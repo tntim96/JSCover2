@@ -17,13 +17,7 @@
         <dependency>
             <groupId>com.google.javascript</groupId>
             <artifactId>closure-compiler</artifactId>
-            <version>v20140625</version>
-        </dependency>
-        <dependency>
-            <groupId>net.sourceforge.htmlunit</groupId>
-            <artifactId>htmlunit</artifactId>
-            <version>2.15</version>
-            <scope>test</scope>
+            <version>v20140730</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

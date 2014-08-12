@@ -32,7 +32,7 @@ public class NodeVisitor implements NodeTraversal.Callback {
 
     private void addStatement(Node node, Node parent) {
         statements.add(node);
-        Node instrumentNode = parse("jscover['test.js'].s["+node.getLineno()+"]++;");
+        Node instrumentNode = parse("jscover['test.js'].s['"+node.getLineno()+"']++;");
         parent.addChildBefore(instrumentNode, node);
     }
 

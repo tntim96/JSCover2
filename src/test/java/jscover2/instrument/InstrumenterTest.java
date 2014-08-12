@@ -17,8 +17,9 @@ public class InstrumenterTest {
     @Test
     public void shouldRecordLineCoverage() throws ScriptException {
         String instrumented = instrumenter.instrument("x = 1;");
+        System.out.println("instrumented = " + instrumented);
         assertThat(engine.eval(instrumented), equalTo(1));
         String json = (String)engine.eval("JSON.stringify(jscover);");
-        assertThat(json, equalTo("{\"test.js\":{\"s\":{\"1\":1},\"f\":{},\"b\":{}}}"));
+        assertThat(json, equalTo("{\"test.js\":{\"s\":{\"1\":1}}}"));
     }
 }

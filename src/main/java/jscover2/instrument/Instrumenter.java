@@ -25,18 +25,22 @@ public class Instrumenter {
 
     private String buildHeader() {
         StringBuilder sb = new StringBuilder(header);
-        sb.append("if (!jscover['test.js']) {\njscover['test.js'] = {};\njscover['test.js'].s = {};\n");
-        for (Node node : nodeVisitor.getStatements()) {
-            sb.append(String.format("  jscover['test.js'].s['%d'] = 0;\n", node.getLineno()));
+        sb.append("if (!jscover['test.js']) {\n");
+        sb.append("  jscover['test.js'] = {\n");
+        addStatements(sb);
+        sb.append("  };\n");
+        sb.append("}\n");
+        return sb.toString();
+    }
+
+    private void addStatements(StringBuilder sb) {
+        sb.append("    \"s\":{");
+        for (int i = 1; i <= nodeVisitor.getStatements().size(); i++) {
+            if (i > 1)
+                sb.append(",");
+            sb.append(String.format("\"%d\":0", i));
         }
         sb.append("}\n");
-        sb.append("if (! jscover['test.js'].f) {\n" +
-                "  jscover['test.js'].f = {};\n" +
-                "}\n" +
-                "if (!jscover['test.js'].b) {\n" +
-                "  jscover['test.js'].b = {};\n" +
-                "}\n");
-        return sb.toString();
     }
 
     private Node parse(String source, String... warnings) {

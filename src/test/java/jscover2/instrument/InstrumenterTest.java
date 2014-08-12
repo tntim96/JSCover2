@@ -19,6 +19,6 @@ public class InstrumenterTest {
         String instrumented = instrumenter.instrument("x = 1;");
         assertThat(engine.eval(instrumented), equalTo(1));
         String json = (String)engine.eval("JSON.stringify(jscover);");
-        assertThat(json, equalTo("{\"test.js\":{\"s\":[null,1],\"f\":[],\"b\":{}}}"));
+        assertThat(json, equalTo("{\"test.js\":{\"s\":{\"1\":1},\"f\":{},\"b\":{}}}"));
     }
 }

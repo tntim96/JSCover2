@@ -36,7 +36,8 @@ public class Instrumenter {
         sb.append(format("if (!jscover['%s']) {\n", urlPath));
         sb.append(format("  jscover['%s'] = {\n", urlPath));
         addStatements(sb, nodeVisitor, lineNumberTable);
-        sb.append("  };\n");
+        addBranches(sb, nodeVisitor, lineNumberTable);
+        sb.append("  }\n");
         sb.append("}\n");
         return sb.toString();
     }
@@ -57,7 +58,26 @@ public class Instrumenter {
             int col = lineNumberTable.getColumn(n.getSourceOffset());
             sb.append(format("\"%d\":{\"pos\":{\"line\":%d,\"col\":%d,\"len\":%d}}", i, n.getLineno(), col, n.getLength()));
         }
+        sb.append("},\n");
+    }
+
+    private void addBranches(StringBuilder sb, NodeVisitor nodeVisitor, LineNumberTable lineNumberTable) {
+        sb.append("    \"b\":{");
+        for (int i = 1; i <= nodeVisitor.getBranches().size(); i++) {
+            if (i > 1)
+                sb.append(",");
+            sb.append(format("\"%d\":[0,0]", i));
+        }
         sb.append("}\n");
+//        sb.append("    \"bD\":{");
+//        for (int i = 1; i <= nodeVisitor.getBranches().size(); i++) {
+//            Node n = nodeVisitor.getBranches().get(i-1);
+//            if (i > 1)
+//                sb.append(",");
+//            int col = lineNumberTable.getColumn(n.getSourceOffset());
+//            sb.append(format("\"%d\":{\"pos\":{\"line\":%d,\"col\":%d,\"len\":%d}}", i, n.getLineno(), col, n.getLength()));
+//        }
+//        sb.append("}\n");
     }
 
     private Node parse(String source, StaticSourceFile sourceFile, String... warnings) {

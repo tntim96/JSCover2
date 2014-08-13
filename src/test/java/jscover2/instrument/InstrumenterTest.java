@@ -79,6 +79,6 @@ public class InstrumenterTest {
         assertThat(engine.eval("jscover['test.js'].s['2']"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['3']"), equalTo(0));
         assertThat(engine.eval("jscover['test.js'].b['1'][0]"), equalTo(0));
-        //assertThat(engine.eval("jscover['test.js'].b['1'][1]"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].b['1'][1]"), equalTo(1));
     }
 }

@@ -1,10 +1,10 @@
 package jscover2.instrument;
 
-import com.google.javascript.jscomp.NodeTraversal;
 import com.google.javascript.jscomp.SourceFile;
 import com.google.javascript.jscomp.parsing.Config;
 import com.google.javascript.jscomp.parsing.ParserRunner;
 import com.google.javascript.rhino.Node;
+import com.google.javascript.rhino.Token;
 import jscover2.util.Pair;
 
 import java.util.ArrayList;
@@ -46,13 +46,19 @@ public class NodeVisitor implements NodeCallback {
     }
 
     private void addBranchStatementToIf(Node n) {
-        Node branch1 = parse(format("jscover['%s'].b['%d'][0]++;", sourceFile.getName(), branches.size()));
-        Node branch2 = parse(format("jscover['%s'].b['%d'][1]++;", sourceFile.getName(), branches.size()));
+        Node branch1 = parse(format("jscover['%s'].b['%d'][0]++;", sourceFile.getName(), branches.size()+1));
+        Node branch2 = parse(format("jscover['%s'].b['%d'][1]++;", sourceFile.getName(), branches.size()+1));
         Pair<Node, Node> pair = new Pair<>(branch1, branch2);
         branches.add(pair);
         instrumentation.add(branch1);
         instrumentation.add(branch2);
-        n.getLastChild().addChildToFront(branch1);
+        n.getChildAtIndex(1).addChildToFront(branch1);
+        Node elseBlock = n.getChildAtIndex(2);
+        if (elseBlock == null) {
+            elseBlock = new Node(Token.BLOCK);
+            n.addChildToBack(elseBlock);
+        }
+        elseBlock.addChildToFront(branch2);
     }
 
     private boolean isStatement(Node n) {
@@ -66,7 +72,6 @@ public class NodeVisitor implements NodeCallback {
         node.getParent().addChildBefore(instrumentNode, node);
     }
 
-
     private Node parse(String source, String... warnings) {
         Node script = ParserRunner.parse(
                 sourceFile,
@@ -75,5 +80,4 @@ public class NodeVisitor implements NodeCallback {
                 null).ast;
         return script;
     }
-
 }

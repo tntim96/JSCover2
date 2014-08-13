@@ -12,7 +12,7 @@ import java.util.List;
 
 import static java.lang.String.format;
 
-public class NodeVisitor implements NodeTraversal.Callback {
+public class NodeVisitor implements NodeCallback {
     private Config.LanguageMode mode = Config.LanguageMode.ECMASCRIPT3;
     public List<Node> statements = new ArrayList<>();
     public List<Pair<Node,Node>> branches = new ArrayList<>();
@@ -32,14 +32,14 @@ public class NodeVisitor implements NodeTraversal.Callback {
     }
 
     @Override
-    public boolean shouldTraverse(NodeTraversal nodeTraversal, Node n, Node parent) {
+    public boolean shouldTraverse(Node n) {
         return !instrumentation.contains(n);
     }
 
     @Override
-    public void visit(NodeTraversal t, Node n, Node parent) {
+    public void visit(Node n) {
         if (isStatement(n))
-            addStatement(n, parent);
+            addStatement(n);
         if (n.isIf())
             addBranchStatementToIf(n);
         //System.out.println("n = " + n);
@@ -59,11 +59,11 @@ public class NodeVisitor implements NodeTraversal.Callback {
         return n.isExprResult() || n.isVar() || n.isIf();
     }
 
-    private void addStatement(Node node, Node parent) {
+    private void addStatement(Node node) {
         statements.add(node);
         Node instrumentNode = parse(format("jscover['%s'].s['%d']++;", sourceFile.getName(), statements.size()));
         instrumentation.add(instrumentNode);
-        parent.addChildBefore(instrumentNode, node);
+        node.getParent().addChildBefore(instrumentNode, node);
     }
 
 

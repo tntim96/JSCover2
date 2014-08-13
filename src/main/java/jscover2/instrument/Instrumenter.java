@@ -1,8 +1,6 @@
 package jscover2.instrument;
 
 import com.google.javascript.jscomp.CodePrinter;
-import com.google.javascript.jscomp.Compiler;
-import com.google.javascript.jscomp.NodeTraversal;
 import com.google.javascript.jscomp.SourceFile;
 import com.google.javascript.jscomp.parsing.Config;
 import com.google.javascript.jscomp.parsing.ParserRunner;
@@ -23,8 +21,7 @@ public class Instrumenter {
         com.google.javascript.jscomp.parsing.parser.SourceFile sf = new com.google.javascript.jscomp.parsing.parser.SourceFile(urlPath, code);
         LineNumberTable lineNumberTable = new LineNumberTable(sf);
         Node jsRoot = parse(code, sourceFile);
-        Compiler compiler = new Compiler();
-        NodeTraversal.traverse(compiler, jsRoot, nodeVisitor);
+        new NodeWalker().visit(jsRoot, nodeVisitor);
         CodePrinter.Builder builder = new CodePrinter.Builder(jsRoot);
         String header = buildHeader(urlPath, nodeVisitor, lineNumberTable);
         String body = builder.build();

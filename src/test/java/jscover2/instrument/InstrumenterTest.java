@@ -21,12 +21,37 @@ public class InstrumenterTest {
     }
 
     @Test
+    public void shouldRecordStatementWithDifferentUrlPath() throws ScriptException {
+        String instrumented = instrumenter.instrument("test1.js", "x = 1;");
+        assertThat(engine.eval(instrumented), equalTo(1));
+        assertThat(engine.eval("jscover['test1.js'].s['1']"), equalTo(1));
+    }
+
+    @Test
+    public void shouldRecordTwoStatement() throws ScriptException {
+        String instrumented = instrumenter.instrument("test.js", "x = 1; ++x;");
+        assertThat(engine.eval(instrumented), equalTo(2.0));
+        assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));
+    }
+
+    @Test
     public void shouldCreateStatementData() throws ScriptException {
         String instrumented = instrumenter.instrument("test.js", "\n     x =\n 1;");
-        System.out.println(instrumented);
         engine.eval(instrumented);
         assertThat(engine.eval("jscover['test.js'].sD['1'].pos.line"), equalTo(2));
         assertThat(engine.eval("jscover['test.js'].sD['1'].pos.col"), equalTo(5));
         assertThat(engine.eval("jscover['test.js'].sD['1'].pos.len"), equalTo(7));
+    }
+
+    @Test
+    public void shouldCreateTwoStatementDataSet() throws ScriptException {
+        String instrumented = instrumenter.instrument("test.js", "x = 1; ++x;");
+        engine.eval(instrumented);
+        assertThat(engine.eval("jscover['test.js'].sD['1'].pos.line"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].sD['1'].pos.col"), equalTo(0));
+        assertThat(engine.eval("jscover['test.js'].sD['1'].pos.len"), equalTo(6));
+        assertThat(engine.eval("jscover['test.js'].sD['2'].pos.line"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].sD['2'].pos.col"), equalTo(7));
+        assertThat(engine.eval("jscover['test.js'].sD['2'].pos.len"), equalTo(4));
     }
 }

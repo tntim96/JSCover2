@@ -40,7 +40,7 @@ public class NodeVisitor implements NodeTraversal.Callback {
 
     private void addStatement(Node node, Node parent) {
         statements.add(node);
-        Node instrumentNode = parse(format("jscover['%s'].s['"+node.getLineno()+"']++;", sourceFile.getName()));
+        Node instrumentNode = parse(format("jscover['%s'].s['"+statements.size()+"']++;", sourceFile.getName()));
         parent.addChildBefore(instrumentNode, node);
     }
 

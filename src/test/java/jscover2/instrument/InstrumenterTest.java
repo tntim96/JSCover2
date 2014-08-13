@@ -15,7 +15,7 @@ public class InstrumenterTest {
 
     @Test
     public void shouldRecordStatement() throws ScriptException {
-        String instrumented = instrumenter.instrument("x = 1;");
+        String instrumented = instrumenter.instrument("test.js", "x = 1;");
         //System.out.println("instrumented = " + instrumented);
         assertThat(engine.eval(instrumented), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));

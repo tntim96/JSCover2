@@ -8,26 +8,28 @@ import com.google.javascript.jscomp.parsing.Config;
 import com.google.javascript.jscomp.parsing.ParserRunner;
 import com.google.javascript.rhino.Node;
 
+import static java.lang.String.format;
+
 
 public class Instrumenter {
     private String header = "if (!jscover) var jscover = {};\n";
     private Config.LanguageMode mode = Config.LanguageMode.ECMASCRIPT3;
     private NodeVisitor nodeVisitor = new NodeVisitor();
 
-    public String instrument(String js) {
+    public String instrument(String urlPath, String js) {
         Node jsRoot = parse(js);
         Compiler compiler = new Compiler();
         NodeTraversal.traverse(compiler, jsRoot, nodeVisitor);
         CodePrinter.Builder builder = new CodePrinter.Builder(jsRoot);
-        String header = buildHeader();
+        String header = buildHeader(urlPath);
         String body = builder.build();
         return header + body;
     }
 
-    private String buildHeader() {
+    private String buildHeader(String urlPath) {
         StringBuilder sb = new StringBuilder(header);
-        sb.append("if (!jscover['test.js']) {\n");
-        sb.append("  jscover['test.js'] = {\n");
+        sb.append(format("if (!jscover['test.js']) {\n", urlPath));
+        sb.append(format("  jscover['test.js'] = {\n", urlPath));
         addStatements(sb);
         sb.append("  };\n");
         sb.append("}\n");
@@ -39,7 +41,7 @@ public class Instrumenter {
         for (int i = 1; i <= nodeVisitor.getStatements().size(); i++) {
             if (i > 1)
                 sb.append(",");
-            sb.append(String.format("\"%d\":0", i));
+            sb.append(format("\"%d\":0", i));
         }
         sb.append("}\n");
     }

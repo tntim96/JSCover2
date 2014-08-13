@@ -16,33 +16,32 @@ import static java.lang.String.format;
 public class Instrumenter {
     private String header = "if (!jscover) var jscover = {};\n";
     private Config.LanguageMode mode = Config.LanguageMode.ECMASCRIPT3;
-    private NodeVisitor nodeVisitor = new NodeVisitor();
-    private LineNumberTable lineNumberTable;
 
     public String instrument(String urlPath, String code) {
         SourceFile sourceFile = SourceFile.fromCode(urlPath, urlPath, code);
+        NodeVisitor nodeVisitor = new NodeVisitor(sourceFile);
         com.google.javascript.jscomp.parsing.parser.SourceFile sf = new com.google.javascript.jscomp.parsing.parser.SourceFile(urlPath, code);
-        lineNumberTable = new LineNumberTable(sf);
+        LineNumberTable lineNumberTable = new LineNumberTable(sf);
         Node jsRoot = parse(code, sourceFile);
         Compiler compiler = new Compiler();
         NodeTraversal.traverse(compiler, jsRoot, nodeVisitor);
         CodePrinter.Builder builder = new CodePrinter.Builder(jsRoot);
-        String header = buildHeader(urlPath);
+        String header = buildHeader(urlPath, nodeVisitor, lineNumberTable);
         String body = builder.build();
         return header + body;
     }
 
-    private String buildHeader(String urlPath) {
+    private String buildHeader(String urlPath, NodeVisitor nodeVisitor, LineNumberTable lineNumberTable) {
         StringBuilder sb = new StringBuilder(header);
         sb.append(format("if (!jscover['%s']) {\n", urlPath));
         sb.append(format("  jscover['%s'] = {\n", urlPath));
-        addStatements(sb);
+        addStatements(sb, nodeVisitor, lineNumberTable);
         sb.append("  };\n");
         sb.append("}\n");
         return sb.toString();
     }
 
-    private void addStatements(StringBuilder sb) {
+    private void addStatements(StringBuilder sb, NodeVisitor nodeVisitor, LineNumberTable lineNumberTable) {
         sb.append("    \"s\":{");
         for (int i = 1; i <= nodeVisitor.getStatements().size(); i++) {
             if (i > 1)

@@ -1,5 +1,6 @@
 package jscover2.instrument;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.script.ScriptEngine;
@@ -7,6 +8,7 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 public class InstrumenterTest {
@@ -59,5 +61,26 @@ public class InstrumenterTest {
     public void shouldCoverDeclaration() throws ScriptException {
         engine.eval(instrumenter.instrument("test.js", "var x;"));
         assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));
+    }
+
+    @Test
+    public void shouldCoverDeclarationAndAssignmentOnce() throws ScriptException {
+        String instrument = instrumenter.instrument("test.js", "var x = 1;");
+        engine.eval(instrument);
+        assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].s['2']"), nullValue());
+    }
+
+    @Test
+    @Ignore
+    public void shouldCoverIf() throws ScriptException {
+        String instrumented = instrumenter.instrument("test.js", "var x = 0;\nif (x < 0)\n  x++;");
+        System.out.println(instrumented);
+        engine.eval(instrumented);
+        assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].s['2']"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].s['3']"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].b['1'][0]"), equalTo(0));
+        assertThat(engine.eval("jscover['test.js'].b['1'][1]"), equalTo(1));
     }
 }

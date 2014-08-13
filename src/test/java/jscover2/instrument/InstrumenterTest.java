@@ -14,21 +14,21 @@ public class InstrumenterTest {
     private Instrumenter instrumenter = new Instrumenter();
 
     @Test
-    public void shouldRecordStatement() throws ScriptException {
+    public void shouldCoverStatement() throws ScriptException {
         String instrumented = instrumenter.instrument("test.js", "x = 1;");
         assertThat(engine.eval(instrumented), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));
     }
 
     @Test
-    public void shouldRecordStatementWithDifferentUrlPath() throws ScriptException {
+    public void shouldCoverStatementWithDifferentUrlPath() throws ScriptException {
         String instrumented = instrumenter.instrument("test1.js", "x = 1;");
         assertThat(engine.eval(instrumented), equalTo(1));
         assertThat(engine.eval("jscover['test1.js'].s['1']"), equalTo(1));
     }
 
     @Test
-    public void shouldRecordTwoStatement() throws ScriptException {
+    public void shouldCoverTwoStatement() throws ScriptException {
         String instrumented = instrumenter.instrument("test.js", "x = 1; ++x;");
         assertThat(engine.eval(instrumented), equalTo(2.0));
         assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));
@@ -44,7 +44,7 @@ public class InstrumenterTest {
     }
 
     @Test
-    public void shouldCreateTwoStatementDataSet() throws ScriptException {
+    public void shouldCreateTwoStatementDataSets() throws ScriptException {
         String instrumented = instrumenter.instrument("test.js", "x = 1; ++x;");
         engine.eval(instrumented);
         assertThat(engine.eval("jscover['test.js'].sD['1'].pos.line"), equalTo(1));
@@ -56,7 +56,7 @@ public class InstrumenterTest {
     }
 
     @Test
-    public void shouldDeclaration() throws ScriptException {
+    public void shouldCoverDeclaration() throws ScriptException {
         engine.eval(instrumenter.instrument("test.js", "var x;"));
         assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));
     }

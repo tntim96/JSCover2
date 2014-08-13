@@ -16,8 +16,17 @@ public class InstrumenterTest {
     @Test
     public void shouldRecordStatement() throws ScriptException {
         String instrumented = instrumenter.instrument("test.js", "x = 1;");
-        //System.out.println("instrumented = " + instrumented);
         assertThat(engine.eval(instrumented), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));
+    }
+
+    @Test
+    public void shouldCreateStatementData() throws ScriptException {
+        String instrumented = instrumenter.instrument("test.js", "x = 1;");
+        System.out.println(instrumented);
+        engine.eval(instrumented);
+        assertThat(engine.eval("jscover['test.js'].sD['1'].pos.line"), equalTo(1));
+        //assertThat(engine.eval("jscover['test.js'].sD['1'].pos.col"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].sD['1'].pos.len"), equalTo(6));
     }
 }

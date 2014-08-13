@@ -43,6 +43,14 @@ public class Instrumenter {
                 sb.append(",");
             sb.append(format("\"%d\":0", i));
         }
+        sb.append("},\n");
+        sb.append("    \"sD\":{");
+        for (int i = 1; i <= nodeVisitor.getStatements().size(); i++) {
+            Node n = nodeVisitor.getStatements().get(i-1);
+            if (i > 1)
+                sb.append(",");
+            sb.append(format("\"%d\":{\"pos\":{\"line\":%d,\"col\":%d,\"len\":%d}}", i, n.getLineno(), n.getSourcePosition(), n.getLength()));
+        }
         sb.append("}\n");
     }
 

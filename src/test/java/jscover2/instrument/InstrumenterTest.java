@@ -22,11 +22,11 @@ public class InstrumenterTest {
 
     @Test
     public void shouldCreateStatementData() throws ScriptException {
-        String instrumented = instrumenter.instrument("test.js", "x = 1;");
+        String instrumented = instrumenter.instrument("test.js", "\n     x =\n 1;");
         System.out.println(instrumented);
         engine.eval(instrumented);
-        assertThat(engine.eval("jscover['test.js'].sD['1'].pos.line"), equalTo(1));
-        //assertThat(engine.eval("jscover['test.js'].sD['1'].pos.col"), equalTo(1));
-        assertThat(engine.eval("jscover['test.js'].sD['1'].pos.len"), equalTo(6));
+        assertThat(engine.eval("jscover['test.js'].sD['1'].pos.line"), equalTo(2));
+        assertThat(engine.eval("jscover['test.js'].sD['1'].pos.col"), equalTo(5));
+        assertThat(engine.eval("jscover['test.js'].sD['1'].pos.len"), equalTo(7));
     }
 }

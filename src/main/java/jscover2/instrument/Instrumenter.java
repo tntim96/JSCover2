@@ -66,6 +66,7 @@ public class Instrumenter {
                 source,
                 ParserRunner.createConfig(true, mode, false),
                 null).ast;
+        //System.out.println(script.toStringTree());
         return script;
     }
 }

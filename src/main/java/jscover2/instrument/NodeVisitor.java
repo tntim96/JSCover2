@@ -33,9 +33,13 @@ public class NodeVisitor implements NodeTraversal.Callback {
 
     @Override
     public void visit(NodeTraversal t, Node n, Node parent) {
-        if (n.isExprResult())
+        if (isStatement(n))
             addStatement(n, parent);
         //System.out.println("n = " + n);
+    }
+
+    private boolean isStatement(Node n) {
+        return n.isExprResult() || n.isVar();
     }
 
     private void addStatement(Node node, Node parent) {

@@ -54,4 +54,10 @@ public class InstrumenterTest {
         assertThat(engine.eval("jscover['test.js'].sD['2'].pos.col"), equalTo(7));
         assertThat(engine.eval("jscover['test.js'].sD['2'].pos.len"), equalTo(4));
     }
+
+    @Test
+    public void shouldDeclaration() throws ScriptException {
+        engine.eval(instrumenter.instrument("test.js", "var x;"));
+        assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));
+    }
 }

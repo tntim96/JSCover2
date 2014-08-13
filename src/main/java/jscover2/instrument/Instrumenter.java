@@ -3,10 +3,11 @@ package jscover2.instrument;
 import com.google.javascript.jscomp.CodePrinter;
 import com.google.javascript.jscomp.Compiler;
 import com.google.javascript.jscomp.NodeTraversal;
+import com.google.javascript.jscomp.SourceFile;
 import com.google.javascript.jscomp.parsing.Config;
 import com.google.javascript.jscomp.parsing.ParserRunner;
 import com.google.javascript.rhino.Node;
-import com.google.javascript.rhino.jstype.SimpleSourceFile;
+
 
 public class Instrumenter {
     private String header = "if (!jscover) var jscover = {};\n";
@@ -45,7 +46,7 @@ public class Instrumenter {
 
     private Node parse(String source, String... warnings) {
         Node script = ParserRunner.parse(
-                new SimpleSourceFile("input", false),
+                new SourceFile("input"),
                 source,
                 ParserRunner.createConfig(true, mode, false),
                 null).ast;

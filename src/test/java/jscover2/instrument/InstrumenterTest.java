@@ -1,6 +1,5 @@
 package jscover2.instrument;
 
-import jdk.nashorn.api.scripting.JSObject;
 import org.junit.Test;
 
 import javax.script.ScriptEngine;
@@ -15,11 +14,10 @@ public class InstrumenterTest {
     private Instrumenter instrumenter = new Instrumenter();
 
     @Test
-    public void shouldRecordLineCoverage() throws ScriptException {
+    public void shouldRecordStatement() throws ScriptException {
         String instrumented = instrumenter.instrument("x = 1;");
-        System.out.println("instrumented = " + instrumented);
+        //System.out.println("instrumented = " + instrumented);
         assertThat(engine.eval(instrumented), equalTo(1));
-        String json = (String)engine.eval("JSON.stringify(jscover);");
-        assertThat(json, equalTo("{\"test.js\":{\"s\":{\"1\":1}}}"));
+        assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));
     }
 }

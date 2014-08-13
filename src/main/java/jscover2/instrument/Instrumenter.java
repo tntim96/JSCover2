@@ -28,8 +28,8 @@ public class Instrumenter {
 
     private String buildHeader(String urlPath) {
         StringBuilder sb = new StringBuilder(header);
-        sb.append(format("if (!jscover['test.js']) {\n", urlPath));
-        sb.append(format("  jscover['test.js'] = {\n", urlPath));
+        sb.append(format("if (!jscover['%s']) {\n", urlPath));
+        sb.append(format("  jscover['%s'] = {\n", urlPath));
         addStatements(sb);
         sb.append("  };\n");
         sb.append("}\n");

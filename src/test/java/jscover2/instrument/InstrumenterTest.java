@@ -1,6 +1,5 @@
 package jscover2.instrument;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.script.ScriptEngine;
@@ -24,9 +23,10 @@ public class InstrumenterTest {
 
     @Test
     public void shouldCoverStatementWithDifferentUrlPath() throws ScriptException {
-        String instrumented = instrumenter.instrument("test1.js", "x = 1;");
+        String instrumented = instrumenter.instrument("/diff.js", "x = 1;");
         assertThat(engine.eval(instrumented), equalTo(1));
-        assertThat(engine.eval("jscover['test1.js'].s['1']"), equalTo(1));
+        assertThat(engine.eval("jscover['/diff.js'].s['1']"), equalTo(1));
+        assertThat(engine.eval("jscover['/diff.js'].sD['1'].pos.line"), equalTo(1));
     }
 
     @Test
@@ -80,5 +80,18 @@ public class InstrumenterTest {
         assertThat(engine.eval("jscover['test.js'].s['3']"), equalTo(0));
         assertThat(engine.eval("jscover['test.js'].b['1'][0]"), equalTo(0));
         assertThat(engine.eval("jscover['test.js'].b['1'][1]"), equalTo(1));
+    }
+
+    @Test
+    public void shouldCoverIfElse() throws ScriptException {
+        String instrumented = instrumenter.instrument("test.js", "var x = 0;\nif (x <= 0)\n  x++; else x--;");
+        engine.eval(instrumented);
+        System.out.println("instrumented = " + instrumented);
+        assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].s['2']"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].s['3']"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].s['4']"), equalTo(0));
+        assertThat(engine.eval("jscover['test.js'].b['1'][0]"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].b['1'][1]"), equalTo(0));
     }
 }

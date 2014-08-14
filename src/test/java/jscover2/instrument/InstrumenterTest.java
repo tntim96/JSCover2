@@ -22,6 +22,14 @@ public class InstrumenterTest {
     }
 
     @Test
+    public void shouldCoverStatementTwice() throws ScriptException {
+        String instrumented = instrumenter.instrument("test.js", "x = 1;");
+        assertThat(engine.eval(instrumented), equalTo(1));
+        assertThat(engine.eval(instrumented), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(2));
+    }
+
+    @Test
     public void shouldCoverStatementWithDifferentUrlPath() throws ScriptException {
         String instrumented = instrumenter.instrument("/diff.js", "x = 1;");
         assertThat(engine.eval(instrumented), equalTo(1));
@@ -86,12 +94,20 @@ public class InstrumenterTest {
     public void shouldCoverIfElse() throws ScriptException {
         String instrumented = instrumenter.instrument("test.js", "var x = 0;\nif (x <= 0)\n  x++; else x--;");
         engine.eval(instrumented);
-        System.out.println("instrumented = " + instrumented);
         assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['2']"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['3']"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['4']"), equalTo(0));
         assertThat(engine.eval("jscover['test.js'].b['1'][0]"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].b['1'][1]"), equalTo(0));
+    }
+
+    @Test
+    public void shouldCreateBranchDataSet() throws ScriptException {
+        String instrumented = instrumenter.instrument("test.js", "var x = 0;\nif (x < 0)\n  x++;");
+        engine.eval(instrumented);
+        assertThat(engine.eval("jscover['test.js'].bD['1'].pos.line"), equalTo(2));
+        assertThat(engine.eval("jscover['test.js'].bD['1'].pos.col"), equalTo(0));
+        assertThat(engine.eval("jscover['test.js'].bD['1'].pos.len"), equalTo(17));
     }
 }

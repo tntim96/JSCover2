@@ -65,16 +65,16 @@ public class Instrumenter {
                 sb.append(",");
             sb.append(format("\"%d\":[0,0]", i));
         }
+        sb.append("},\n");
+        sb.append("    \"bD\":{");
+        for (int i = 1; i <= nodeVisitor.getBranches().size(); i++) {
+            Node n = nodeVisitor.getBranches().get(i-1);
+            if (i > 1)
+                sb.append(",");
+            int col = lineNumberTable.getColumn(n.getSourceOffset());
+            sb.append(format("\"%d\":{\"pos\":{\"line\":%d,\"col\":%d,\"len\":%d}}", i, n.getLineno(), col, n.getLength()));
+        }
         sb.append("}\n");
-//        sb.append("    \"bD\":{");
-//        for (int i = 1; i <= nodeVisitor.getBranches().size(); i++) {
-//            Node n = nodeVisitor.getBranches().get(i-1);
-//            if (i > 1)
-//                sb.append(",");
-//            int col = lineNumberTable.getColumn(n.getSourceOffset());
-//            sb.append(format("\"%d\":{\"pos\":{\"line\":%d,\"col\":%d,\"len\":%d}}", i, n.getLineno(), col, n.getLength()));
-//        }
-//        sb.append("}\n");
     }
 
     private Node parse(String source, StaticSourceFile sourceFile, String... warnings) {

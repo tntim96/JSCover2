@@ -135,7 +135,7 @@ public class InstrumenterTest {
         String instrumented = instrumenter.instrument("test.js", "var x = 0;\nif (x < 0)\n  x++;");
         engine.eval(instrumented);
         assertThat(engine.eval("jscover['test.js'].bD['1'].pos.line"), equalTo(2));
-        assertThat(engine.eval("jscover['test.js'].bD['1'].pos.col"), equalTo(0));
-        assertThat(engine.eval("jscover['test.js'].bD['1'].pos.len"), equalTo(17));
+        assertThat(engine.eval("jscover['test.js'].bD['1'].pos.col"), equalTo(4));
+        assertThat(engine.eval("jscover['test.js'].bD['1'].pos.len"), equalTo(5));
     }
 }

@@ -56,7 +56,7 @@ public class NodeVisitor implements NodeCallback {
     }
 
     private void addBranchStatementToIf(Node n) {
-        branches.add(n);
+        branches.add(n.getFirstChild());
         Node branch1 = parse(format("jscover['%s'].b['%d'][0]++;", sourceFile.getName(), branches.size()));
         Node branch2 = parse(format("jscover['%s'].b['%d'][1]++;", sourceFile.getName(), branches.size()));
         instrumentation.add(branch1);

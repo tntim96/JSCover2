@@ -12,7 +12,8 @@ import static java.lang.String.format;
 
 
 public class Instrumenter {
-    private String header = "if (!jscover) var jscover = {};\n";
+    private String branchRecorderJS = "function(result, u, n) {if (result)this[u].b[''+n][0]++;else this[u].b[''+n][1]++;return result}";
+    private String header = String.format("if (!jscover) var jscover = {bF: %s};\n",branchRecorderJS);
     private Config.LanguageMode mode = Config.LanguageMode.ECMASCRIPT3;
 
     public String instrument(String urlPath, String code) {

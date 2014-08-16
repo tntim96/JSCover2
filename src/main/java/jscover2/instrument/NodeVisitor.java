@@ -45,7 +45,7 @@ public class NodeVisitor implements NodeCallback {
 
     private void addStatement(Node node) {
         statements.add(node);
-        Node instrumentNode = nodeHelper.createStatementIncrementNode("jscover", sourceFile.getName(), statements.size());
+        Node instrumentNode = nodeHelper.createIncrementStatementNode("jscover", sourceFile.getName(), statements.size());
         instrumentation.add(instrumentNode);
         node.getParent().addChildBefore(instrumentNode, node);
     }
@@ -53,7 +53,7 @@ public class NodeVisitor implements NodeCallback {
     private void addBranchStatementToIf(Node n) {
         Node conditionNode = n.getFirstChild();
         branches.add(conditionNode);
-        Node wrapper = nodeHelper.wrap(conditionNode, "jscover", sourceFile.getName(), branches.size());
+        Node wrapper = nodeHelper.wrapConditionNode(conditionNode, "jscover", sourceFile.getName(), branches.size());
         instrumentation.add(wrapper);
         n.replaceChild(conditionNode, wrapper);
     }

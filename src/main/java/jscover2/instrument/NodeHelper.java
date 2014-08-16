@@ -4,7 +4,7 @@ import com.google.javascript.rhino.Node;
 import com.google.javascript.rhino.Token;
 
 public class NodeHelper {
-    public Node createStatementIncrementNode(String coverVarName, String urlPath, int i) {
+    public Node createIncrementStatementNode(String coverVarName, String urlPath, int i) {
         Node coverVar = Node.newString(Token.NAME, coverVarName);
         Node path = Node.newString(Token.STRING, urlPath);
         Node elementGet = new Node(Token.GETELEM, coverVar, path);
@@ -17,7 +17,7 @@ public class NodeHelper {
         return new Node(Token.EXPR_RESULT, inc);
     }
 
-    public Node wrap(Node node, String coverVarName, String urlPath, int i) {
+    public Node wrapConditionNode(Node node, String coverVarName, String urlPath, int i) {
         Node coverVar = Node.newString(Token.NAME, coverVarName);
         Node branchFunction = Node.newString(Token.STRING, "bF");
         Node elementGet = new Node(Token.GETPROP, coverVar, branchFunction);

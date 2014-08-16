@@ -19,7 +19,7 @@ public class NodeHelperTest {
     @Test
     public void shouldCreateStatementIncrementNode() throws IOException {
         Node expected = parse("coverVar['urlPath'].s['7']++;");
-        Node actual = nodeHelper.createStatementIncrementNode("coverVar", "urlPath", 7);
+        Node actual = nodeHelper.createIncrementStatementNode("coverVar", "urlPath", 7);
 
         assertThat(new CodePrinter.Builder(actual).build(), equalTo(new CodePrinter.Builder(expected).build()));
     }
@@ -31,7 +31,7 @@ public class NodeHelperTest {
         node.addChildToBack(Node.newNumber(0));
 
         Node expected = parse("coverVar.bF((x < 0), 'urlPath', 7)");
-        Node actual = nodeHelper.wrap(node, "coverVar", "urlPath", 7);
+        Node actual = nodeHelper.wrapConditionNode(node, "coverVar", "urlPath", 7);
 
         assertThat(new CodePrinter.Builder(actual).build(), equalTo(new CodePrinter.Builder(expected).build()));
     }
@@ -55,7 +55,7 @@ public class NodeHelperTest {
 
         Node expected = parse("if (coverVar.bF((x < 0), 'urlPath', 7))\n  x++;");
 
-        Node wrapper = nodeHelper.wrap(lt, "coverVar", "urlPath", 7);
+        Node wrapper = nodeHelper.wrapConditionNode(lt, "coverVar", "urlPath", 7);
         ifNode.replaceChild(lt, wrapper);
 
         assertThat(new CodePrinter.Builder(ifNode).build(), equalTo(new CodePrinter.Builder(expected).build()));

@@ -25,7 +25,7 @@ public class ClosureCompilerTest {
         Node script = ParserRunner.parse(
                 new SimpleSourceFile("input", false),
                 source,
-                ParserRunner.createConfig(true, mode, false),
+                ParserRunner.createConfig(true, false, mode, false, null),
                 null).ast;
         return script;
     }

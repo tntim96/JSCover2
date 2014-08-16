@@ -82,7 +82,7 @@ public class Instrumenter {
         Node script = ParserRunner.parse(
                 sourceFile,
                 source,
-                ParserRunner.createConfig(true, mode, false),
+                ParserRunner.createConfig(true, false, mode, false, null),
                 null).ast;
         //System.out.println(script.toStringTree());
         return script;

@@ -45,7 +45,7 @@ public class NodeVisitor implements NodeCallback {
 
     private void addStatement(Node node) {
         statements.add(node);
-        Node instrumentNode = nodeHelper.createIncrementStatementNode("jscover", sourceFile.getName(), statements.size());
+        Node instrumentNode = nodeHelper.createStatementIncrementNode("jscover", sourceFile.getName(), statements.size());
         instrumentation.add(instrumentNode);
         node.getParent().addChildBefore(instrumentNode, node);
     }

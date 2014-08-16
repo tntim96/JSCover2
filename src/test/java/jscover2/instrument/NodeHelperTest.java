@@ -19,13 +19,21 @@ public class NodeHelperTest {
     @Test
     public void shouldCreateStatementIncrementNode() throws IOException {
         Node expected = parse("coverVar['urlPath'].s['7']++;");
-        Node actual = nodeHelper.createIncrementStatementNode("coverVar", "urlPath", 7);
+        Node actual = nodeHelper.createStatementIncrementNode("coverVar", "urlPath", 7);
 
         assertThat(new CodePrinter.Builder(actual).build(), equalTo(new CodePrinter.Builder(expected).build()));
     }
 
     @Test
-    public void shouldWrapNode() throws IOException {
+    public void shouldCreateFunctionIncrementNode() throws IOException {
+        Node expected = parse("coverVar['urlPath'].f['7']++;");
+        Node actual = nodeHelper.createFunctionIncrementNode("coverVar", "urlPath", 7);
+
+        assertThat(new CodePrinter.Builder(actual).build(), equalTo(new CodePrinter.Builder(expected).build()));
+    }
+
+    @Test
+    public void shouldWrapConditionNode() throws IOException {
         Node node = new Node(Token.LT);
         node.addChildToFront(Node.newString(Token.NAME, "x"));
         node.addChildToBack(Node.newNumber(0));

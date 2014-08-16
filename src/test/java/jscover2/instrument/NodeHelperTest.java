@@ -6,7 +6,6 @@ import com.google.javascript.jscomp.parsing.Config;
 import com.google.javascript.jscomp.parsing.ParserRunner;
 import com.google.javascript.rhino.Node;
 import com.google.javascript.rhino.Token;
-import jdk.nashorn.internal.ir.Block;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -16,6 +15,14 @@ import static org.junit.Assert.assertThat;
 
 public class NodeHelperTest {
     private NodeHelper nodeHelper = new NodeHelper();
+
+    @Test
+    public void shouldCreateStatementIncrementNode() throws IOException {
+        Node expected = parse("coverVar['urlPath'].s['7']++;");
+        Node actual = nodeHelper.createStatementIncrementNode("coverVar", "urlPath", 7);
+
+        assertThat(new CodePrinter.Builder(actual).build(), equalTo(new CodePrinter.Builder(expected).build()));
+    }
 
     @Test
     public void shouldWrapNode() throws IOException {
@@ -54,13 +61,12 @@ public class NodeHelperTest {
         assertThat(new CodePrinter.Builder(ifNode).build(), equalTo(new CodePrinter.Builder(expected).build()));
     }
 
-    private Node parse(String source, String... warnings) {
-        Node script = ParserRunner.parse(
+    private Node parse(String source) {
+        return ParserRunner.parse(
                 new SourceFile("test.js"),
                 source,
                 ParserRunner.createConfig(true, false, Config.LanguageMode.ECMASCRIPT3, false, null),
                 null).ast;
-        return script;
     }
 
 }

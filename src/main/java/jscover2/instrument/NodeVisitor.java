@@ -1,17 +1,12 @@
 package jscover2.instrument;
 
 import com.google.javascript.jscomp.SourceFile;
-import com.google.javascript.jscomp.parsing.Config;
-import com.google.javascript.jscomp.parsing.ParserRunner;
 import com.google.javascript.rhino.Node;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.lang.String.format;
-
 public class NodeVisitor implements NodeCallback {
-    private Config.LanguageMode mode = Config.LanguageMode.ECMASCRIPT3;
     private NodeHelper nodeHelper = new NodeHelper();
     public List<Node> statements = new ArrayList<>();
     public List<Node> branches = new ArrayList<>();
@@ -50,7 +45,7 @@ public class NodeVisitor implements NodeCallback {
 
     private void addStatement(Node node) {
         statements.add(node);
-        Node instrumentNode = parse(format("jscover['%s'].s['%d']++;", sourceFile.getName(), statements.size()));
+        Node instrumentNode = nodeHelper.createStatementIncrementNode("jscover", sourceFile.getName(), statements.size());
         instrumentation.add(instrumentNode);
         node.getParent().addChildBefore(instrumentNode, node);
     }
@@ -61,14 +56,5 @@ public class NodeVisitor implements NodeCallback {
         Node wrapper = nodeHelper.wrap(conditionNode, "jscover", sourceFile.getName(), branches.size());
         instrumentation.add(wrapper);
         n.replaceChild(conditionNode, wrapper);
-    }
-
-    private Node parse(String source, String... warnings) {
-        Node script = ParserRunner.parse(
-                sourceFile,
-                source,
-                ParserRunner.createConfig(true, false, mode, false, null),
-                null).ast;
-        return script;
     }
 }

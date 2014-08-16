@@ -4,6 +4,19 @@ import com.google.javascript.rhino.Node;
 import com.google.javascript.rhino.Token;
 
 public class NodeHelper {
+    public Node createStatementIncrementNode(String coverVarName, String urlPath, int i) {
+        Node coverVar = Node.newString(Token.NAME, coverVarName);
+        Node path = Node.newString(Token.STRING, urlPath);
+        Node elementGet = new Node(Token.GETELEM, coverVar, path);
+        Node statementProp = Node.newString(Token.STRING, "s");
+        Node propGet = new Node(Token.GETPROP, elementGet, statementProp);
+        Node statementNumber = Node.newString(Token.STRING, ""+i);
+        Node elementGet2 = new Node(Token.GETELEM, propGet, statementNumber);
+        Node inc = new Node(Token.INC, elementGet2);
+        inc.putBooleanProp(Node.INCRDECR_PROP, true);
+        return new Node(Token.EXPR_RESULT, inc);
+    }
+
     public Node wrap(Node node, String coverVarName, String urlPath, int i) {
         Node coverVar = Node.newString(Token.NAME, coverVarName);
         Node branchFunction = Node.newString(Token.STRING, "bF");

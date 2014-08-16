@@ -78,7 +78,7 @@ public class Instrumenter {
         sb.append("}\n");
     }
 
-    private Node parse(String source, StaticSourceFile sourceFile, String... warnings) {
+    private Node parse(String source, StaticSourceFile sourceFile) {
         Node script = ParserRunner.parse(
                 sourceFile,
                 source,

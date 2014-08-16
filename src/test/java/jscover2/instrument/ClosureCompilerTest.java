@@ -21,12 +21,11 @@ public class ClosureCompilerTest {
         assertThat(builder.build(), equalTo("x=1;y=2;z=3"));
     }
 
-    private Node parse(String source, String... warnings) {
-        Node script = ParserRunner.parse(
+    private Node parse(String source) {
+        return ParserRunner.parse(
                 new SimpleSourceFile("input", false),
                 source,
                 ParserRunner.createConfig(true, false, mode, false, null),
                 null).ast;
-        return script;
     }
 }

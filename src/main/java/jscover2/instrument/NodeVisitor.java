@@ -10,6 +10,7 @@ public class NodeVisitor implements NodeCallback {
     private NodeHelper nodeHelper = new NodeHelper();
     public List<Node> statements = new ArrayList<>();
     public List<Node> branches = new ArrayList<>();
+    public List<Node> functions = new ArrayList<>();
     public List<Node> instrumentation = new ArrayList<>();
     private SourceFile sourceFile;
 
@@ -25,6 +26,10 @@ public class NodeVisitor implements NodeCallback {
         return branches;
     }
 
+    public List<Node> getFunctions() {
+        return functions;
+    }
+
     @Override
     public boolean shouldTraverse(Node n) {
         return !instrumentation.contains(n);
@@ -33,28 +38,38 @@ public class NodeVisitor implements NodeCallback {
     @Override
     public void visit(Node n) {
         if (isStatement(n))
-            addStatement(n);
-        if (n.isIf())
+            addStatementRecorder(n);
+        if (n.isIf()) {
             addBranchStatementToIf(n);
+        }
+        if (n.isFunction())
+            addFunctionRecorder(n);
         //System.out.println("n = " + n);
     }
 
     private boolean isStatement(Node n) {
-        return n.isExprResult() || n.isVar() || n.isIf();
+        return n.isExprResult() || n.isVar() || n.isIf() || n.isReturn();
     }
 
-    private void addStatement(Node node) {
+    private void addStatementRecorder(Node node) {
         statements.add(node);
         Node instrumentNode = nodeHelper.createStatementIncrementNode("jscover", sourceFile.getName(), statements.size());
         instrumentation.add(instrumentNode);
         node.getParent().addChildBefore(instrumentNode, node);
     }
 
-    private void addBranchStatementToIf(Node n) {
-        Node conditionNode = n.getFirstChild();
+    private void addFunctionRecorder(Node node) {
+        functions.add(node);
+        Node instrumentNode = nodeHelper.createFunctionIncrementNode("jscover", sourceFile.getName(), functions.size());
+        instrumentation.add(instrumentNode);
+        node.getLastChild().addChildToFront(instrumentNode);
+    }
+
+    private void addBranchStatementToIf(Node node) {
+        Node conditionNode = node.getFirstChild();
         branches.add(conditionNode);
         Node wrapper = nodeHelper.wrapConditionNode(conditionNode, "jscover", sourceFile.getName(), branches.size());
         instrumentation.add(wrapper);
-        n.replaceChild(conditionNode, wrapper);
+        node.replaceChild(conditionNode, wrapper);
     }
 }

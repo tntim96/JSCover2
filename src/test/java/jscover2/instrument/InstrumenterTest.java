@@ -91,6 +91,23 @@ public class InstrumenterTest {
     }
 
     @Test
+    public void shouldCoverFunction() throws ScriptException {
+        String instrumented = instrumenter.instrument("test.js", "function sq(x) {return x*x;}\nsq(5);");
+        assertThat(engine.eval(instrumented), equalTo(25.0));
+        assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].s['2']"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].f['1']"), equalTo(1));
+    }
+
+    @Test
+    public void shouldNotCoverFunction() throws ScriptException {
+        String instrumented = instrumenter.instrument("test.js", "function sq(x) {return x*x;}");
+        engine.eval(instrumented);
+        assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(0));
+        assertThat(engine.eval("jscover['test.js'].f['1']"), equalTo(0));
+    }
+
+    @Test
     public void shouldCoverIfElse() throws ScriptException {
         String instrumented = instrumenter.instrument("test.js", "var x = 0;\nif (x <= 0)\n  x++;\nelse\n  x--;");
         engine.eval(instrumented);

@@ -2,7 +2,6 @@ package jscover2.instrument;
 
 import com.google.javascript.jscomp.CodePrinter;
 import com.google.javascript.jscomp.SourceFile;
-import com.google.javascript.jscomp.parsing.Config;
 import com.google.javascript.jscomp.parsing.ParserRunner;
 import com.google.javascript.jscomp.parsing.parser.LineNumberTable;
 import com.google.javascript.rhino.Node;
@@ -13,12 +12,21 @@ import static java.lang.String.format;
 
 public class Instrumenter {
     private String branchRecorderJS = "function(result, u, n) {if (result)this[u].b[''+n][0]++;else this[u].b[''+n][1]++;return result}";
-    private String header = String.format("if (!jscover) var jscover = {bF: %s};\n",branchRecorderJS);
-    private Config.LanguageMode mode = Config.LanguageMode.ECMASCRIPT3;
+    private String header;
+    private Configuration config;
+
+    public Instrumenter() {
+        this(new Configuration());
+    }
+
+    public Instrumenter(Configuration config) {
+        this.config = config;
+        this.header = format("if (!%s) var %s = {bF: %s};\n", config.getCoverVariableName(), config.getCoverVariableName(), branchRecorderJS);
+    }
 
     public String instrument(String urlPath, String code) {
         SourceFile sourceFile = SourceFile.fromCode(urlPath, urlPath, code);
-        NodeVisitor nodeVisitor = new NodeVisitor(sourceFile);
+        NodeVisitor nodeVisitor = new NodeVisitor(config.getCoverVariableName(), sourceFile);
         com.google.javascript.jscomp.parsing.parser.SourceFile sf = new com.google.javascript.jscomp.parsing.parser.SourceFile(urlPath, code);
         LineNumberTable lineNumberTable = new LineNumberTable(sf);
         Node jsRoot = parse(code, sourceFile);
@@ -31,8 +39,8 @@ public class Instrumenter {
 
     private String buildHeader(String urlPath, NodeVisitor nodeVisitor, LineNumberTable lineNumberTable) {
         StringBuilder sb = new StringBuilder(header);
-        sb.append(format("if (!jscover['%s']) {\n", urlPath));
-        sb.append(format("  jscover['%s'] = {\n", urlPath));
+        sb.append(format("if (!%s['%s']) {\n", config.getCoverVariableName() ,urlPath));
+        sb.append(format("  %s['%s'] = {\n", config.getCoverVariableName(), urlPath));
         addStatements(sb, nodeVisitor, lineNumberTable);
         addBranches(sb, nodeVisitor, lineNumberTable);
         addFunctions(sb, nodeVisitor, lineNumberTable);
@@ -102,7 +110,7 @@ public class Instrumenter {
         Node script = ParserRunner.parse(
                 sourceFile,
                 source,
-                ParserRunner.createConfig(true, false, mode, false, null),
+                ParserRunner.createConfig(true, false, config.getJavaScriptVersion(), false, null),
                 null).ast;
         //System.out.println(script.toStringTree());
         return script;

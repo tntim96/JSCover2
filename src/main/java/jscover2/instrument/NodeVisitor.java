@@ -12,9 +12,11 @@ public class NodeVisitor implements NodeCallback {
     public List<Node> branches = new ArrayList<>();
     public List<Node> functions = new ArrayList<>();
     public List<Node> instrumentation = new ArrayList<>();
+    private String coverVarName;
     private SourceFile sourceFile;
 
-    public NodeVisitor(SourceFile sourceFile) {
+    public NodeVisitor(String coverVarName, SourceFile sourceFile) {
+        this.coverVarName = coverVarName;
         this.sourceFile = sourceFile;
     }
 
@@ -53,14 +55,14 @@ public class NodeVisitor implements NodeCallback {
 
     private void addStatementRecorder(Node node) {
         statements.add(node);
-        Node instrumentNode = nodeHelper.createStatementIncrementNode("jscover", sourceFile.getName(), statements.size());
+        Node instrumentNode = nodeHelper.createStatementIncrementNode(coverVarName, sourceFile.getName(), statements.size());
         instrumentation.add(instrumentNode);
         node.getParent().addChildBefore(instrumentNode, node);
     }
 
     private void addFunctionRecorder(Node node) {
         functions.add(node);
-        Node instrumentNode = nodeHelper.createFunctionIncrementNode("jscover", sourceFile.getName(), functions.size());
+        Node instrumentNode = nodeHelper.createFunctionIncrementNode(coverVarName, sourceFile.getName(), functions.size());
         instrumentation.add(instrumentNode);
         node.getLastChild().addChildToFront(instrumentNode);
     }

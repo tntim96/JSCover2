@@ -1,5 +1,6 @@
 package jscover2.instrument;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import javax.script.ScriptEngine;
@@ -12,7 +13,14 @@ import static org.junit.Assert.assertThat;
 
 public class InstrumenterTest {
     private ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
-    private Instrumenter instrumenter = new Instrumenter();
+    private Configuration config = new Configuration();
+    private Instrumenter instrumenter;
+
+    @Before
+    public void before() {
+        config.setCoverVariableName("jscover");
+        instrumenter = new Instrumenter(config);
+    }
 
     @Test
     public void shouldCoverStatement() throws ScriptException {

@@ -70,7 +70,7 @@ public class NodeVisitor implements NodeCallback {
     private void addBranchStatementToIf(Node node) {
         Node conditionNode = node.getFirstChild();
         branches.add(conditionNode);
-        Node wrapper = nodeHelper.wrapConditionNode(conditionNode, "jscover", sourceFile.getName(), branches.size());
+        Node wrapper = nodeHelper.wrapConditionNode(conditionNode, coverVarName, sourceFile.getName(), branches.size());
         instrumentation.add(wrapper);
         node.replaceChild(conditionNode, wrapper);
     }

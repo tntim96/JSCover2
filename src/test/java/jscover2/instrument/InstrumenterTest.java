@@ -27,6 +27,9 @@ public class InstrumenterTest {
         String instrumented = instrumenter.instrument("test.js", "x = 1;");
         assertThat(engine.eval(instrumented), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));
+        assertThat(engine.eval("JSON.stringify(jscover['test.js'].sD)"), equalTo("{\"1\":{\"pos\":{\"line\":1,\"col\":0,\"len\":6}}}"));
+        assertThat(engine.eval("JSON.stringify(jscover['test.js'].bD)"), equalTo("{}"));
+        assertThat(engine.eval("JSON.stringify(jscover['test.js'].fD)"), equalTo("{}"));
     }
 
     @Test
@@ -100,11 +103,14 @@ public class InstrumenterTest {
 
     @Test
     public void shouldCoverFunction() throws ScriptException {
-        String instrumented = instrumenter.instrument("test.js", "function sq(x) {return x*x;}\nsq(5);");
+        String instrumented = instrumenter.instrument("test.js", "function sq(x) {\n  return x*x;\n}\nsq(5);");
         assertThat(engine.eval(instrumented), equalTo(25.0));
         assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['2']"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].f['1']"), equalTo(1));
+        assertThat(engine.eval("JSON.stringify(jscover['test.js'].sD)"), equalTo("{\"1\":{\"pos\":{\"line\":2,\"col\":2,\"len\":11}},\"2\":{\"pos\":{\"line\":4,\"col\":0,\"len\":6}}}"));
+        assertThat(engine.eval("JSON.stringify(jscover['test.js'].bD)"), equalTo("{}"));
+        assertThat(engine.eval("JSON.stringify(jscover['test.js'].fD)"), equalTo("{\"1\":{\"pos\":{\"line\":1,\"col\":0,\"len\":32}}}"));
     }
 
     @Test

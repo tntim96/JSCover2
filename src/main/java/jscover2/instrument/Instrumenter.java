@@ -89,15 +89,15 @@ public class Instrumenter {
 
     private void addFunctions(StringBuilder sb, NodeVisitor nodeVisitor, LineNumberTable lineNumberTable) {
         sb.append("    \"f\":{");
-        for (int i = 1; i <= nodeVisitor.getStatements().size(); i++) {
+        for (int i = 1; i <= nodeVisitor.getFunctions().size(); i++) {
             if (i > 1)
                 sb.append(",");
             sb.append(format("\"%d\":0", i));
         }
         sb.append("},\n");
         sb.append("    \"fD\":{");
-        for (int i = 1; i <= nodeVisitor.getStatements().size(); i++) {
-            Node n = nodeVisitor.getStatements().get(i-1);
+        for (int i = 1; i <= nodeVisitor.getFunctions().size(); i++) {
+            Node n = nodeVisitor.getFunctions().get(i-1);
             if (i > 1)
                 sb.append(",");
             int col = lineNumberTable.getColumn(n.getSourceOffset());

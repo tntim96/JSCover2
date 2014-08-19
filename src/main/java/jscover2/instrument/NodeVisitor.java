@@ -52,7 +52,12 @@ public class NodeVisitor implements NodeCallback {
     private boolean isStatementToBeInstrumented(Node n) {
         if (n.getParent() != null && !n.getParent().isBlock() && !n.getParent().isScript())
             return false;
-        return n.isExprResult() || n.isVar() || n.isIf() || n.isReturn();
+        return n.isExprResult()
+                || n.isVar()
+                || n.isIf()
+                || n.isWhile()
+                || n.isFor()
+                || n.isReturn();
     }
 
     private void addStatementRecorder(Node node) {

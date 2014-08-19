@@ -57,6 +57,7 @@ public class NodeVisitor implements NodeCallback {
                 || n.isIf()
                 || n.isWhile()
                 || n.isFor()
+                || n.isForOf()
                 || n.isReturn();
     }
 

@@ -97,7 +97,7 @@ public class Instrumenter {
         sb.append("},\n");
         sb.append("    \"fD\":{");
         for (int i = 1; i <= nodeVisitor.getFunctions().size(); i++) {
-            Node n = nodeVisitor.getFunctions().get(i-1);
+            Node n = nodeVisitor.getFunctions().get(i - 1);
             if (i > 1)
                 sb.append(",");
             int col = lineNumberTable.getColumn(n.getSourceOffset());

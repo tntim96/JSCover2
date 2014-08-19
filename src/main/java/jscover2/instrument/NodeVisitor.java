@@ -39,7 +39,7 @@ public class NodeVisitor implements NodeCallback {
 
     @Override
     public void visit(Node n) {
-        if (isStatement(n))
+        if (isStatementToBeInstrumented(n))
             addStatementRecorder(n);
         if (n.isIf()) {
             addBranchStatementToIf(n);
@@ -49,7 +49,9 @@ public class NodeVisitor implements NodeCallback {
         //System.out.println("n = " + n);
     }
 
-    private boolean isStatement(Node n) {
+    private boolean isStatementToBeInstrumented(Node n) {
+        if (n.getParent() != null && !n.getParent().isBlock() && !n.getParent().isScript())
+            return false;
         return n.isExprResult() || n.isVar() || n.isIf() || n.isReturn();
     }
 

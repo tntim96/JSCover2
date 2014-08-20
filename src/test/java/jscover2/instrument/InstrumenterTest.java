@@ -49,6 +49,15 @@ public class InstrumenterTest {
     }
 
     @Test
+    public void shouldCoverStatementWithDifferentCoverageVariable() throws ScriptException {
+        config.setCoverVariableName("__cov__");
+        instrumenter = new Instrumenter(config);
+        assertThat(engine.eval(instrumenter.instrument("/diff.js", "x = 1;")), equalTo(1));
+        assertThat(engine.eval("__cov__['/diff.js'].s['1']"), equalTo(1));
+        assertThat(engine.eval("__cov__['/diff.js'].sD['1'].pos.line"), equalTo(1));
+    }
+
+    @Test
     public void shouldCoverTwoStatement() throws ScriptException {
         String instrumented = instrumenter.instrument("test.js", "x = 1; ++x;");
         assertThat(engine.eval(instrumented), equalTo(2.0));

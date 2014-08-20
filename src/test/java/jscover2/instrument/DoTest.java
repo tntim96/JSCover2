@@ -10,7 +10,7 @@ import javax.script.ScriptException;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class WhileTest {
+public class DoTest {
     private ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
     private Configuration config = new Configuration();
     private Instrumenter instrumenter;
@@ -22,8 +22,8 @@ public class WhileTest {
     }
 
     @Test
-    public void shouldCoverWhileLoop() throws ScriptException {
-        String instrumented = instrumenter.instrument("test.js", "var i = 0;\nwhile (i < 2)\n  i++;\ni;");
+    public void shouldCoverDoLoop() throws ScriptException {
+        String instrumented = instrumenter.instrument("test.js", "var i = 0;\ndo\n  i++;\nwhile (i < 2)\ni;");
         assertThat(engine.eval(instrumented), equalTo(2.0));
         assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['2']"), equalTo(1));

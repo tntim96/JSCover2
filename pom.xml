@@ -12,7 +12,7 @@
 
     <groupId>com.github.tntim96</groupId>
     <artifactId>JSCover2</artifactId>
-    <name>JSCover</name>
+    <name>JSCover2</name>
     <packaging>jar</packaging>
     <version>0.0.1-SNAPSHOT</version>
 

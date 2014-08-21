@@ -41,8 +41,8 @@ public class NodeVisitor implements NodeCallback {
     public void visit(Node n) {
         if (isStatementToBeInstrumented(n))
             addStatementRecorder(n);
-        if (n.isIf()) {
-            addBranchStatementToIf(n);
+        if (n.isIf() || n.isHook()) {
+            addConditionRecorder(n);
         }
         if (n.isFunction())
             addFunctionRecorder(n);
@@ -62,13 +62,6 @@ public class NodeVisitor implements NodeCallback {
                 || n.isReturn();
     }
 
-    private void addStatementRecorder(Node node) {
-        statements.add(node);
-        Node instrumentNode = nodeHelper.createStatementIncrementNode(coverVarName, sourceFile.getName(), statements.size());
-        instrumentation.add(instrumentNode);
-        node.getParent().addChildBefore(instrumentNode, node);
-    }
-
     private void addFunctionRecorder(Node node) {
         functions.add(node);
         Node instrumentNode = nodeHelper.createFunctionIncrementNode(coverVarName, sourceFile.getName(), functions.size());
@@ -76,7 +69,14 @@ public class NodeVisitor implements NodeCallback {
         node.getLastChild().addChildToFront(instrumentNode);
     }
 
-    private void addBranchStatementToIf(Node node) {
+    private void addStatementRecorder(Node node) {
+        statements.add(node);
+        Node instrumentNode = nodeHelper.createStatementIncrementNode(coverVarName, sourceFile.getName(), statements.size());
+        instrumentation.add(instrumentNode);
+        node.getParent().addChildBefore(instrumentNode, node);
+    }
+
+    private void addConditionRecorder(Node node) {
         Node conditionNode = node.getFirstChild();
         branches.add(conditionNode);
         Node wrapper = nodeHelper.wrapConditionNode(conditionNode, coverVarName, sourceFile.getName(), branches.size());

@@ -8,6 +8,7 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 public class ForTest {
@@ -23,11 +24,12 @@ public class ForTest {
 
     @Test
     public void shouldCoverForLoop() throws ScriptException {
-        String instrumented = instrumenter.instrument("test.js", "var j = 0;\nfor (var i = 0; i < 2; i++)\n  j++;\nj;");
-        assertThat(engine.eval(instrumented), equalTo(2.0));
+        String instrumented = instrumenter.instrument("test.js", "var j = 0;\nfor (var i = 0; i < 2; i++)\n  j++;");
+        assertThat(engine.eval(instrumented), equalTo(1.0));
+        assertThat(engine.eval("j"), equalTo(2.0));
         assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['2']"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['3']"), equalTo(2));
-        assertThat(engine.eval("jscover['test.js'].s['4']"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].s['4']"), nullValue());
     }
 }

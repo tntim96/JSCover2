@@ -76,7 +76,7 @@ public class InstrumenterTest {
     @Test
     public void shouldCreateTwoStatementDataSets() throws ScriptException {
         String instrumented = instrumenter.instrument("test.js", "x = 1; ++x;");
-        engine.eval(instrumented);
+        assertThat(engine.eval(instrumented), equalTo(2.0));
         assertThat(engine.eval("jscover['test.js'].sD['1'].pos.line"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].sD['1'].pos.col"), equalTo(0));
         assertThat(engine.eval("jscover['test.js'].sD['1'].pos.len"), equalTo(6));
@@ -102,7 +102,7 @@ public class InstrumenterTest {
     @Test
     public void shouldCoverIf() throws ScriptException {
         String instrumented = instrumenter.instrument("test.js", "var x = 0;\nif (x < 0)\n  x++;");
-        engine.eval(instrumented);
+        assertThat(engine.eval(instrumented), equalTo(0.0));
         assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['2']"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['3']"), equalTo(0));
@@ -133,7 +133,8 @@ public class InstrumenterTest {
     @Test
     public void shouldCoverIfElse() throws ScriptException {
         String instrumented = instrumenter.instrument("test.js", "var x = 0;\nif (x <= 0)\n  x++;\nelse\n  x--;");
-        engine.eval(instrumented);
+        assertThat(engine.eval(instrumented), equalTo(0.0));
+        assertThat(engine.eval("x"), equalTo(1.0));
         assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['2']"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['3']"), equalTo(1));
@@ -145,7 +146,8 @@ public class InstrumenterTest {
     @Test
     public void shouldCoverIfElseWithBrackets() throws ScriptException {
         String instrumented = instrumenter.instrument("test.js", "var x = 0;\nif (x <= 0)\n {x++;} else\n {x--;}");
-        engine.eval(instrumented);
+        assertThat(engine.eval(instrumented), equalTo(0.0));
+        assertThat(engine.eval("x"), equalTo(1.0));
         assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['2']"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['3']"), equalTo(1));

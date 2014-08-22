@@ -2,6 +2,7 @@ package jscover2.instrument;
 
 import com.google.javascript.jscomp.SourceFile;
 import com.google.javascript.rhino.Node;
+import com.google.javascript.rhino.Token;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,15 +40,47 @@ public class NodeVisitor implements NodeCallback {
         if (isInstrumented(n)) {
             return;
         }
-        log.log(Level.FINEST, "Visiting {0}", n);
         if (isStatementToBeInstrumented(n))
             addStatementRecorder(n);
-        if (n.isIf() || n.isHook()) {
+        if (isBranch(n)) {
+            addBranchRecorder(n);
+        } else if (isBooleanTest(n) && isBranch(n.getParent())) {
             addConditionRecorder(n);
+        } else if (isBooleanJoin(n)) {
+            addConditionRecorder(n.getFirstChild());
+            addConditionRecorder(n.getLastChild());
         }
         if (n.isFunction())
             addFunctionRecorder(n);
         //System.out.println("n = " + n);
+    }
+
+    private boolean isBranch(Node n) {
+        return n.isIf() || n.isHook();
+    }
+
+    private boolean isBooleanJoin(Node n) {
+        switch (n.getType()) {
+            case Token.OR:
+            case Token.AND:
+                return true;
+        }
+        return false;
+    }
+
+    private boolean isBooleanTest(Node n) {
+        switch (n.getType()) {
+            case Token.EQ:
+            case Token.NE:
+            case Token.LT:
+            case Token.LE:
+            case Token.GT:
+            case Token.GE:
+            case Token.SHEQ:
+            case Token.SHNE:
+                return true;
+        }
+        return false;
     }
 
     private boolean isInstrumented(Node n) {
@@ -58,6 +91,7 @@ public class NodeVisitor implements NodeCallback {
         if (n.getParent() != null && !n.getParent().isBlock() && !n.getParent().isScript())
             return false;
         return n.isExprResult()
+                || n.isFunction()
                 || n.isVar()
                 || n.isIf()
                 || n.isDo()
@@ -79,10 +113,21 @@ public class NodeVisitor implements NodeCallback {
         node.getParent().addChildBefore(instrumentNode, node);
     }
 
-    private void addConditionRecorder(Node node) {
+    private void addBranchRecorder(Node node) {
         Node conditionNode = node.getFirstChild();
         branches.add(conditionNode);
         Node wrapper = nodeHelper.wrapConditionNode(conditionNode, coverVarName, sourceFile.getName(), branches.size());
         node.replaceChild(conditionNode, wrapper);
+    }
+
+    private void addConditionRecorder(Node n) {
+        log.log(Level.FINEST, "----------------------------");
+        log.log(Level.FINEST, "Wrapping {0}", n);
+        branches.add(n);
+        Node wrapper = nodeHelper.wrapConditionNode(n, coverVarName, sourceFile.getName(), branches.size());
+        Node parent = n.getParent();
+        log.log(Level.FINEST, "Before\n{0}", parent.toStringTree());
+        parent.replaceChild(n, wrapper);
+        log.log(Level.FINEST, "After\n{0}", parent.toStringTree());
     }
 }

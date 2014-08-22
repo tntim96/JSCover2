@@ -7,10 +7,14 @@ import com.google.javascript.jscomp.parsing.parser.LineNumberTable;
 import com.google.javascript.rhino.Node;
 import com.google.javascript.rhino.jstype.StaticSourceFile;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import static java.lang.String.format;
 
 
 public class Instrumenter {
+    private static final Logger log = Logger.getLogger(Instrumenter.class.getName());
     private String branchRecorderJS = "function(result, u, n) {if (result)this[u].b[''+n][0]++;else this[u].b[''+n][1]++;return result}";
     private String header;
     private Configuration config;
@@ -112,7 +116,7 @@ public class Instrumenter {
                 source,
                 ParserRunner.createConfig(true, false, config.getJavaScriptVersion(), false, null),
                 null).ast;
-        //System.out.println(script.toStringTree());
+        log.log(Level.FINEST, script.toStringTree());
         return script;
     }
 }

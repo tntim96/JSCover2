@@ -5,13 +5,15 @@ import com.google.javascript.rhino.Node;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class NodeVisitor implements NodeCallback {
+    private static final Logger log = Logger.getLogger(NodeVisitor.class.getName());
     private NodeHelper nodeHelper = new NodeHelper();
     public List<Node> statements = new ArrayList<>();
     public List<Node> branches = new ArrayList<>();
     public List<Node> functions = new ArrayList<>();
-    public List<Node> instrumentation = new ArrayList<>();
     private String coverVarName;
     private SourceFile sourceFile;
 
@@ -33,12 +35,11 @@ public class NodeVisitor implements NodeCallback {
     }
 
     @Override
-    public boolean shouldTraverse(Node n) {
-        return !instrumentation.contains(n);
-    }
-
-    @Override
     public void visit(Node n) {
+        if (isInstrumented(n)) {
+            return;
+        }
+        log.log(Level.FINEST, "Visiting {0}", n);
         if (isStatementToBeInstrumented(n))
             addStatementRecorder(n);
         if (n.isIf() || n.isHook()) {
@@ -47,6 +48,10 @@ public class NodeVisitor implements NodeCallback {
         if (n.isFunction())
             addFunctionRecorder(n);
         //System.out.println("n = " + n);
+    }
+
+    private boolean isInstrumented(Node n) {
+        return n.getSourceFileName() == null;
     }
 
     private boolean isStatementToBeInstrumented(Node n) {
@@ -65,14 +70,12 @@ public class NodeVisitor implements NodeCallback {
     private void addFunctionRecorder(Node node) {
         functions.add(node);
         Node instrumentNode = nodeHelper.createFunctionIncrementNode(coverVarName, sourceFile.getName(), functions.size());
-        instrumentation.add(instrumentNode);
         node.getLastChild().addChildToFront(instrumentNode);
     }
 
     private void addStatementRecorder(Node node) {
         statements.add(node);
         Node instrumentNode = nodeHelper.createStatementIncrementNode(coverVarName, sourceFile.getName(), statements.size());
-        instrumentation.add(instrumentNode);
         node.getParent().addChildBefore(instrumentNode, node);
     }
 
@@ -80,7 +83,6 @@ public class NodeVisitor implements NodeCallback {
         Node conditionNode = node.getFirstChild();
         branches.add(conditionNode);
         Node wrapper = nodeHelper.wrapConditionNode(conditionNode, coverVarName, sourceFile.getName(), branches.size());
-        instrumentation.add(wrapper);
         node.replaceChild(conditionNode, wrapper);
     }
 }

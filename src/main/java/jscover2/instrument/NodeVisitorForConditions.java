@@ -9,30 +9,20 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class NodeVisitor implements NodeCallback {
-    private static final Logger log = Logger.getLogger(NodeVisitor.class.getName());
+public class NodeVisitorForConditions implements NodeCallback {
+    private static final Logger log = Logger.getLogger(NodeVisitorForConditions.class.getName());
     private NodeHelper nodeHelper = new NodeHelper();
-    public List<Node> statements = new ArrayList<>();
     public List<Node> branches = new ArrayList<>();
-    public List<Node> functions = new ArrayList<>();
     private String coverVarName;
     private SourceFile sourceFile;
 
-    public NodeVisitor(String coverVarName, SourceFile sourceFile) {
+    public NodeVisitorForConditions(String coverVarName, SourceFile sourceFile) {
         this.coverVarName = coverVarName;
         this.sourceFile = sourceFile;
     }
 
-    public List<Node> getStatements() {
-        return statements;
-    }
-
     public List<Node> getBranches() {
         return branches;
-    }
-
-    public List<Node> getFunctions() {
-        return functions;
     }
 
     @Override
@@ -41,8 +31,6 @@ public class NodeVisitor implements NodeCallback {
             return;
         }
         log.log(Level.FINEST, "Visiting {0}", n);
-        if (isStatementToBeInstrumented(n))
-            addStatementRecorder(n);
         if (isBranch(n)) {
             addBranchRecorder(n);
         } else if (isBooleanTest(n) && !isInstrumentation(n.getParent())) {
@@ -51,9 +39,6 @@ public class NodeVisitor implements NodeCallback {
             addConditionRecorder(n.getFirstChild());
             addConditionRecorder(n.getLastChild());
         }
-        if (n.isFunction())
-            addFunctionRecorder(n);
-        //System.out.println("n = " + n);
     }
 
     private boolean isBranch(Node n) {
@@ -85,6 +70,8 @@ public class NodeVisitor implements NodeCallback {
     }
 
     private boolean isInstrumentation(Node n) {
+        if (n == null)
+            return false;
         if (n.getSourceFileName() == null)
             return true;
         Node child = n.getFirstChild();
@@ -107,18 +94,6 @@ public class NodeVisitor implements NodeCallback {
                 || n.isReturn();
     }
 
-    private void addFunctionRecorder(Node node) {
-        functions.add(node);
-        Node instrumentNode = nodeHelper.createFunctionIncrementNode(coverVarName, sourceFile.getName(), functions.size());
-        node.getLastChild().addChildToFront(instrumentNode);
-    }
-
-    private void addStatementRecorder(Node node) {
-        statements.add(node);
-        Node instrumentNode = nodeHelper.createStatementIncrementNode(coverVarName, sourceFile.getName(), statements.size());
-        node.getParent().addChildBefore(instrumentNode, node);
-    }
-
     private void addBranchRecorder(Node node) {
         Node conditionNode = node.getFirstChild();
         branches.add(conditionNode);
@@ -130,8 +105,8 @@ public class NodeVisitor implements NodeCallback {
         log.log(Level.FINEST, "----------------------------");
         log.log(Level.FINEST, "Wrapping {0}", n);
         branches.add(n);
-        Node wrapper = nodeHelper.wrapConditionNode(n, coverVarName, sourceFile.getName(), branches.size());
         Node parent = n.getParent();
+        Node wrapper = nodeHelper.wrapConditionNode(n, coverVarName, sourceFile.getName(), branches.size());
         log.log(Level.FINEST, "Before\n{0}", parent.toStringTree());
         parent.replaceChild(n, wrapper);
         log.log(Level.FINEST, "After\n{0}", parent.toStringTree());

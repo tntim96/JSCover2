@@ -30,31 +30,41 @@ public class Instrumenter {
 
     public String instrument(String urlPath, String code) {
         SourceFile sourceFile = SourceFile.fromCode(urlPath, urlPath, code);
-        NodeVisitor nodeVisitor = new NodeVisitor(config.getCoverVariableName(), sourceFile);
         com.google.javascript.jscomp.parsing.parser.SourceFile sf = new com.google.javascript.jscomp.parsing.parser.SourceFile(urlPath, code);
         LineNumberTable lineNumberTable = new LineNumberTable(sf);
         Node jsRoot = parse(code, sourceFile);
-        new NodeWalker().visit(jsRoot, nodeVisitor);
+
+        NodeWalker nodeWalker = new NodeWalker();
+        NodeVisitorForStatements statementsVisitor = new NodeVisitorForStatements(config.getCoverVariableName(), sourceFile);
+        nodeWalker.visit(jsRoot, statementsVisitor);
+        NodeVisitorForFunctions functionVisitor  = new NodeVisitorForFunctions(config.getCoverVariableName(), sourceFile);
+        nodeWalker.visit(jsRoot, functionVisitor );
+        NodeVisitorForConditions conditionVisitor = new NodeVisitorForConditions(config.getCoverVariableName(), sourceFile);
+        int i = 0;
+        while (nodeWalker.visit(jsRoot, conditionVisitor) && i<20)
+            i++;
+
+
         log.log(Level.FINEST, "{0}", jsRoot.toStringTree());
         CodePrinter.Builder builder = new CodePrinter.Builder(jsRoot);
-        String header = buildHeader(urlPath, nodeVisitor, lineNumberTable);
+        String header = buildHeader(urlPath, statementsVisitor, functionVisitor, conditionVisitor, lineNumberTable);
         String body = builder.build();
         return header + body;
     }
 
-    private String buildHeader(String urlPath, NodeVisitor nodeVisitor, LineNumberTable lineNumberTable) {
+    private String buildHeader(String urlPath, NodeVisitorForStatements statementsVisitor, NodeVisitorForFunctions functionVisitor, NodeVisitorForConditions conditionVisitor, LineNumberTable lineNumberTable) {
         StringBuilder sb = new StringBuilder(header);
-        sb.append(format("if (!%s['%s']) {\n", config.getCoverVariableName() ,urlPath));
+        sb.append(format("if (!%s['%s']) {\n", config.getCoverVariableName(), urlPath));
         sb.append(format("  %s['%s'] = {\n", config.getCoverVariableName(), urlPath));
-        addStatements(sb, nodeVisitor, lineNumberTable);
-        addBranches(sb, nodeVisitor, lineNumberTable);
-        addFunctions(sb, nodeVisitor, lineNumberTable);
+        addStatements(sb, statementsVisitor, lineNumberTable);
+        addBranches(sb, conditionVisitor, lineNumberTable);
+        addFunctions(sb, functionVisitor, lineNumberTable);
         sb.append("  }\n");
         sb.append("}\n");
         return sb.toString();
     }
 
-    private void addStatements(StringBuilder sb, NodeVisitor nodeVisitor, LineNumberTable lineNumberTable) {
+    private void addStatements(StringBuilder sb, NodeVisitorForStatements nodeVisitor, LineNumberTable lineNumberTable) {
         sb.append("    \"s\":{");
         for (int i = 1; i <= nodeVisitor.getStatements().size(); i++) {
             if (i > 1)
@@ -73,7 +83,7 @@ public class Instrumenter {
         sb.append("},\n");
     }
 
-    private void addBranches(StringBuilder sb, NodeVisitor nodeVisitor, LineNumberTable lineNumberTable) {
+    private void addBranches(StringBuilder sb, NodeVisitorForConditions nodeVisitor, LineNumberTable lineNumberTable) {
         sb.append("    \"b\":{");
         for (int i = 1; i <= nodeVisitor.getBranches().size(); i++) {
             if (i > 1)
@@ -92,7 +102,7 @@ public class Instrumenter {
         sb.append("},\n");
     }
 
-    private void addFunctions(StringBuilder sb, NodeVisitor nodeVisitor, LineNumberTable lineNumberTable) {
+    private void addFunctions(StringBuilder sb, NodeVisitorForFunctions nodeVisitor, LineNumberTable lineNumberTable) {
         sb.append("    \"f\":{");
         for (int i = 1; i <= nodeVisitor.getFunctions().size(); i++) {
             if (i > 1)

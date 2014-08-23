@@ -37,14 +37,15 @@ public class NodeVisitor implements NodeCallback {
 
     @Override
     public void visit(Node n) {
-        if (isInstrumented(n)) {
+        //log.log(Level.FINEST, "Visiting {0}", n);
+        if (isInstrumentation(n)) {
             return;
         }
         if (isStatementToBeInstrumented(n))
             addStatementRecorder(n);
         if (isBranch(n)) {
             addBranchRecorder(n);
-        } else if (isBooleanTest(n) && isBranch(n.getParent())) {
+        } else if (isBooleanTest(n) && !isInstrumentation(n.getParent())) {
             addConditionRecorder(n);
         } else if (isBooleanJoin(n)) {
             addConditionRecorder(n.getFirstChild());
@@ -83,8 +84,13 @@ public class NodeVisitor implements NodeCallback {
         return false;
     }
 
-    private boolean isInstrumented(Node n) {
-        return n.getSourceFileName() == null;
+    private boolean isInstrumentation(Node n) {
+        if (n.getSourceFileName() == null)
+            return true;
+        Node child = n.getFirstChild();
+        if (child !=null && child.isGetProp() && child.getFirstChild().getString().equals(coverVarName))
+            return true;
+        return false;
     }
 
     private boolean isStatementToBeInstrumented(Node n) {

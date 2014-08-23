@@ -40,10 +40,7 @@ public class Instrumenter {
         NodeVisitorForFunctions functionVisitor  = new NodeVisitorForFunctions(config.getCoverVariableName(), sourceFile);
         nodeWalker.visit(jsRoot, functionVisitor );
         NodeVisitorForConditions conditionVisitor = new NodeVisitorForConditions(config.getCoverVariableName(), sourceFile);
-        int i = 0;
-        while (nodeWalker.visit(jsRoot, conditionVisitor) && i<20)
-            i++;
-
+        nodeWalker.visit(jsRoot, conditionVisitor);
 
         log.log(Level.FINEST, "{0}", jsRoot.toStringTree());
         CodePrinter.Builder builder = new CodePrinter.Builder(jsRoot);

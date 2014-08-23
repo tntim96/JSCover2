@@ -37,10 +37,10 @@ public class NodeVisitor implements NodeCallback {
 
     @Override
     public void visit(Node n) {
-        //log.log(Level.FINEST, "Visiting {0}", n);
         if (isInstrumentation(n)) {
             return;
         }
+        log.log(Level.FINEST, "Visiting {0}", n);
         if (isStatementToBeInstrumented(n))
             addStatementRecorder(n);
         if (isBranch(n)) {

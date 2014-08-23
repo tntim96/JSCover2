@@ -11,6 +11,7 @@ import org.junit.Test;
 import java.io.IOException;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 public class NodeHelperTest {
@@ -46,8 +47,33 @@ public class NodeHelperTest {
 
     @Test
     public void shouldWrapNodeWithParent() throws IOException {
-        Node ifNode = new Node(Token.IF);
         Node lt = new Node(Token.LT);
+        Node ifNode = buildLessThanNodeWithParent(lt);
+
+        Node expected = parse("if (coverVar.bF((x < 0), 'urlPath', 7))\n  x++;");
+
+        Node wrapper = nodeHelper.wrapConditionNode(lt, "coverVar", "urlPath", 7);
+        ifNode.replaceChild(lt, wrapper);
+
+        assertThat(new CodePrinter.Builder(ifNode).build(), equalTo(new CodePrinter.Builder(expected).build()));
+    }
+
+    @Test
+    public void shouldDetectWrappedNode() throws IOException {
+        Node lt = new Node(Token.LT);
+        buildLessThanNodeWithParent(lt);
+
+        Node wrapped = nodeHelper.wrapConditionNode(lt, "coverVar", "urlPath", 7);
+
+        Node ltWrapped = wrapped.getChildAtIndex(1);
+        assertThat(lt == ltWrapped, is(false));
+        assertThat(nodeHelper.isWrapped(lt, "coverVar"), is(false));
+        assertThat(nodeHelper.isWrapped(ltWrapped, "coverVar"), is(true));
+        assertThat(nodeHelper.isWrapped(ltWrapped, "coverVary"), is(false));
+    }
+
+    private Node buildLessThanNodeWithParent(Node lt) {
+        Node ifNode = new Node(Token.IF);
         lt.addChildToFront(Node.newString(Token.NAME, "x"));
         lt.addChildToBack(Node.newNumber(0));
         ifNode.addChildrenToFront(lt);
@@ -60,13 +86,7 @@ public class NodeHelperTest {
         exprResult.addChildToBack(inc);
         block.addChildrenToFront(exprResult);
         ifNode.addChildrenToBack(block);
-
-        Node expected = parse("if (coverVar.bF((x < 0), 'urlPath', 7))\n  x++;");
-
-        Node wrapper = nodeHelper.wrapConditionNode(lt, "coverVar", "urlPath", 7);
-        ifNode.replaceChild(lt, wrapper);
-
-        assertThat(new CodePrinter.Builder(ifNode).build(), equalTo(new CodePrinter.Builder(expected).build()));
+        return ifNode;
     }
 
     private Node parse(String source) {

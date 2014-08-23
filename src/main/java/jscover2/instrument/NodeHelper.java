@@ -18,7 +18,7 @@ public class NodeHelper {
         Node elementGet = new Node(Token.GETELEM, coverVar, path);
         Node statementProp = Node.newString(Token.STRING, prop);
         Node propGet = new Node(Token.GETPROP, elementGet, statementProp);
-        Node statementNumber = Node.newString(Token.STRING, ""+i);
+        Node statementNumber = Node.newString(Token.STRING, "" + i);
         Node elementGet2 = new Node(Token.GETELEM, propGet, statementNumber);
         Node inc = new Node(Token.INC, elementGet2);
         inc.putBooleanProp(Node.INCRDECR_PROP, true);
@@ -35,5 +35,23 @@ public class NodeHelper {
         call.addChildToBack(Node.newString(Token.STRING, urlPath));
         call.addChildToBack(Node.newNumber(i));
         return call;
+    }
+
+    public boolean isWrapped(Node node, String coverVarName) {
+        Node parent = node.getParent();
+        if (parent == null)
+            return false;
+        if (!parent.isCall())
+            return false;
+        Node prop = parent.getFirstChild();
+        if (prop == null)
+            return false;
+        if (!prop.isGetProp())
+            return false;
+        if (prop.getFirstChild()==null)
+            return false;
+        if (!prop.getFirstChild().isName())
+            return false;
+        return prop.getFirstChild().getString().equals(coverVarName);
     }
 }

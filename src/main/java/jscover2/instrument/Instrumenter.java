@@ -35,6 +35,7 @@ public class Instrumenter {
         LineNumberTable lineNumberTable = new LineNumberTable(sf);
         Node jsRoot = parse(code, sourceFile);
         new NodeWalker().visit(jsRoot, nodeVisitor);
+        log.log(Level.FINEST, "{0}", jsRoot.toStringTree());
         CodePrinter.Builder builder = new CodePrinter.Builder(jsRoot);
         String header = buildHeader(urlPath, nodeVisitor, lineNumberTable);
         String body = builder.build();

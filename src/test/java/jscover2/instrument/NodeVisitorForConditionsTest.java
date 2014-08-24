@@ -25,6 +25,25 @@ public class NodeVisitorForConditionsTest {
         assertThat(builder.build(), equalTo("jscover.bF(a,\"test.js\",1)||jscover.bF(b,\"test.js\",2)"));
     }
 
+    @Test
+    public void shouldNotWrapConditionTwice() {
+        Node a = Node.newString(Token.NAME, "a");
+        Node b = Node.newString(Token.NAME, "b");
+        Node or = new Node(Token.OR, a, b);
+        Node expressionResult = new Node(Token.EXPR_RESULT, or);
+        setSourceFile(expressionResult);
+        visitor.visit(or);
+        or = NodeUtil.findFirst(expressionResult, new NodeTest() {
+            @Override
+            public boolean test(Node node) {
+                return node.isOr();
+            }
+        });
+        visitor.visit(or);
+        CodePrinter.Builder builder = new CodePrinter.Builder(expressionResult);
+        assertThat(builder.build(), equalTo("jscover.bF(a,\"test.js\",1)||jscover.bF(b,\"test.js\",2)"));
+    }
+
     private void setSourceFile(Node expressionResult) {
         new NodeWalker().visit(expressionResult, new NodeCallback() {
             @Override

@@ -36,8 +36,10 @@ public class NodeVisitorForConditions implements NodeCallback {
         } else if (isBooleanTest(n) && !isInstrumentation(n.getParent())) {
             addConditionRecorder(n);
         } else if (isBooleanJoin(n)) {
-            addConditionRecorder(n.getFirstChild());
-            addConditionRecorder(n.getLastChild());
+            if (!isInstrumentation(n.getFirstChild()))
+                addConditionRecorder(n.getFirstChild());
+            if (!isInstrumentation(n.getLastChild()))
+                addConditionRecorder(n.getLastChild());
         }
     }
 

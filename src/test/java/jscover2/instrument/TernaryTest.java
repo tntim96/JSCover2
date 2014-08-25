@@ -51,7 +51,7 @@ public class TernaryTest {
         String instrumented = instrumenter.instrument("test.js", "var j = j !== 'undefined' ? 0 : 1;");
         engine.eval(instrumented);
         assertThat(engine.eval("JSON.stringify(jscover['test.js'].sD)"), equalTo("{\"1\":{\"pos\":{\"line\":1,\"col\":0,\"len\":34}}}"));
-        assertThat(engine.eval("JSON.stringify(jscover['test.js'].bD)"), equalTo("{\"1\":{\"pos\":{\"line\":1,\"col\":8,\"len\":17}}}"));
+        assertThat(engine.eval("JSON.stringify(jscover['test.js'].bD)"), equalTo("{\"1\":{\"pos\":{\"line\":1,\"col\":8,\"len\":17},\"br\":\"true\"}}"));
         assertThat(engine.eval("JSON.stringify(jscover['test.js'].fD)"), equalTo("{}"));
     }
 }

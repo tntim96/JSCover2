@@ -46,7 +46,7 @@ public class ConditionTest {
     }
 
     private String getPropertyForPosition(String json, int column, int length) {
-        String regex = format("^.*\"(\\d+)\":\\{\"pos\":\\{\"line\":2,\"col\":%d,\"len\":%d}}.*$", column, length);
+        String regex = format("^.*\"(\\d+)\":\\{\"pos\":\\{\"line\":2,\"col\":%d,\"len\":%d}.*$", column, length);
         Pattern pattern = Pattern.compile(regex);
         Matcher m = pattern.matcher(json);
         if (m.matches())
@@ -74,6 +74,11 @@ public class ConditionTest {
         assertThat(engine.eval("jscover['test.js'].s['2']"), equalTo(calls));
         assertThat(engine.eval("jscover['test.js'].s['3']"), nullValue());
         assertThat(engine.eval("jscover['test.js'].f['1']"), equalTo(calls));
+        assertThat(engine.eval("jscover['test.js'].bD['" + pABC + "'].br"), equalTo("false"));
+        assertThat(engine.eval("jscover['test.js'].bD['" + pAB + "'].br"), equalTo("false"));
+        assertThat(engine.eval("jscover['test.js'].bD['" + pA + "'].br"), equalTo("false"));
+        assertThat(engine.eval("jscover['test.js'].bD['" + pB + "'].br"), equalTo("false"));
+        assertThat(engine.eval("jscover['test.js'].bD['" + pC + "'].br"), equalTo("false"));
         assertThat(engine.eval("jscover['test.js'].b['" + pABC + "'][0]"), equalTo(brABC[0]));//Entire function
         assertThat(engine.eval("jscover['test.js'].b['" + pABC + "'][1]"), equalTo(brABC[1]));
         assertThat(engine.eval("jscover['test.js'].b['" + pAB + "'][0]"), equalTo(brAB[0]));//a||b

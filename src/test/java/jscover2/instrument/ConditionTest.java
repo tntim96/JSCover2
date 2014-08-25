@@ -30,24 +30,25 @@ public class ConditionTest {
     }
 
     @Test
-    @Ignore
     public void shouldCoverCondition() throws ScriptException, NoSuchMethodException {
         assertThat(invocable.invokeFunction("condition", true, false, true), is(true));
-        verify(new int[]{1, 0}, new int[]{1, 0}, new int[]{1, 0}, new int[]{0, 0}, 1);
+        verify(new int[]{1, 0}, new int[]{1, 0}, new int[]{1, 0}, new int[]{1, 0}, new int[]{0, 0}, 1);
     }
 
-    private void verify(int[] br1, int[] br2, int[] br3, int[] br4, int calls) throws ScriptException {
+    private void verify(int[] br1, int[] br2, int[] br3, int[] br4, int[] br5, int calls) throws ScriptException {
         assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(calls));
         assertThat(engine.eval("jscover['test.js'].s['2']"), equalTo(calls));
         assertThat(engine.eval("jscover['test.js'].s['3']"), nullValue());
         assertThat(engine.eval("jscover['test.js'].f['1']"), equalTo(calls));
-        assertThat(engine.eval("jscover['test.js'].b['1'][0]"), equalTo(br1[0]));
+        assertThat(engine.eval("jscover['test.js'].b['1'][0]"), equalTo(br1[0]));//Entire function
         assertThat(engine.eval("jscover['test.js'].b['1'][1]"), equalTo(br1[1]));
-        assertThat(engine.eval("jscover['test.js'].b['2'][0]"), equalTo(br2[0]));
+        assertThat(engine.eval("jscover['test.js'].b['2'][0]"), equalTo(br2[0]));//a||b
         assertThat(engine.eval("jscover['test.js'].b['2'][1]"), equalTo(br2[1]));
-        assertThat(engine.eval("jscover['test.js'].b['3'][0]"), equalTo(br3[0]));
+        assertThat(engine.eval("jscover['test.js'].b['3'][0]"), equalTo(br3[0]));//a
         assertThat(engine.eval("jscover['test.js'].b['3'][1]"), equalTo(br3[1]));
-        assertThat(engine.eval("jscover['test.js'].b['4'][0]"), equalTo(br4[0]));
+        assertThat(engine.eval("jscover['test.js'].b['4'][0]"), equalTo(br4[0]));//c
         assertThat(engine.eval("jscover['test.js'].b['4'][1]"), equalTo(br4[1]));
+        assertThat(engine.eval("jscover['test.js'].b['5'][0]"), equalTo(br5[0]));//b
+        assertThat(engine.eval("jscover['test.js'].b['5'][1]"), equalTo(br5[1]));
     }
 }

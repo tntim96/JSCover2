@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class NodeVisitorForConditions implements NodeCallback {
+public class NodeVisitorForConditions implements AstAlteredNodeCallback {
     private static final Logger log = Logger.getLogger(NodeVisitorForConditions.class.getName());
     private NodeHelper nodeHelper = new NodeHelper();
     public List<Node> branches = new ArrayList<>();
@@ -26,18 +26,22 @@ public class NodeVisitorForConditions implements NodeCallback {
     }
 
     @Override
-    public void visit(Node n) {
+    public boolean visit(Node n) {
         if (isInstrumentation(n)) {
-            return;
+            return false;
         }
         log.log(Level.FINEST, "Visiting {0}", n);
         if (isBranch(n) && !isInstrumentation(n.getFirstChild())) {
             addBranchRecorder(n);
+            return true;
         } else if (isBooleanJoin(n.getParent()) && !isInstrumentation(n.getParent())) {
             addConditionRecorder(n);
+            return true;
         } else if (isBooleanTest(n) && !isInstrumentation(n.getParent())) {
             addConditionRecorder(n);
+            return true;
         }
+        return false;
     }
 
     private boolean isBranch(Node n) {

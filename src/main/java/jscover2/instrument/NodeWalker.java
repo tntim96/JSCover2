@@ -8,4 +8,11 @@ public class NodeWalker {
         for (Node cursor = n.getFirstChild(); cursor != null; cursor = cursor.getNext())
             visit(cursor, callback);
     }
+
+    public void visit(Node n, AstAlteredNodeCallback callback) {
+        if (callback.visit(n))
+            return;
+        for (Node cursor = n.getFirstChild(); cursor != null; cursor = cursor.getNext())
+            visit(cursor, callback);
+    }
 }

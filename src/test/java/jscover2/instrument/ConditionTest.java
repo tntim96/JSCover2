@@ -1,7 +1,6 @@
 package jscover2.instrument;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.script.Invocable;
@@ -35,8 +34,16 @@ public class ConditionTest {
         verify(new int[]{1, 0}, new int[]{1, 0}, new int[]{1, 0}, new int[]{1, 0}, new int[]{0, 0}, 1);
     }
 
+    @Test
+    public void shouldCoverAllPaths() throws ScriptException, NoSuchMethodException {
+        assertThat(invocable.invokeFunction("condition", true, false, true), is(true));
+        assertThat(invocable.invokeFunction("condition", false, true, false), is(false));
+        assertThat(invocable.invokeFunction("condition", false, false, false), is(false));
+        verify(new int[]{1, 2}, new int[]{2, 1}, new int[]{1, 2}, new int[]{1, 1}, new int[]{1, 1}, 3);
+    }
+
     private void verify(int[] br1, int[] br2, int[] br3, int[] br4, int[] br5, int calls) throws ScriptException {
-        assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(calls));
+        assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['2']"), equalTo(calls));
         assertThat(engine.eval("jscover['test.js'].s['3']"), nullValue());
         assertThat(engine.eval("jscover['test.js'].f['1']"), equalTo(calls));

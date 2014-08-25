@@ -15,6 +15,7 @@ import static java.lang.String.format;
 
 public class Instrumenter {
     private static final Logger log = Logger.getLogger(Instrumenter.class.getName());
+    private static final int MAX_PARSES = 10000000;
     private String branchRecorderJS = "function(result, u, n) {if (result)this[u].b[''+n][0]++;else this[u].b[''+n][1]++;return result}";
     private String header;
     private Configuration config;
@@ -39,11 +40,21 @@ public class Instrumenter {
         nodeWalker.visit(jsRoot, statementsVisitor);
         NodeVisitorForFunctions functionVisitor = new NodeVisitorForFunctions(config.getCoverVariableName(), sourceFile);
         nodeWalker.visit(jsRoot, functionVisitor);
+        NodeVisitorForConditions conditionVisitor = processConditions(sourceFile, jsRoot, nodeWalker);
+
+        log.log(Level.FINEST, "{0}", jsRoot.toStringTree());
+        CodePrinter.Builder builder = new CodePrinter.Builder(jsRoot);
+        String header = buildHeader(urlPath, statementsVisitor, functionVisitor, conditionVisitor, lineNumberTable);
+        String body = builder.build();
+        return header + body;
+    }
+
+    private NodeVisitorForConditions processConditions(SourceFile sourceFile, Node jsRoot, NodeWalker nodeWalker) {
         NodeVisitorForConditions conditionVisitor = new NodeVisitorForConditions(config.getCoverVariableName(), sourceFile);
         int parses = 0;
-        while (parses++ <= 100) {//Maximum of 100 parses
+        while (++parses <= MAX_PARSES) {
             if (parses > 1)
-                log.log(Level.FINE, "Condition parse number {0}", parses);
+                log.log(Level.FINEST, "Condition parse number {0}", parses);
             int conditions = conditionVisitor.getBranches().size();
             nodeWalker.visit(jsRoot, conditionVisitor);
             if (conditions == conditionVisitor.getBranches().size()) {
@@ -51,13 +62,9 @@ public class Instrumenter {
                 break;
             }
         }
-        nodeWalker.visit(jsRoot, conditionVisitor);
-
-        log.log(Level.FINEST, "{0}", jsRoot.toStringTree());
-        CodePrinter.Builder builder = new CodePrinter.Builder(jsRoot);
-        String header = buildHeader(urlPath, statementsVisitor, functionVisitor, conditionVisitor, lineNumberTable);
-        String body = builder.build();
-        return header + body;
+        if (parses > MAX_PARSES)
+            log.log(Level.WARNING, "Stopping AST condition parsing after iteration {0}", parses-1);
+        return conditionVisitor;
     }
 
     private String buildHeader(String urlPath, NodeVisitorForStatements statementsVisitor, NodeVisitorForFunctions functionVisitor, NodeVisitorForConditions conditionVisitor, LineNumberTable lineNumberTable) {

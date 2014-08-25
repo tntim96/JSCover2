@@ -37,9 +37,20 @@ public class Instrumenter {
         NodeWalker nodeWalker = new NodeWalker();
         NodeVisitorForStatements statementsVisitor = new NodeVisitorForStatements(config.getCoverVariableName(), sourceFile);
         nodeWalker.visit(jsRoot, statementsVisitor);
-        NodeVisitorForFunctions functionVisitor  = new NodeVisitorForFunctions(config.getCoverVariableName(), sourceFile);
-        nodeWalker.visit(jsRoot, functionVisitor );
+        NodeVisitorForFunctions functionVisitor = new NodeVisitorForFunctions(config.getCoverVariableName(), sourceFile);
+        nodeWalker.visit(jsRoot, functionVisitor);
         NodeVisitorForConditions conditionVisitor = new NodeVisitorForConditions(config.getCoverVariableName(), sourceFile);
+        int parses = 0;
+        while (parses++ <= 100) {//Maximum of 100 parses
+            if (parses > 1)
+                log.log(Level.FINE, "Condition parse number {0}", parses);
+            int conditions = conditionVisitor.getBranches().size();
+            nodeWalker.visit(jsRoot, conditionVisitor);
+            if (conditions == conditionVisitor.getBranches().size()) {
+                log.log(Level.FINE, "No AST condition changes after parse {0}", parses);
+                break;
+            }
+        }
         nodeWalker.visit(jsRoot, conditionVisitor);
 
         log.log(Level.FINEST, "{0}", jsRoot.toStringTree());
@@ -71,7 +82,7 @@ public class Instrumenter {
         sb.append("},\n");
         sb.append("    \"sD\":{");
         for (int i = 1; i <= nodeVisitor.getStatements().size(); i++) {
-            Node n = nodeVisitor.getStatements().get(i-1);
+            Node n = nodeVisitor.getStatements().get(i - 1);
             if (i > 1)
                 sb.append(",");
             int col = lineNumberTable.getColumn(n.getSourceOffset());
@@ -90,7 +101,7 @@ public class Instrumenter {
         sb.append("},\n");
         sb.append("    \"bD\":{");
         for (int i = 1; i <= nodeVisitor.getBranches().size(); i++) {
-            Node n = nodeVisitor.getBranches().get(i-1);
+            Node n = nodeVisitor.getBranches().get(i - 1);
             if (i > 1)
                 sb.append(",");
             int col = lineNumberTable.getColumn(n.getSourceOffset());
@@ -115,7 +126,7 @@ public class Instrumenter {
             int col = lineNumberTable.getColumn(n.getSourceOffset());
             sb.append(format("\"%d\":{\"pos\":{\"line\":%d,\"col\":%d,\"len\":%d}}", i, n.getLineno(), col, n.getLength()));
         }
-        sb.append("},\n");
+        sb.append("}\n");
     }
 
     private Node parse(String source, StaticSourceFile sourceFile) {

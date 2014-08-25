@@ -20,7 +20,8 @@ public class NodeVisitorForConditionsTest {
         Node or = new Node(Token.OR, a, b);
         Node expressionResult = new Node(Token.EXPR_RESULT, or);
         setSourceFile(expressionResult);
-        visitor.visit(or);
+        visitor.visit(a);
+        visitor.visit(b);
         CodePrinter.Builder builder = new CodePrinter.Builder(expressionResult);
         assertThat(builder.build(), equalTo("jscover.bF(a,\"test.js\",1)||jscover.bF(b,\"test.js\",2)"));
     }
@@ -32,14 +33,16 @@ public class NodeVisitorForConditionsTest {
         Node or = new Node(Token.OR, a, b);
         Node expressionResult = new Node(Token.EXPR_RESULT, or);
         setSourceFile(expressionResult);
-        visitor.visit(or);
+        visitor.visit(a);
+        visitor.visit(b);
         or = NodeUtil.findFirst(expressionResult, new NodeTest() {
             @Override
             public boolean test(Node node) {
                 return node.isOr();
             }
         });
-        visitor.visit(or);
+        visitor.visit(a);
+        visitor.visit(b);
         CodePrinter.Builder builder = new CodePrinter.Builder(expressionResult);
         assertThat(builder.build(), equalTo("jscover.bF(a,\"test.js\",1)||jscover.bF(b,\"test.js\",2)"));
     }

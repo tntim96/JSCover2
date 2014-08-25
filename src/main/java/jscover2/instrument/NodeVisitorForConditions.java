@@ -31,15 +31,12 @@ public class NodeVisitorForConditions implements NodeCallback {
             return;
         }
         log.log(Level.FINEST, "Visiting {0}", n);
-        if (isBranch(n)) {
+        if (isBranch(n) && !isInstrumentation(n.getFirstChild())) {
             addBranchRecorder(n);
+        } else if (isBooleanJoin(n.getParent()) && !isInstrumentation(n.getParent())) {
+            addConditionRecorder(n);
         } else if (isBooleanTest(n) && !isInstrumentation(n.getParent())) {
             addConditionRecorder(n);
-        } else if (isBooleanJoin(n)) {
-            if (!isInstrumentation(n.getFirstChild()))
-                addConditionRecorder(n.getFirstChild());
-            if (!isInstrumentation(n.getLastChild()))
-                addConditionRecorder(n.getLastChild());
         }
     }
 
@@ -48,6 +45,8 @@ public class NodeVisitorForConditions implements NodeCallback {
     }
 
     private boolean isBooleanJoin(Node n) {
+        if (n == null)
+            return false;
         switch (n.getType()) {
             case Token.OR:
             case Token.AND:
@@ -66,6 +65,8 @@ public class NodeVisitorForConditions implements NodeCallback {
             case Token.GE:
             case Token.SHEQ:
             case Token.SHNE:
+            case Token.OR:
+            case Token.AND:
                 return true;
         }
         return false;
@@ -80,20 +81,6 @@ public class NodeVisitorForConditions implements NodeCallback {
         if (child !=null && child.isGetProp() && child.getFirstChild().getString().equals(coverVarName))
             return true;
         return false;
-    }
-
-    private boolean isStatementToBeInstrumented(Node n) {
-        if (n.getParent() != null && !n.getParent().isBlock() && !n.getParent().isScript())
-            return false;
-        return n.isExprResult()
-                || n.isFunction()
-                || n.isVar()
-                || n.isIf()
-                || n.isDo()
-                || n.isWhile()
-                || n.isFor()
-                || n.isForOf()
-                || n.isReturn();
     }
 
     private void addBranchRecorder(Node node) {

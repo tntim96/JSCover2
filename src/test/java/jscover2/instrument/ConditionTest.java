@@ -1,6 +1,7 @@
 package jscover2.instrument;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.script.Invocable;
@@ -29,6 +30,7 @@ public class ConditionTest {
     }
 
     @Test
+    @Ignore
     public void shouldCoverCondition() throws ScriptException, NoSuchMethodException {
         assertThat(invocable.invokeFunction("condition", true, false, true), is(true));
         verify(new int[]{1, 0}, new int[]{1, 0}, new int[]{1, 0}, new int[]{0, 0}, 1);

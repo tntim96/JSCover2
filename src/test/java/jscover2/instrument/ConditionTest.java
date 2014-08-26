@@ -39,13 +39,16 @@ public class ConditionTest {
 
     @Test
     public void shouldCoverAllPaths() throws ScriptException, NoSuchMethodException {
+        verify(new int[]{0, 0}, new int[]{0, 0}, new int[]{0, 0}, new int[]{0, 0}, new int[]{0, 0}, 0);
+        assertThat(invocable.invokeFunction("condition", false, false, true), is(false));
+        verify(new int[]{0, 1}, new int[]{0, 1}, new int[]{0, 1}, new int[]{0, 1}, new int[]{0, 0}, 1);
         assertThat(invocable.invokeFunction("condition", true, false, true), is(true));
+        verify(new int[]{1, 1}, new int[]{1, 1}, new int[]{1, 1}, new int[]{0, 1}, new int[]{1, 0}, 2);
         assertThat(invocable.invokeFunction("condition", false, true, false), is(false));
-        assertThat(invocable.invokeFunction("condition", false, false, false), is(false));
         verify(new int[]{1, 2}, new int[]{2, 1}, new int[]{1, 2}, new int[]{1, 1}, new int[]{1, 1}, 3);
     }
 
-    private String getPropertyForPosition(String json, int column, int length) {
+    private String getConditionNumber(String json, int column, int length) {
         String regex = format("^.*\"(\\d+)\":\\{\"pos\":\\{\"line\":2,\"col\":%d,\"len\":%d}.*$", column, length);
         Pattern pattern = Pattern.compile(regex);
         Matcher m = pattern.matcher(json);
@@ -64,11 +67,11 @@ public class ConditionTest {
         "5":{"pos":{"line":2,"col":18,"len":1}}},//b
          */
         String bD = (String) engine.eval("JSON.stringify(jscover['test.js'].bD)");
-        String pABC = getPropertyForPosition(bD, 12, 13);
-        String pAB = getPropertyForPosition(bD, 13, 6);
-        String pA = getPropertyForPosition(bD, 13, 1);
-        String pB = getPropertyForPosition(bD, 18, 1);
-        String pC = getPropertyForPosition(bD, 24, 1);
+        String pABC = getConditionNumber(bD, 12, 13);
+        String pAB = getConditionNumber(bD, 13, 6);
+        String pA = getConditionNumber(bD, 13, 1);
+        String pB = getConditionNumber(bD, 18, 1);
+        String pC = getConditionNumber(bD, 24, 1);
 
         assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['2']"), equalTo(calls));

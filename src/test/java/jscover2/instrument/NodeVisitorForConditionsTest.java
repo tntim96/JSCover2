@@ -11,7 +11,7 @@ import static org.junit.Assert.assertThat;
 
 public class NodeVisitorForConditionsTest {
     private final SourceFile sourceFile = new SourceFile("test.js");
-    private NodeVisitorForConditions visitor = new NodeVisitorForConditions("jscover", sourceFile);
+    private NodeVisitorForConditions visitor = new NodeVisitorForConditions("jscover", sourceFile, false);
 
     @Test
     public void shouldWrapCondition() {

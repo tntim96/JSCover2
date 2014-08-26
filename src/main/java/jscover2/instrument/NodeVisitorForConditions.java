@@ -15,10 +15,12 @@ public class NodeVisitorForConditions implements AstAlteredNodeCallback {
     public List<Condition> branches = new ArrayList<>();
     private String coverVarName;
     private SourceFile sourceFile;
+    private boolean excludeConditions;
 
-    public NodeVisitorForConditions(String coverVarName, SourceFile sourceFile) {
+    public NodeVisitorForConditions(String coverVarName, SourceFile sourceFile, boolean excludeConditions) {
         this.coverVarName = coverVarName;
         this.sourceFile = sourceFile;
+        this.excludeConditions = excludeConditions;
     }
 
     public List<Condition> getBranches() {
@@ -34,12 +36,14 @@ public class NodeVisitorForConditions implements AstAlteredNodeCallback {
         if (isBranch(n) && !isInstrumentation(n.getFirstChild())) {
             addBranchRecorder(n);
             return true;
-        } else if (isBooleanJoin(n.getParent()) && !isInstrumentation(n.getParent())) {
-            addConditionRecorder(n);
-            return true;
-        } else if (isBooleanTest(n) && !isInstrumentation(n.getParent())) {
-            addConditionRecorder(n);
-            return true;
+        } else if (!excludeConditions) {
+            if (isBooleanJoin(n.getParent()) && !isInstrumentation(n.getParent())) {
+                addConditionRecorder(n);
+                return true;
+            } else if (isBooleanTest(n) && !isInstrumentation(n.getParent())) {
+                addConditionRecorder(n);
+                return true;
+            }
         }
         return false;
     }

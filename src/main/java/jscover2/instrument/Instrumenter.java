@@ -40,7 +40,13 @@ public class Instrumenter {
         nodeWalker.visit(jsRoot, statementsVisitor);
         NodeVisitorForFunctions functionVisitor = new NodeVisitorForFunctions(config.getCoverVariableName(), sourceFile);
         nodeWalker.visit(jsRoot, functionVisitor);
-        NodeVisitorForConditions conditionVisitor = processConditions(sourceFile, jsRoot, nodeWalker);
+        NodeVisitorForConditions conditionVisitor;
+        if (config.isExcludeConditions()) {
+            conditionVisitor = new NodeVisitorForConditions(config.getCoverVariableName(), sourceFile, true);
+            nodeWalker.visit(jsRoot, conditionVisitor);
+        } else {
+            conditionVisitor = processConditions(sourceFile, jsRoot, nodeWalker);
+        }
 
         log.log(Level.FINEST, "{0}", jsRoot.toStringTree());
         CodePrinter.Builder builder = new CodePrinter.Builder(jsRoot);
@@ -50,13 +56,13 @@ public class Instrumenter {
     }
 
     private NodeVisitorForConditions processConditions(SourceFile sourceFile, Node jsRoot, NodeWalker nodeWalker) {
-        NodeVisitorForConditions conditionVisitor = new NodeVisitorForConditions(config.getCoverVariableName(), sourceFile);
+        NodeVisitorForConditions conditionVisitor = new NodeVisitorForConditions(config.getCoverVariableName(), sourceFile, false);
         int parses = 0;
         while (++parses <= MAX_PARSES) {
             if (parses > 1)
                 log.log(Level.FINEST, "Condition parse number {0}", parses);
             int conditions = conditionVisitor.getBranches().size();
-            nodeWalker.visit(jsRoot, conditionVisitor);
+            nodeWalker.visitAndExitOnAstChange(jsRoot, conditionVisitor);
             if (conditions == conditionVisitor.getBranches().size()) {
                 log.log(Level.FINE, "No AST condition changes after parse {0}", parses);
                 break;

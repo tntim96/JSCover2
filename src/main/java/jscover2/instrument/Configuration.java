@@ -5,7 +5,7 @@ import com.google.javascript.jscomp.parsing.Config;
 public class Configuration {
 
     private String coverVariableName = "jscover";
-    private Config.LanguageMode javaScriptVersion = Config.LanguageMode.ECMASCRIPT3;
+    private Config.LanguageMode javaScriptVersion = Config.LanguageMode.ECMASCRIPT6;
 
     public String getCoverVariableName() {
         return coverVariableName;
@@ -18,10 +18,4 @@ public class Configuration {
     public void setCoverVariableName(String coverVariableName) {
         this.coverVariableName = coverVariableName;
     }
-
-    public void setJavaScriptVersion(Config.LanguageMode javaScriptVersion) {
-        this.javaScriptVersion = javaScriptVersion;
-    }
-
-
 }

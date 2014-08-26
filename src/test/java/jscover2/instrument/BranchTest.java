@@ -26,73 +26,42 @@ public class BranchTest {
         config.setExcludeConditions(true);
         instrumenter = new Instrumenter(config);
         String code = "function condition(a, b, c) {\n" +
-                "    return ((a || b) && c);\n" +
+                "    if ((a || b) && c)\n" +
+                "        return true;\n" +
+                "    return false;\n" +
                 "}\n";
-        String instrumented = instrumenter.instrument("test.js", code);
-        System.out.println("instrumented = " + instrumented);
-        engine.eval(instrumented);
+        engine.eval(instrumenter.instrument("test.js", code));
     }
 
-//    @Test
-    public void shouldCoverBranch() throws ScriptException, NoSuchMethodException {
+    @Test
+    public void shouldCoverBranchPath1() throws ScriptException, NoSuchMethodException {
         assertThat(invocable.invokeFunction("condition", true, false, true), is(true));
-        verify(new int[]{1, 0}, new int[]{1, 0}, new int[]{1, 0}, new int[]{0, 0}, new int[]{1, 0}, 1);
-    }
-
-//    @Test
-    public void shouldCoverAllPaths() throws ScriptException, NoSuchMethodException {
-        verify(new int[]{0, 0}, new int[]{0, 0}, new int[]{0, 0}, new int[]{0, 0}, new int[]{0, 0}, 0);
-        assertThat(invocable.invokeFunction("condition", false, false, true), is(false));
-        verify(new int[]{0, 1}, new int[]{0, 1}, new int[]{0, 1}, new int[]{0, 1}, new int[]{0, 0}, 1);
-        assertThat(invocable.invokeFunction("condition", true, false, true), is(true));
-        verify(new int[]{1, 1}, new int[]{1, 1}, new int[]{1, 1}, new int[]{0, 1}, new int[]{1, 0}, 2);
-        assertThat(invocable.invokeFunction("condition", false, true, false), is(false));
-        verify(new int[]{1, 2}, new int[]{2, 1}, new int[]{1, 2}, new int[]{1, 1}, new int[]{1, 1}, 3);
-    }
-
-    private String getConditionNumber(String json, int column, int length) {
-        String regex = format("^.*\"(\\d+)\":\\{\"pos\":\\{\"line\":2,\"col\":%d,\"len\":%d}.*$", column, length);
-        Pattern pattern = Pattern.compile(regex);
-        Matcher m = pattern.matcher(json);
-        if (m.matches())
-            return m.group(1);
-        throw new RuntimeException();
-    }
-
-    private void verify(int[] brABC, int[] brAB, int[] brA, int[] brB, int[] brC, int calls) throws ScriptException {
-        /*
-        "bD":{
-        "1":{"pos":{"line":2,"col":12,"len":13}},//all
-        "2":{"pos":{"line":2,"col":13,"len":6}}, //a||b
-        "3":{"pos":{"line":2,"col":13,"len":1}}, //a
-        "4":{"pos":{"line":2,"col":24,"len":1}}, //c
-        "5":{"pos":{"line":2,"col":18,"len":1}}},//b
-         */
-        String bD = (String) engine.eval("JSON.stringify(jscover['test.js'].bD)");
-        String pABC = getConditionNumber(bD, 12, 13);
-        String pAB = getConditionNumber(bD, 13, 6);
-        String pA = getConditionNumber(bD, 13, 1);
-        String pB = getConditionNumber(bD, 18, 1);
-        String pC = getConditionNumber(bD, 24, 1);
 
         assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));
-        assertThat(engine.eval("jscover['test.js'].s['2']"), equalTo(calls));
-        assertThat(engine.eval("jscover['test.js'].s['3']"), nullValue());
-        assertThat(engine.eval("jscover['test.js'].f['1']"), equalTo(calls));
-        assertThat(engine.eval("jscover['test.js'].bD['" + pABC + "'].br"), equalTo("false"));
-        assertThat(engine.eval("jscover['test.js'].bD['" + pAB + "'].br"), equalTo("false"));
-        assertThat(engine.eval("jscover['test.js'].bD['" + pA + "'].br"), equalTo("false"));
-        assertThat(engine.eval("jscover['test.js'].bD['" + pB + "'].br"), equalTo("false"));
-        assertThat(engine.eval("jscover['test.js'].bD['" + pC + "'].br"), equalTo("false"));
-        assertThat(engine.eval("jscover['test.js'].b['" + pABC + "'][0]"), equalTo(brABC[0]));//Entire function
-        assertThat(engine.eval("jscover['test.js'].b['" + pABC + "'][1]"), equalTo(brABC[1]));
-        assertThat(engine.eval("jscover['test.js'].b['" + pAB + "'][0]"), equalTo(brAB[0]));//a||b
-        assertThat(engine.eval("jscover['test.js'].b['" + pAB + "'][1]"), equalTo(brAB[1]));
-        assertThat(engine.eval("jscover['test.js'].b['" + pA + "'][0]"), equalTo(brA[0]));//a
-        assertThat(engine.eval("jscover['test.js'].b['" + pA + "'][1]"), equalTo(brA[1]));
-        assertThat(engine.eval("jscover['test.js'].b['" + pC + "'][0]"), equalTo(brC[0]));//c
-        assertThat(engine.eval("jscover['test.js'].b['" + pC + "'][1]"), equalTo(brC[1]));
-        assertThat(engine.eval("jscover['test.js'].b['" + pB + "'][0]"), equalTo(brB[0]));//b
-        assertThat(engine.eval("jscover['test.js'].b['" + pB + "'][1]"), equalTo(brB[1]));
+        assertThat(engine.eval("jscover['test.js'].s['2']"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].s['3']"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].s['4']"), equalTo(0));
+        assertThat(engine.eval("jscover['test.js'].s['5']"), nullValue());
+        assertThat(engine.eval("jscover['test.js'].f['1']"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].bD['1'].br"), equalTo("true"));
+        assertThat(engine.eval("jscover['test.js'].bD['2']"), nullValue());
+        assertThat(engine.eval("jscover['test.js'].b['1'][0]"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].b['1'][1]"), equalTo(0));
+    }
+
+    @Test
+    public void shouldCoverBranchPath2() throws ScriptException, NoSuchMethodException {
+        assertThat(invocable.invokeFunction("condition", false, true, false), is(false));
+
+        assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].s['2']"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].s['3']"), equalTo(0));
+        assertThat(engine.eval("jscover['test.js'].s['4']"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].s['5']"), nullValue());
+        assertThat(engine.eval("jscover['test.js'].f['1']"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].bD['1'].br"), equalTo("true"));
+        assertThat(engine.eval("jscover['test.js'].bD['2']"), nullValue());
+        assertThat(engine.eval("jscover['test.js'].b['1'][0]"), equalTo(0));
+        assertThat(engine.eval("jscover['test.js'].b['1'][1]"), equalTo(1));
     }
 }

@@ -20,9 +20,9 @@ public class Instrumenter {
     private String header;
     private Configuration config;
 
-    public Instrumenter() {
-        this(new Configuration());
-    }
+    //public Instrumenter() {
+    //    this(new Configuration());
+    //}
 
     public Instrumenter(Configuration config) {
         this.config = config;

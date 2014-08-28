@@ -7,10 +7,7 @@ import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import static java.lang.String.format;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 

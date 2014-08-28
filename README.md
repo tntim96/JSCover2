@@ -5,7 +5,7 @@ A JavaScript code-coverage tool
 [![Build Status](https://drone.io/github.com/tntim96/JSCover2/status.png)](https://drone.io/github.com/tntim96/JSCover2/latest)
 
 Motivations
-* Swap from Rhino to the excellent Closure-Compiler for several reasons:
+* Swap from Rhino to the excellent [Closure-Compiler](https://developers.google.com/closure/compiler/) for several reasons:
   * ES6 Harmony support
   * Designed specifically for AST manipulation and JavaScript code generation
   * Superior code position data for reports

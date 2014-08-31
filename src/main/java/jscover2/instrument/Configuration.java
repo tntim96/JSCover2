@@ -5,7 +5,7 @@ import com.google.javascript.jscomp.parsing.Config;
 public class Configuration {
     private String coverVariableName = "jscover";
     private Config.LanguageMode javaScriptVersion = Config.LanguageMode.ECMASCRIPT6;
-    private boolean excludeConditions;
+    private boolean includeConditions = true;
 
     public String getCoverVariableName() {
         return coverVariableName;
@@ -19,11 +19,11 @@ public class Configuration {
         return javaScriptVersion;
     }
 
-    public boolean isExcludeConditions() {
-        return excludeConditions;
+    public boolean isIncludeConditions() {
+        return includeConditions;
     }
 
-    public void setExcludeConditions(boolean excludeConditions) {
-        this.excludeConditions = excludeConditions;
+    public void setIncludeConditions(boolean includeConditions) {
+        this.includeConditions = includeConditions;
     }
 }

@@ -41,11 +41,11 @@ public class Instrumenter {
         NodeVisitorForFunctions functionVisitor = new NodeVisitorForFunctions(config.getCoverVariableName(), sourceFile);
         nodeWalker.visit(jsRoot, functionVisitor);
         NodeVisitorForConditions conditionVisitor;
-        if (config.isExcludeConditions()) {
+        if (config.isIncludeConditions()) {
+            conditionVisitor = processConditions(sourceFile, jsRoot, nodeWalker);
+        } else {
             conditionVisitor = new NodeVisitorForConditions(config.getCoverVariableName(), sourceFile, true);
             nodeWalker.visit(jsRoot, conditionVisitor);
-        } else {
-            conditionVisitor = processConditions(sourceFile, jsRoot, nodeWalker);
         }
 
         log.log(Level.FINEST, "{0}", jsRoot.toStringTree());

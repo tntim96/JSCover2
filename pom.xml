@@ -9,6 +9,9 @@
         <artifactId>oss-parent</artifactId>
         <version>9</version>
     </parent>
+    <prerequisites>
+        <maven>3.0.0</maven>
+    </prerequisites>
 
     <groupId>com.github.tntim96</groupId>
     <artifactId>JSCover2</artifactId>
@@ -74,6 +77,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
@@ -85,13 +89,39 @@
                 <version>0.7.1.201405082137</version>
                 <executions>
                     <execution>
-                        <id>jacoco-initialize</id>
+                        <id>default-prepare-agent</id>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
                     </execution>
+                    <!--
                     <execution>
-                        <id>jacoco-site</id>
+                        <id>default-check</id>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <haltOnFailure>true</haltOnFailure>
+                            <rules>
+                                <rule implementation="org.jacoco.maven.RuleConfiguration">
+                                    <element>CLASS</element>
+                                    <excludes>
+                                        <exclude>*Test</exclude>
+                                    </excludes>
+                                    <limits>
+                                        <limit implementation="org.jacoco.report.check.Limit">
+                                            <counter>LINE</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.99</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
+                    </execution>
+                    -->
+                    <execution>
+                        <id>default-report</id>
                         <phase>package</phase>
                         <goals>
                             <goal>report</goal>

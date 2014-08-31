@@ -20,7 +20,7 @@ public class BranchTest {
     @Before
     public void before() throws ScriptException {
         config.setCoverVariableName("jscover");
-        config.setExcludeConditions(true);
+        config.setIncludeConditions(false);
         instrumenter = new Instrumenter(config);
         String code = "function condition(a, b, c) {\n" +
                 "    if ((a || b) && c)\n" +

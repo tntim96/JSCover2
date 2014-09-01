@@ -36,14 +36,24 @@ public class Instrumenter {
 
         NodeWalker nodeWalker = new NodeWalker();
         NodeVisitorForStatements statementsVisitor = new NodeVisitorForStatements(config.getCoverVariableName(), sourceFile);
+        NodeVisitorForFunctions functionVisitor = new NodeVisitorForFunctions(config.getCoverVariableName(), sourceFile);
+        NodeVisitorForConditions conditionVisitor = new NodeVisitorForConditions(config.getCoverVariableName(), sourceFile, true);
+        conditionVisitor = instrument(sourceFile, jsRoot, nodeWalker, statementsVisitor, functionVisitor, conditionVisitor);
+
+        log.log(Level.FINEST, "{0}", jsRoot.toStringTree());
+        CodePrinter.Builder builder = new CodePrinter.Builder(jsRoot);
+        String header = buildHeader(urlPath, statementsVisitor, functionVisitor, conditionVisitor, lineNumberTable);
+        String body = builder.build();
+        return header + body;
+    }
+
+    private NodeVisitorForConditions instrument(SourceFile sourceFile, Node jsRoot, NodeWalker nodeWalker, NodeVisitorForStatements statementsVisitor, NodeVisitorForFunctions functionVisitor, NodeVisitorForConditions conditionVisitor) {
         if (config.isIncludeStatements()) {
             nodeWalker.visit(jsRoot, statementsVisitor);
         }
-        NodeVisitorForFunctions functionVisitor = new NodeVisitorForFunctions(config.getCoverVariableName(), sourceFile);
         if (config.isIncludeFunctions()) {
             nodeWalker.visit(jsRoot, functionVisitor);
         }
-        NodeVisitorForConditions conditionVisitor = new NodeVisitorForConditions(config.getCoverVariableName(), sourceFile, true);
         if (config.isIncludeBranches()) {
             if (config.isIncludeConditions()) {
                 conditionVisitor = processConditions(sourceFile, jsRoot, nodeWalker);
@@ -51,12 +61,7 @@ public class Instrumenter {
                 nodeWalker.visit(jsRoot, conditionVisitor);
             }
         }
-
-        log.log(Level.FINEST, "{0}", jsRoot.toStringTree());
-        CodePrinter.Builder builder = new CodePrinter.Builder(jsRoot);
-        String header = buildHeader(urlPath, statementsVisitor, functionVisitor, conditionVisitor, lineNumberTable);
-        String body = builder.build();
-        return header + body;
+        return conditionVisitor;
     }
 
     private NodeVisitorForConditions processConditions(SourceFile sourceFile, Node jsRoot, NodeWalker nodeWalker) {

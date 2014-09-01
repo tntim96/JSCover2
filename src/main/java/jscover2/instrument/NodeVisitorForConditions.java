@@ -59,8 +59,9 @@ public class NodeVisitorForConditions implements AstAlteredNodeCallback {
             case Token.OR:
             case Token.AND:
                 return true;
+            default:
+                return false;
         }
-        return false;
     }
 
     private boolean isBooleanTest(Node n) {
@@ -76,8 +77,9 @@ public class NodeVisitorForConditions implements AstAlteredNodeCallback {
             case Token.OR:
             case Token.AND:
                 return true;
+            default:
+                return false;
         }
-        return false;
     }
 
     private boolean isInstrumentation(Node n) {

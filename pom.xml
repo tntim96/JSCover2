@@ -19,6 +19,12 @@
     <packaging>jar</packaging>
     <version>0.0.1-SNAPSHOT</version>
 
+    <url>http://tntim96.github.com/JSCover2/</url>
+
+    <scm>
+        <url>http://github.com/tntim96/JSCover2/</url>
+        <connection>scm:git:git://github.com/tntim96/JSCover2.git</connection>
+    </scm>
     <repositories>
         <repository>
             <id>central</id>

@@ -87,6 +87,24 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.7.1.201405082137</version>
+                <configuration>
+                    <haltOnFailure>true</haltOnFailure>
+                    <rules>
+                        <rule>
+                            <element>BUNDLE</element>
+                            <excludes>
+                                <exclude>*Test</exclude>
+                            </excludes>
+                            <limits>
+                                <limit>
+                                    <counter>LINE</counter>
+                                    <value>COVEREDRATIO</value>
+                                    <minimum>0.95</minimum>
+                                </limit>
+                            </limits>
+                        </rule>
+                    </rules>
+                </configuration>
                 <executions>
                     <execution>
                         <id>default-prepare-agent</id>
@@ -94,32 +112,12 @@
                             <goal>prepare-agent</goal>
                         </goals>
                     </execution>
-                    <!--
                     <execution>
                         <id>default-check</id>
                         <goals>
                             <goal>check</goal>
                         </goals>
-                        <configuration>
-                            <haltOnFailure>true</haltOnFailure>
-                            <rules>
-                                <rule implementation="org.jacoco.maven.RuleConfiguration">
-                                    <element>CLASS</element>
-                                    <excludes>
-                                        <exclude>*Test</exclude>
-                                    </excludes>
-                                    <limits>
-                                        <limit implementation="org.jacoco.report.check.Limit">
-                                            <counter>LINE</counter>
-                                            <value>COVEREDRATIO</value>
-                                            <minimum>0.99</minimum>
-                                        </limit>
-                                    </limits>
-                                </rule>
-                            </rules>
-                        </configuration>
                     </execution>
-                    -->
                     <execution>
                         <id>default-report</id>
                         <phase>package</phase>

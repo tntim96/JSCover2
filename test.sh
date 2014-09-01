@@ -1,1 +1,1 @@
-mvn clean test surefire-report:report jacoco:report
+mvn clean test surefire-report:report jacoco:report jacoco:check

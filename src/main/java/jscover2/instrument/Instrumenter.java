@@ -15,7 +15,6 @@ import static java.lang.String.format;
 
 public class Instrumenter {
     private static final Logger log = Logger.getLogger(Instrumenter.class.getName());
-    private static final int MAX_PARSES = 10000000;
     private String branchRecorderJS = "function(result, u, n) {if (result)this[u].b[''+n][0]++;else this[u].b[''+n][1]++;return result}";
     private String header;
     private Configuration config;
@@ -37,15 +36,20 @@ public class Instrumenter {
 
         NodeWalker nodeWalker = new NodeWalker();
         NodeVisitorForStatements statementsVisitor = new NodeVisitorForStatements(config.getCoverVariableName(), sourceFile);
-        nodeWalker.visit(jsRoot, statementsVisitor);
+        if (config.isIncludeStatements()) {
+            nodeWalker.visit(jsRoot, statementsVisitor);
+        }
         NodeVisitorForFunctions functionVisitor = new NodeVisitorForFunctions(config.getCoverVariableName(), sourceFile);
-        nodeWalker.visit(jsRoot, functionVisitor);
-        NodeVisitorForConditions conditionVisitor;
-        if (config.isIncludeConditions()) {
-            conditionVisitor = processConditions(sourceFile, jsRoot, nodeWalker);
-        } else {
-            conditionVisitor = new NodeVisitorForConditions(config.getCoverVariableName(), sourceFile, true);
-            nodeWalker.visit(jsRoot, conditionVisitor);
+        if (config.isIncludeFunctions()) {
+            nodeWalker.visit(jsRoot, functionVisitor);
+        }
+        NodeVisitorForConditions conditionVisitor = new NodeVisitorForConditions(config.getCoverVariableName(), sourceFile, true);
+        if (config.isIncludeBranches()) {
+            if (config.isIncludeConditions()) {
+                conditionVisitor = processConditions(sourceFile, jsRoot, nodeWalker);
+            } else {
+                nodeWalker.visit(jsRoot, conditionVisitor);
+            }
         }
 
         log.log(Level.FINEST, "{0}", jsRoot.toStringTree());
@@ -58,7 +62,7 @@ public class Instrumenter {
     private NodeVisitorForConditions processConditions(SourceFile sourceFile, Node jsRoot, NodeWalker nodeWalker) {
         NodeVisitorForConditions conditionVisitor = new NodeVisitorForConditions(config.getCoverVariableName(), sourceFile, false);
         int parses = 0;
-        while (++parses <= MAX_PARSES) {
+        while (++parses <= config.getMaxParses()) {
             if (parses > 1)
                 log.log(Level.FINEST, "Condition parse number {0}", parses);
             int conditions = conditionVisitor.getBranches().size();
@@ -68,7 +72,7 @@ public class Instrumenter {
                 break;
             }
         }
-        if (parses > MAX_PARSES)
+        if (parses > config.getMaxParses())
             log.log(Level.WARNING, "Stopping AST condition parsing after iteration {0}", parses-1);
         return conditionVisitor;
     }

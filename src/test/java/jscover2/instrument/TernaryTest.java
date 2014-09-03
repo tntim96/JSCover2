@@ -29,9 +29,9 @@ public class TernaryTest {
         assertThat(engine.eval("j"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['2']"), nullValue());
-        assertThat(engine.eval("jscover['test.js'].b['1'][0]"), equalTo(0));
-        assertThat(engine.eval("jscover['test.js'].b['1'][1]"), equalTo(1));
-        assertThat(engine.eval("jscover['test.js'].b['2']"), nullValue());
+        assertThat(engine.eval("jscover['test.js'].d['1'][0]"), equalTo(0));
+        assertThat(engine.eval("jscover['test.js'].d['1'][1]"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].d['2']"), nullValue());
     }
 
     @Test
@@ -41,17 +41,17 @@ public class TernaryTest {
         assertThat(engine.eval("j"), equalTo(0));
         assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['2']"), nullValue());
-        assertThat(engine.eval("jscover['test.js'].b['1'][0]"), equalTo(1));
-        assertThat(engine.eval("jscover['test.js'].b['1'][1]"), equalTo(0));
-        assertThat(engine.eval("jscover['test.js'].b['2']"), nullValue());
+        assertThat(engine.eval("jscover['test.js'].d['1'][0]"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].d['1'][1]"), equalTo(0));
+        assertThat(engine.eval("jscover['test.js'].d['2']"), nullValue());
     }
 
     @Test
     public void shouldCreateDataForTernaryConditional() throws ScriptException {
         String instrumented = instrumenter.instrument("test.js", "var j = j !== 'undefined' ? 0 : 1;");
         engine.eval(instrumented);
-        assertThat(engine.eval("JSON.stringify(jscover['test.js'].sD)"), equalTo("{\"1\":{\"pos\":{\"line\":1,\"col\":0,\"len\":34}}}"));
-        assertThat(engine.eval("JSON.stringify(jscover['test.js'].bD)"), equalTo("{\"1\":{\"pos\":{\"line\":1,\"col\":8,\"len\":17},\"br\":\"true\"}}"));
-        assertThat(engine.eval("JSON.stringify(jscover['test.js'].fD)"), equalTo("{}"));
+        assertThat(engine.eval("JSON.stringify(jscover['test.js'].sM)"), equalTo("{\"1\":{\"pos\":{\"line\":1,\"col\":0,\"len\":34}}}"));
+        assertThat(engine.eval("JSON.stringify(jscover['test.js'].dM)"), equalTo("{\"1\":{\"pos\":{\"line\":1,\"col\":8,\"len\":17},\"br\":\"true\"}}"));
+        assertThat(engine.eval("JSON.stringify(jscover['test.js'].fM)"), equalTo("{}"));
     }
 }

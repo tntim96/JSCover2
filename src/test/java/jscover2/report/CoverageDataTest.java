@@ -11,10 +11,8 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
-import java.io.FileReader;
-
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 public class CoverageDataTest {
     private ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
@@ -29,16 +27,7 @@ public class CoverageDataTest {
     }
 
     @Test
-    public void shouldCreateLineCoverageEntry() throws Exception {
-        String instrumented = instrumenter.instrument("test.js", "x = 1;");
-        engine.eval(instrumented);
-        ScriptObjectMirror json = (ScriptObjectMirror) engine.eval("jscover['test.js']");
-        CoverageData coverageData = new CoverageData(json);
-        assertThat(coverageData.getStatements().getRatio(), is(1f));
-    }
-
-    @Test
-    public void shouldCreateFunctionEntry() throws Exception {
+    public void shouldCalculateStatementCoverage() throws Exception {
         String instrumented = instrumenter.instrument("test.js", "function sq(x) {\n  return x * x;\n}");
         engine.eval(instrumented);
         ScriptObjectMirror json = (ScriptObjectMirror) engine.eval("jscover['test.js']");
@@ -49,5 +38,15 @@ public class CoverageDataTest {
         json = (ScriptObjectMirror) engine.eval("jscover['test.js']");
         coverageData = new CoverageData(json);
         assertThat(coverageData.getStatements().getRatio(), is(1.0f));
+    }
+
+    @Test
+    public void shouldCalculateLineCoverage() throws Exception {
+        String instrumented = instrumenter.instrument("test.js", "function sq(x) {return x * x;}");
+        engine.eval(instrumented);
+        ScriptObjectMirror json = (ScriptObjectMirror) engine.eval("jscover['test.js']");
+        CoverageData coverageData = new CoverageData(json);
+        assertThat(coverageData.getStatements().getRatio(), is(0.5f));
+        assertThat(coverageData.getLines().getRatio(), is(1f));
     }
 }

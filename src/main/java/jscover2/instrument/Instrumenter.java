@@ -15,7 +15,7 @@ import static java.lang.String.format;
 
 public class Instrumenter {
     private static final Logger log = Logger.getLogger(Instrumenter.class.getName());
-    private String branchRecorderJS = "function(result, u, n) {if (result)this[u].b[''+n][0]++;else this[u].b[''+n][1]++;return result}";
+    private String decisionRecorderJS = "function(result, u, n) {if (result)this[u].d[''+n][0]++;else this[u].d[''+n][1]++;return result}";
     private String header;
     private Configuration config;
 
@@ -25,7 +25,7 @@ public class Instrumenter {
 
     public Instrumenter(Configuration config) {
         this.config = config;
-        this.header = format("if (!%s) var %s = {bF: %s};\n", config.getCoverVariableName(), config.getCoverVariableName(), branchRecorderJS);
+        this.header = format("if (!%s) var %s = {dF: %s};\n", config.getCoverVariableName(), config.getCoverVariableName(), decisionRecorderJS);
     }
 
     public String instrument(String urlPath, String code) {
@@ -55,7 +55,7 @@ public class Instrumenter {
             nodeWalker.visit(jsRoot, functionVisitor);
         }
         if (config.isIncludeBranches()) {
-            if (config.isIncludeConditions()) {
+            if (config.isIncludeDecisions()) {
                 conditionVisitor = processConditions(sourceFile, jsRoot, nodeWalker);
             } else {
                 nodeWalker.visit(jsRoot, conditionVisitor);
@@ -102,7 +102,7 @@ public class Instrumenter {
             sb.append(format("\"%d\":0", i));
         }
         sb.append("},\n");
-        sb.append("    \"sD\":{");
+        sb.append("    \"sM\":{");
         for (int i = 1; i <= nodeVisitor.getStatements().size(); i++) {
             Node n = nodeVisitor.getStatements().get(i - 1);
             if (i > 1)
@@ -114,20 +114,20 @@ public class Instrumenter {
     }
 
     private void addBranches(StringBuilder sb, NodeVisitorForConditions nodeVisitor, LineNumberTable lineNumberTable) {
-        sb.append("    \"b\":{");
+        sb.append("    \"d\":{");
         for (int i = 1; i <= nodeVisitor.getBranches().size(); i++) {
             if (i > 1)
                 sb.append(",");
             sb.append(format("\"%d\":[0,0]", i));
         }
         sb.append("},\n");
-        sb.append("    \"bD\":{");
+        sb.append("    \"dM\":{");
         for (int i = 1; i <= nodeVisitor.getBranches().size(); i++) {
-            Condition condition = nodeVisitor.getBranches().get(i - 1);
+            Decision decision = nodeVisitor.getBranches().get(i - 1);
             if (i > 1)
                 sb.append(",");
-            int col = lineNumberTable.getColumn(condition.getNode().getSourceOffset());
-            sb.append(format("\"%d\":{\"pos\":{\"line\":%d,\"col\":%d,\"len\":%d},\"br\":\"%s\"}", i, condition.getNode().getLineno(), col, condition.getNode().getLength(), condition.isBranch()));
+            int col = lineNumberTable.getColumn(decision.getNode().getSourceOffset());
+            sb.append(format("\"%d\":{\"pos\":{\"line\":%d,\"col\":%d,\"len\":%d},\"br\":\"%s\"}", i, decision.getNode().getLineno(), col, decision.getNode().getLength(), decision.isBranch()));
         }
         sb.append("},\n");
     }
@@ -140,7 +140,7 @@ public class Instrumenter {
             sb.append(format("\"%d\":0", i));
         }
         sb.append("},\n");
-        sb.append("    \"fD\":{");
+        sb.append("    \"fM\":{");
         for (int i = 1; i <= nodeVisitor.getFunctions().size(); i++) {
             Node n = nodeVisitor.getFunctions().get(i - 1);
             if (i > 1)

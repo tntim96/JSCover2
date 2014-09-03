@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 public class NodeVisitorForConditions implements AstAlteredNodeCallback {
     private static final Logger log = Logger.getLogger(NodeVisitorForConditions.class.getName());
     private NodeHelper nodeHelper = new NodeHelper();
-    public List<Condition> branches = new ArrayList<>();
+    public List<Decision> branches = new ArrayList<>();
     private String coverVarName;
     private SourceFile sourceFile;
     private boolean excludeConditions;
@@ -23,7 +23,7 @@ public class NodeVisitorForConditions implements AstAlteredNodeCallback {
         this.excludeConditions = excludeConditions;
     }
 
-    public List<Condition> getBranches() {
+    public List<Decision> getBranches() {
         return branches;
     }
 
@@ -95,7 +95,7 @@ public class NodeVisitorForConditions implements AstAlteredNodeCallback {
 
     private void addBranchRecorder(Node node) {
         Node conditionNode = node.getFirstChild();
-        branches.add(new Condition(conditionNode, true));
+        branches.add(new Decision(conditionNode, true));
         Node wrapper = nodeHelper.wrapConditionNode(conditionNode, coverVarName, sourceFile.getName(), branches.size());
         node.replaceChild(conditionNode, wrapper);
     }
@@ -103,7 +103,7 @@ public class NodeVisitorForConditions implements AstAlteredNodeCallback {
     private void addConditionRecorder(Node n) {
         log.log(Level.FINEST, "----------------------------");
         log.log(Level.FINEST, "Wrapping {0}", n);
-        branches.add(new Condition(n,false));
+        branches.add(new Decision(n,false));
         Node parent = n.getParent();
         Node wrapper = nodeHelper.wrapConditionNode(n, coverVarName, sourceFile.getName(), branches.size());
         log.log(Level.FINEST, "Before\n{0}", parent.toStringTree());

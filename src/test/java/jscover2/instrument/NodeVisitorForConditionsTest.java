@@ -23,7 +23,7 @@ public class NodeVisitorForConditionsTest {
         visitor.visit(a);
         visitor.visit(b);
         CodePrinter.Builder builder = new CodePrinter.Builder(expressionResult);
-        assertThat(builder.build(), equalTo("jscover.bF(a,\"test.js\",1)||jscover.bF(b,\"test.js\",2)"));
+        assertThat(builder.build(), equalTo("jscover.dF(a,\"test.js\",1)||jscover.dF(b,\"test.js\",2)"));
     }
 
     @Test
@@ -44,7 +44,7 @@ public class NodeVisitorForConditionsTest {
         visitor.visit(a);
         visitor.visit(b);
         CodePrinter.Builder builder = new CodePrinter.Builder(expressionResult);
-        assertThat(builder.build(), equalTo("jscover.bF(a,\"test.js\",1)||jscover.bF(b,\"test.js\",2)"));
+        assertThat(builder.build(), equalTo("jscover.dF(a,\"test.js\",1)||jscover.dF(b,\"test.js\",2)"));
     }
 
     private void setSourceFile(Node expressionResult) {

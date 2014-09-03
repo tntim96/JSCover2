@@ -39,7 +39,7 @@ public class NodeHelperTest {
         node.addChildToFront(Node.newString(Token.NAME, "x"));
         node.addChildToBack(Node.newNumber(0));
 
-        Node expected = parse("coverVar.bF((x < 0), 'urlPath', 7)");
+        Node expected = parse("coverVar.dF((x < 0), 'urlPath', 7)");
         Node actual = nodeHelper.wrapConditionNode(node, "coverVar", "urlPath", 7);
 
         assertThat(new CodePrinter.Builder(actual).build(), equalTo(new CodePrinter.Builder(expected).build()));
@@ -50,7 +50,7 @@ public class NodeHelperTest {
         Node lt = new Node(Token.LT);
         Node ifNode = buildLessThanNodeWithParent(lt);
 
-        Node expected = parse("if (coverVar.bF((x < 0), 'urlPath', 7))\n  x++;");
+        Node expected = parse("if (coverVar.dF((x < 0), 'urlPath', 7))\n  x++;");
 
         Node wrapper = nodeHelper.wrapConditionNode(lt, "coverVar", "urlPath", 7);
         ifNode.replaceChild(lt, wrapper);

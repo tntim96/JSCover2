@@ -27,7 +27,7 @@ public class NodeHelper {
 
     public Node wrapConditionNode(Node node, String coverVarName, String urlPath, int i) {
         Node coverVar = Node.newString(Token.NAME, coverVarName);
-        Node branchFunction = Node.newString(Token.STRING, "bF");
+        Node branchFunction = Node.newString(Token.STRING, "dF");
         Node elementGet = new Node(Token.GETPROP, coverVar, branchFunction);
         Node call = new Node(Token.CALL);
         call.addChildToFront(elementGet);

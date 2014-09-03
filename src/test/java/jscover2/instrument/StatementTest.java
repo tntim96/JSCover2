@@ -28,8 +28,8 @@ public class StatementTest {
         String instrumented = instrumenter.instrument("test.js", "x = 1;");
         assertThat(engine.eval(instrumented), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));
-        assertThat(engine.eval("JSON.stringify(jscover['test.js'].sD)"), equalTo("{\"1\":{\"pos\":{\"line\":1,\"col\":0,\"len\":6}}}"));
-        assertThat(engine.eval("JSON.stringify(jscover['test.js'].bD)"), equalTo("{}"));
-        assertThat(engine.eval("JSON.stringify(jscover['test.js'].fD)"), equalTo("{}"));
+        assertThat(engine.eval("JSON.stringify(jscover['test.js'].sM)"), equalTo("{\"1\":{\"pos\":{\"line\":1,\"col\":0,\"len\":6}}}"));
+        assertThat(engine.eval("JSON.stringify(jscover['test.js'].dM)"), equalTo("{}"));
+        assertThat(engine.eval("JSON.stringify(jscover['test.js'].fM)"), equalTo("{}"));
     }
 }

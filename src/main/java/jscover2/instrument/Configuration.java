@@ -8,7 +8,7 @@ public class Configuration {
     private boolean includeStatements = true;
     private boolean includeFunctions = true;
     private boolean includeBranches = true;
-    private boolean includeConditions = true;
+    private boolean includeDecisions = true;
     private int maxParses = 10000000;
 
     public String getCoverVariableName() {
@@ -47,12 +47,12 @@ public class Configuration {
         this.includeBranches = includeBranches;
     }
 
-    public boolean isIncludeConditions() {
-        return includeConditions;
+    public boolean isIncludeDecisions() {
+        return includeDecisions;
     }
 
-    public void setIncludeConditions(boolean includeConditions) {
-        this.includeConditions = includeConditions;
+    public void setIncludeDecisions(boolean includeDecisions) {
+        this.includeDecisions = includeDecisions;
     }
 
     public int getMaxParses() {

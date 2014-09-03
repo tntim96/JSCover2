@@ -31,7 +31,7 @@ public class FunctionTest {
         String instrumented = instrumenter.instrument("test.js", "function sq(x) {\n  return x*x;\n};");
         engine.eval(instrumented);
         assertThat(engine.eval("jscover['test.js'].f['1']"), equalTo(0));
-        assertThat(engine.eval("JSON.stringify(jscover['test.js'].fD)"), equalTo("{\"1\":{\"pos\":{\"line\":1,\"col\":0,\"len\":32}}}"));
+        assertThat(engine.eval("JSON.stringify(jscover['test.js'].fM)"), equalTo("{\"1\":{\"pos\":{\"line\":1,\"col\":0,\"len\":32}}}"));
     }
 
     @Test
@@ -43,7 +43,7 @@ public class FunctionTest {
         assertThat(engine.eval("jscover['test.js'].f['1']"), equalTo(1));
         assertThat(invocable.invokeFunction("sq", 5), equalTo(25.0));
         assertThat(engine.eval("jscover['test.js'].f['1']"), equalTo(2));
-        assertThat(engine.eval("JSON.stringify(jscover['test.js'].fD)"), equalTo("{\"1\":{\"pos\":{\"line\":1,\"col\":0,\"len\":32}}}"));
+        assertThat(engine.eval("JSON.stringify(jscover['test.js'].fM)"), equalTo("{\"1\":{\"pos\":{\"line\":1,\"col\":0,\"len\":32}}}"));
     }
 
     @Test
@@ -59,7 +59,7 @@ public class FunctionTest {
         assertThat(invocable.invokeFunction("cube", 3), equalTo(27.0));
         assertThat(engine.eval("jscover['test.js'].f['1']"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].f['2']"), equalTo(1));
-        assertThat(engine.eval("JSON.stringify(jscover['test.js'].fD['1'])"), equalTo("{\"pos\":{\"line\":1,\"col\":0,\"len\":32}}"));
-        assertThat(engine.eval("JSON.stringify(jscover['test.js'].fD['2'])"), equalTo("{\"pos\":{\"line\":3,\"col\":2,\"len\":36}}"));
+        assertThat(engine.eval("JSON.stringify(jscover['test.js'].fM['1'])"), equalTo("{\"pos\":{\"line\":1,\"col\":0,\"len\":32}}"));
+        assertThat(engine.eval("JSON.stringify(jscover['test.js'].fM['2'])"), equalTo("{\"pos\":{\"line\":3,\"col\":2,\"len\":36}}"));
     }
 }

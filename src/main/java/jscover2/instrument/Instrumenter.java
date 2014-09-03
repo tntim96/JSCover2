@@ -68,8 +68,7 @@ public class Instrumenter {
         NodeVisitorForBooleanExpressions conditionVisitor = new NodeVisitorForBooleanExpressions(config.getCoverVariableName(), sourceFile, false);
         int parses = 0;
         while (++parses <= config.getMaxParses()) {
-            if (parses > 1)
-                log.log(Level.FINEST, "Condition parse number {0}", parses);
+            log.log(Level.FINEST, "Condition parse number {0}", parses);
             int conditions = conditionVisitor.getBranches().size();
             nodeWalker.visitAndExitOnAstChange(jsRoot, conditionVisitor);
             if (conditions == conditionVisitor.getBranches().size()) {

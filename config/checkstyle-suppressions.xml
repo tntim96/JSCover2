@@ -5,6 +5,7 @@
 
 <suppressions>
     <suppress checks="BooleanExpressionComplexity" files="instrument.NodeVisitorForStatements.java"/>
-    <suppress checks="CyclomaticComplexity" files="instrument.NodeVisitorForBooleanExpressions.java" lines="67"/>
     <suppress checks="CyclomaticComplexity" files="instrument.NodeVisitorForStatements.java"/>
+    <suppress checks="CyclomaticComplexity" files="instrument.NodeVisitorForBooleanExpressions.java"/>
+    <suppress checks="MethodLength" files="report.CoverageData.java" lines="41"/>
 </suppressions>

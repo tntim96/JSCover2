@@ -38,8 +38,8 @@ public class CoverageDataTest {
         assertThat(invocable.invokeFunction("sq", 5), is(25.0));
         json = (ScriptObjectMirror) engine.eval("jscover['test.js']");
         coverageData = new CoverageData(json);
-        assertThat(coverageData.getStatements().getRatio(), is(1.0f));
-        assertThat(coverageData.getLines().getRatio(), is(1.0f));
+        assertThat(coverageData.getStatements().getRatio(), is(1f));
+        assertThat(coverageData.getLines().getRatio(), is(1f));
     }
 
     @Test
@@ -54,8 +54,8 @@ public class CoverageDataTest {
         assertThat(invocable.invokeFunction("sq", 5), is(25.0));
         json = (ScriptObjectMirror) engine.eval("jscover['test.js']");
         coverageData = new CoverageData(json);
-        assertThat(coverageData.getStatements().getRatio(), is(1.0f));
-        assertThat(coverageData.getLines().getRatio(), is(1.0f));
+        assertThat(coverageData.getStatements().getRatio(), is(1f));
+        assertThat(coverageData.getLines().getRatio(), is(1f));
     }
 
     @Test
@@ -65,7 +65,7 @@ public class CoverageDataTest {
         engine.eval(instrumented);
         ScriptObjectMirror json = (ScriptObjectMirror) engine.eval("jscover['test.js']");
         CoverageData coverageData = new CoverageData(json);
-        assertThat(coverageData.getFunctions().getRatio(), is(0.0f));
+        assertThat(coverageData.getFunctions().getRatio(), is(0f));
 
         assertThat(invocable.invokeFunction("sq", 5), is(25.0));
         json = (ScriptObjectMirror) engine.eval("jscover['test.js']");
@@ -76,5 +76,39 @@ public class CoverageDataTest {
         json = (ScriptObjectMirror) engine.eval("jscover['test.js']");
         coverageData = new CoverageData(json);
         assertThat(coverageData.getFunctions().getRatio(), is(1f));
+    }
+
+    @Test
+    public void shouldCalculateBooleanExpressionAndBranchCoverage() throws Exception {
+        String code = "function condition(a, b, c) {\n" +
+                "    if ((a || b) && c)\n" +
+                "        return true;\n" +
+                "    else;\n" +
+                "        return false;\n" +
+                "}";
+        String instrumented = instrumenter.instrument("test.js", code);
+        engine.eval(instrumented);
+        ScriptObjectMirror json = (ScriptObjectMirror) engine.eval("jscover['test.js']");
+        CoverageData coverageData = new CoverageData(json);
+        assertThat(coverageData.getBranches().getRatio(), is(0f));
+        assertThat(coverageData.getBooleanExpressions().getRatio(), is(0f));
+
+        assertThat(invocable.invokeFunction("condition", false, false, true), is(false));
+        json = (ScriptObjectMirror) engine.eval("jscover['test.js']");
+        coverageData = new CoverageData(json);
+        assertThat(coverageData.getBranches().getRatio(), is(0.5f));
+        assertThat(coverageData.getBooleanExpressions().getRatio(), is(0.4F));
+
+        assertThat(invocable.invokeFunction("condition", true, false, true), is(true));
+        json = (ScriptObjectMirror) engine.eval("jscover['test.js']");
+        coverageData = new CoverageData(json);
+        assertThat(coverageData.getBranches().getRatio(), is(1f));
+        assertThat(coverageData.getBooleanExpressions().getRatio(), is(0.8F));
+
+        assertThat(invocable.invokeFunction("condition", false, true, false), is(false));
+        json = (ScriptObjectMirror) engine.eval("jscover['test.js']");
+        coverageData = new CoverageData(json);
+        assertThat(coverageData.getBranches().getRatio(), is(1f));
+        assertThat(coverageData.getBooleanExpressions().getRatio(), is(1f));
     }
 }

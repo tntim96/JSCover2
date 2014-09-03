@@ -19,6 +19,6 @@ public class NodeWalker {
         if (callback.visit(n))
             return;
         for (Node cursor = n.getFirstChild(); cursor != null; cursor = cursor.getNext())
-            visit(cursor, callback);
+            visitAndExitOnAstChange(cursor, callback);
     }
 }

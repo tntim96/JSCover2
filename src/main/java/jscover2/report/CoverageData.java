@@ -10,23 +10,26 @@ public class CoverageData {
     private CoverageItem statements;
     private CoverageItem lines;
     private CoverageItem functions;
+    private CoverageItem branches;
+    private CoverageItem booleanExpressions;
 
     public CoverageData(ScriptObjectMirror mirror) {
         processStatements(mirror);
         processFunctions(mirror);
+        processBooleanExpressions(mirror);
     }
 
     private void processStatements(ScriptObjectMirror mirror) {
-        ScriptObjectMirror statementObject = (ScriptObjectMirror) mirror.get("s");
-        ScriptObjectMirror statementMap = (ScriptObjectMirror) mirror.get("sM");
-        int totalStatements = statementObject.size();
+        ScriptObjectMirror data = (ScriptObjectMirror) mirror.get("s");
+        ScriptObjectMirror map = (ScriptObjectMirror) mirror.get("sM");
+        int totalStatements = data.size();
         int coveredStatements = 0;
         Set<Integer> linesTotal = new HashSet<>();
         Set<Integer> linesCovered = new HashSet<>();
-        for (String stmt : statementObject.keySet()) {
-            int line = (int)((ScriptObjectMirror)((ScriptObjectMirror)statementMap.get(stmt)).get("pos")).get("line");
+        for (String count : data.keySet()) {
+            int line = (int) ((ScriptObjectMirror) ((ScriptObjectMirror) map.get(count)).get("pos")).get("line");
             linesTotal.add(line);
-            if (!zero.equals(statementObject.get(stmt))) {
+            if (!zero.equals(data.get(count))) {
                 coveredStatements++;
                 linesCovered.add(line);
             }
@@ -35,12 +38,38 @@ public class CoverageData {
         lines = new CoverageItem(linesTotal.size(), linesCovered.size());
     }
 
+    private void processBooleanExpressions(ScriptObjectMirror mirror) {
+        ScriptObjectMirror data = (ScriptObjectMirror) mirror.get("be");
+        ScriptObjectMirror map = (ScriptObjectMirror) mirror.get("beM");
+        int totalBEs = data.size() * 2;
+        int coveredBEs = 0;
+        int branchesTotal = 0;
+        int branchesCovered = 0;
+        for (String count : data.keySet()) {
+            String branch = (String) ((ScriptObjectMirror) map.get(count)).get("br");
+            if ("true".equals(branch))
+                branchesTotal += 2;
+            if (!zero.equals(((ScriptObjectMirror) data.get(count)).get("0"))) {
+                coveredBEs++;
+                if ("true".equals(branch))
+                    branchesCovered++;
+            }
+            if (!zero.equals(((ScriptObjectMirror) data.get(count)).get("1"))) {
+                coveredBEs++;
+                if ("true".equals(branch))
+                    branchesCovered++;
+            }
+        }
+        booleanExpressions = new CoverageItem(totalBEs, coveredBEs);
+        branches = new CoverageItem(branchesTotal, branchesCovered);
+    }
+
     private void processFunctions(ScriptObjectMirror mirror) {
-        ScriptObjectMirror statementObject = (ScriptObjectMirror) mirror.get("f");
-        int total = statementObject.size();
+        ScriptObjectMirror data = (ScriptObjectMirror) mirror.get("f");
+        int total = data.size();
         int covered = 0;
-        for (String stmt : statementObject.keySet()) {
-            if (!zero.equals(statementObject.get(stmt)))
+        for (String count : data.keySet()) {
+            if (!zero.equals(data.get(count)))
                 covered++;
         }
         functions = new CoverageItem(total, covered);
@@ -56,5 +85,13 @@ public class CoverageData {
 
     public CoverageItem getFunctions() {
         return functions;
+    }
+
+    public CoverageItem getBranches() {
+        return branches;
+    }
+
+    public CoverageItem getBooleanExpressions() {
+        return booleanExpressions;
     }
 }

@@ -33,7 +33,8 @@ public class NodeVisitorForBooleanExpressions implements AstAlteredNodeCallback 
             return false;
         }
         log.log(Level.FINEST, "Visiting {0}", n);
-        if (isBranch(n) && !isInstrumentation(n.getFirstChild())) {
+        if (isBranch(n) &&
+                !isInstrumentation(n.getFirstChild())) {
             addBranchRecorder(n);
             return true;
         } else if (!excludeConditions) {
@@ -93,21 +94,25 @@ public class NodeVisitorForBooleanExpressions implements AstAlteredNodeCallback 
         return false;
     }
 
-    private void addBranchRecorder(Node node) {
-        Node conditionNode = node.getFirstChild();
+    private void addBranchRecorder(Node n) {
+        log.log(Level.FINE, "----------------------------");
+        log.log(Level.FINE, "Wrapping branch {0}", n);
+        Node conditionNode = n.getFirstChild();
         branches.add(new BooleanExpression(conditionNode, true));
+        log.log(Level.FINE, "Before {0}\n{1}", new Object[]{branches.size(), n.getFirstChild().toStringTree()});
         Node wrapper = nodeHelper.wrapConditionNode(conditionNode, coverVarName, sourceFile.getName(), branches.size());
-        node.replaceChild(conditionNode, wrapper);
+        n.replaceChild(conditionNode, wrapper);
+        log.log(Level.FINE, "After\n{0}", n.getFirstChild().toStringTree());
     }
 
     private void addConditionRecorder(Node n) {
-        log.log(Level.FINEST, "----------------------------");
-        log.log(Level.FINEST, "Wrapping {0}", n);
+        log.log(Level.FINE, "----------------------------");
+        log.log(Level.FINE, "Wrapping condition {0}", n);
         branches.add(new BooleanExpression(n,false));
         Node parent = n.getParent();
         Node wrapper = nodeHelper.wrapConditionNode(n, coverVarName, sourceFile.getName(), branches.size());
-        log.log(Level.FINEST, "Before\n{0}", parent.toStringTree());
+        log.log(Level.FINE, "Before {0}\n{1}", new Object[]{branches.size(), parent.toStringTree()});
         parent.replaceChild(n, wrapper);
-        log.log(Level.FINEST, "After\n{0}", parent.toStringTree());
+        log.log(Level.FINE, "After\n{0}", parent.toStringTree());
     }
 }

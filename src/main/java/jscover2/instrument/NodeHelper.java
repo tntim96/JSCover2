@@ -39,11 +39,12 @@ public class NodeHelper {
 
     public boolean isWrapped(Node node, String coverVarName) {
         Node parent = node.getParent();
-        if (parent == null)
-            return false;
+        //if (parent == null)
+        //    return false;
         if (!parent.isCall())
             return false;
         Node prop = parent.getFirstChild();
+        /* These should always be true
         if (prop == null)
             return false;
         if (!prop.isGetProp())
@@ -52,6 +53,7 @@ public class NodeHelper {
             return false;
         if (!prop.getFirstChild().isName())
             return false;
+        */
         return prop.getFirstChild().getString().equals(coverVarName);
     }
 }

@@ -57,4 +57,24 @@ public class CoverageDataTest {
         assertThat(coverageData.getStatements().getRatio(), is(1.0f));
         assertThat(coverageData.getLines().getRatio(), is(1.0f));
     }
+
+    @Test
+    public void shouldCalculateFunctionCoverage() throws Exception {
+        String instrumented = instrumenter.instrument("test.js", "function sq(x){return x*x;}" +
+                "function cube(x){return x*x*x;}");
+        engine.eval(instrumented);
+        ScriptObjectMirror json = (ScriptObjectMirror) engine.eval("jscover['test.js']");
+        CoverageData coverageData = new CoverageData(json);
+        assertThat(coverageData.getFunctions().getRatio(), is(0.0f));
+
+        assertThat(invocable.invokeFunction("sq", 5), is(25.0));
+        json = (ScriptObjectMirror) engine.eval("jscover['test.js']");
+        coverageData = new CoverageData(json);
+        assertThat(coverageData.getFunctions().getRatio(), is(0.5f));
+
+        assertThat(invocable.invokeFunction("cube", 5), is(125.0));
+        json = (ScriptObjectMirror) engine.eval("jscover['test.js']");
+        coverageData = new CoverageData(json);
+        assertThat(coverageData.getFunctions().getRatio(), is(1f));
+    }
 }

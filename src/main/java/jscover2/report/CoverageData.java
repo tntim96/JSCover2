@@ -9,9 +9,11 @@ public class CoverageData {
     private final Integer zero = new Integer(0);
     private CoverageItem statements;
     private CoverageItem lines;
+    private CoverageItem functions;
 
     public CoverageData(ScriptObjectMirror mirror) {
         processStatements(mirror);
+        processFunctions(mirror);
     }
 
     private void processStatements(ScriptObjectMirror mirror) {
@@ -33,11 +35,26 @@ public class CoverageData {
         lines = new CoverageItem(linesTotal.size(), linesCovered.size());
     }
 
+    private void processFunctions(ScriptObjectMirror mirror) {
+        ScriptObjectMirror statementObject = (ScriptObjectMirror) mirror.get("f");
+        int total = statementObject.size();
+        int covered = 0;
+        for (String stmt : statementObject.keySet()) {
+            if (!zero.equals(statementObject.get(stmt)))
+                covered++;
+        }
+        functions = new CoverageItem(total, covered);
+    }
+
     public CoverageItem getStatements() {
         return statements;
     }
 
     public CoverageItem getLines() {
         return lines;
+    }
+
+    public CoverageItem getFunctions() {
+        return functions;
     }
 }

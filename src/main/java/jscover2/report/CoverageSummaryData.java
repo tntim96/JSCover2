@@ -5,7 +5,7 @@ import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import java.util.HashSet;
 import java.util.Set;
 
-public class CoverageData {
+public class CoverageSummaryData {
     private final Integer zero = new Integer(0);
     private CoverageItem statements;
     private CoverageItem lines;
@@ -13,7 +13,7 @@ public class CoverageData {
     private CoverageItem branches;
     private CoverageItem booleanExpressions;
 
-    public CoverageData(ScriptObjectMirror mirror) {
+    public CoverageSummaryData(ScriptObjectMirror mirror) {
         processStatements(mirror);
         processFunctions(mirror);
         processBooleanExpressions(mirror);

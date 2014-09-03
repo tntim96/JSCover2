@@ -14,7 +14,7 @@ import static java.lang.String.format;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
-public class DecisionTest {
+public class BooleanExpressionTest {
     private ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
     private Invocable invocable = (Invocable) engine;
     private Configuration config = new Configuration();
@@ -59,38 +59,38 @@ public class DecisionTest {
 
     private void verify(int[] brABC, int[] brAB, int[] brA, int[] brB, int[] brC, int calls) throws ScriptException {
         /*
-        "dM":{
+        "beM":{
         "1":{"pos":{"line":2,"col":12,"len":13}},//all
         "2":{"pos":{"line":2,"col":13,"len":6}}, //a||b
         "3":{"pos":{"line":2,"col":13,"len":1}}, //a
         "4":{"pos":{"line":2,"col":24,"len":1}}, //c
         "5":{"pos":{"line":2,"col":18,"len":1}}},//b
          */
-        String dM = (String) engine.eval("JSON.stringify(jscover['test.js'].dM)");
-        String pABC = getConditionNumber(dM, 12, 13);
-        String pAB = getConditionNumber(dM, 13, 6);
-        String pA = getConditionNumber(dM, 13, 1);
-        String pB = getConditionNumber(dM, 18, 1);
-        String pC = getConditionNumber(dM, 24, 1);
+        String beM = (String) engine.eval("JSON.stringify(jscover['test.js'].beM)");
+        String pABC = getConditionNumber(beM, 12, 13);
+        String pAB = getConditionNumber(beM, 13, 6);
+        String pA = getConditionNumber(beM, 13, 1);
+        String pB = getConditionNumber(beM, 18, 1);
+        String pC = getConditionNumber(beM, 24, 1);
 
         assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['2']"), equalTo(calls));
         assertThat(engine.eval("jscover['test.js'].s['3']"), nullValue());
         assertThat(engine.eval("jscover['test.js'].f['1']"), equalTo(calls));
-        assertThat(engine.eval("jscover['test.js'].dM['" + pABC + "'].br"), equalTo("false"));
-        assertThat(engine.eval("jscover['test.js'].dM['" + pAB + "'].br"), equalTo("false"));
-        assertThat(engine.eval("jscover['test.js'].dM['" + pA + "'].br"), equalTo("false"));
-        assertThat(engine.eval("jscover['test.js'].dM['" + pB + "'].br"), equalTo("false"));
-        assertThat(engine.eval("jscover['test.js'].dM['" + pC + "'].br"), equalTo("false"));
-        assertThat(engine.eval("jscover['test.js'].d['" + pABC + "'][0]"), equalTo(brABC[0]));//Entire function
-        assertThat(engine.eval("jscover['test.js'].d['" + pABC + "'][1]"), equalTo(brABC[1]));
-        assertThat(engine.eval("jscover['test.js'].d['" + pAB + "'][0]"), equalTo(brAB[0]));//a||b
-        assertThat(engine.eval("jscover['test.js'].d['" + pAB + "'][1]"), equalTo(brAB[1]));
-        assertThat(engine.eval("jscover['test.js'].d['" + pA + "'][0]"), equalTo(brA[0]));//a
-        assertThat(engine.eval("jscover['test.js'].d['" + pA + "'][1]"), equalTo(brA[1]));
-        assertThat(engine.eval("jscover['test.js'].d['" + pC + "'][0]"), equalTo(brC[0]));//c
-        assertThat(engine.eval("jscover['test.js'].d['" + pC + "'][1]"), equalTo(brC[1]));
-        assertThat(engine.eval("jscover['test.js'].d['" + pB + "'][0]"), equalTo(brB[0]));//b
-        assertThat(engine.eval("jscover['test.js'].d['" + pB + "'][1]"), equalTo(brB[1]));
+        assertThat(engine.eval("jscover['test.js'].beM['" + pABC + "'].br"), equalTo("false"));
+        assertThat(engine.eval("jscover['test.js'].beM['" + pAB + "'].br"), equalTo("false"));
+        assertThat(engine.eval("jscover['test.js'].beM['" + pA + "'].br"), equalTo("false"));
+        assertThat(engine.eval("jscover['test.js'].beM['" + pB + "'].br"), equalTo("false"));
+        assertThat(engine.eval("jscover['test.js'].beM['" + pC + "'].br"), equalTo("false"));
+        assertThat(engine.eval("jscover['test.js'].be['" + pABC + "'][0]"), equalTo(brABC[0]));//Entire function
+        assertThat(engine.eval("jscover['test.js'].be['" + pABC + "'][1]"), equalTo(brABC[1]));
+        assertThat(engine.eval("jscover['test.js'].be['" + pAB + "'][0]"), equalTo(brAB[0]));//a||b
+        assertThat(engine.eval("jscover['test.js'].be['" + pAB + "'][1]"), equalTo(brAB[1]));
+        assertThat(engine.eval("jscover['test.js'].be['" + pA + "'][0]"), equalTo(brA[0]));//a
+        assertThat(engine.eval("jscover['test.js'].be['" + pA + "'][1]"), equalTo(brA[1]));
+        assertThat(engine.eval("jscover['test.js'].be['" + pC + "'][0]"), equalTo(brC[0]));//c
+        assertThat(engine.eval("jscover['test.js'].be['" + pC + "'][1]"), equalTo(brC[1]));
+        assertThat(engine.eval("jscover['test.js'].be['" + pB + "'][0]"), equalTo(brB[0]));//b
+        assertThat(engine.eval("jscover['test.js'].be['" + pB + "'][1]"), equalTo(brB[1]));
     }
 }

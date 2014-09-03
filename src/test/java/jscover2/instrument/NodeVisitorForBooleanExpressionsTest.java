@@ -9,9 +9,9 @@ import org.junit.Test;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-public class NodeVisitorForConditionsTest {
+public class NodeVisitorForBooleanExpressionsTest {
     private final SourceFile sourceFile = new SourceFile("test.js");
-    private NodeVisitorForConditions visitor = new NodeVisitorForConditions("jscover", sourceFile, false);
+    private NodeVisitorForBooleanExpressions visitor = new NodeVisitorForBooleanExpressions("jscover", sourceFile, false);
 
     @Test
     public void shouldWrapCondition() {
@@ -23,7 +23,7 @@ public class NodeVisitorForConditionsTest {
         visitor.visit(a);
         visitor.visit(b);
         CodePrinter.Builder builder = new CodePrinter.Builder(expressionResult);
-        assertThat(builder.build(), equalTo("jscover.dF(a,\"test.js\",1)||jscover.dF(b,\"test.js\",2)"));
+        assertThat(builder.build(), equalTo("jscover.beF(a,\"test.js\",1)||jscover.beF(b,\"test.js\",2)"));
     }
 
     @Test
@@ -44,7 +44,7 @@ public class NodeVisitorForConditionsTest {
         visitor.visit(a);
         visitor.visit(b);
         CodePrinter.Builder builder = new CodePrinter.Builder(expressionResult);
-        assertThat(builder.build(), equalTo("jscover.dF(a,\"test.js\",1)||jscover.dF(b,\"test.js\",2)"));
+        assertThat(builder.build(), equalTo("jscover.beF(a,\"test.js\",1)||jscover.beF(b,\"test.js\",2)"));
     }
 
     private void setSourceFile(Node expressionResult) {

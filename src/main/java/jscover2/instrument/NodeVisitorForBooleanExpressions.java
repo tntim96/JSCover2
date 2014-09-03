@@ -9,21 +9,21 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class NodeVisitorForConditions implements AstAlteredNodeCallback {
-    private static final Logger log = Logger.getLogger(NodeVisitorForConditions.class.getName());
+public class NodeVisitorForBooleanExpressions implements AstAlteredNodeCallback {
+    private static final Logger log = Logger.getLogger(NodeVisitorForBooleanExpressions.class.getName());
     private NodeHelper nodeHelper = new NodeHelper();
-    public List<Decision> branches = new ArrayList<>();
+    public List<BooleanExpression> branches = new ArrayList<>();
     private String coverVarName;
     private SourceFile sourceFile;
     private boolean excludeConditions;
 
-    public NodeVisitorForConditions(String coverVarName, SourceFile sourceFile, boolean excludeConditions) {
+    public NodeVisitorForBooleanExpressions(String coverVarName, SourceFile sourceFile, boolean excludeConditions) {
         this.coverVarName = coverVarName;
         this.sourceFile = sourceFile;
         this.excludeConditions = excludeConditions;
     }
 
-    public List<Decision> getBranches() {
+    public List<BooleanExpression> getBranches() {
         return branches;
     }
 
@@ -95,7 +95,7 @@ public class NodeVisitorForConditions implements AstAlteredNodeCallback {
 
     private void addBranchRecorder(Node node) {
         Node conditionNode = node.getFirstChild();
-        branches.add(new Decision(conditionNode, true));
+        branches.add(new BooleanExpression(conditionNode, true));
         Node wrapper = nodeHelper.wrapConditionNode(conditionNode, coverVarName, sourceFile.getName(), branches.size());
         node.replaceChild(conditionNode, wrapper);
     }
@@ -103,7 +103,7 @@ public class NodeVisitorForConditions implements AstAlteredNodeCallback {
     private void addConditionRecorder(Node n) {
         log.log(Level.FINEST, "----------------------------");
         log.log(Level.FINEST, "Wrapping {0}", n);
-        branches.add(new Decision(n,false));
+        branches.add(new BooleanExpression(n,false));
         Node parent = n.getParent();
         Node wrapper = nodeHelper.wrapConditionNode(n, coverVarName, sourceFile.getName(), branches.size());
         log.log(Level.FINEST, "Before\n{0}", parent.toStringTree());

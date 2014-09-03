@@ -29,7 +29,7 @@ public class StatementTest {
         assertThat(engine.eval(instrumented), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));
         assertThat(engine.eval("JSON.stringify(jscover['test.js'].sM)"), equalTo("{\"1\":{\"pos\":{\"line\":1,\"col\":0,\"len\":6}}}"));
-        assertThat(engine.eval("JSON.stringify(jscover['test.js'].dM)"), equalTo("{}"));
+        assertThat(engine.eval("JSON.stringify(jscover['test.js'].beM)"), equalTo("{}"));
         assertThat(engine.eval("JSON.stringify(jscover['test.js'].fM)"), equalTo("{}"));
     }
 }

@@ -15,7 +15,7 @@ import static java.lang.String.format;
 
 public class Instrumenter {
     private static final Logger log = Logger.getLogger(Instrumenter.class.getName());
-    private String decisionRecorderJS = "function(result, u, n) {if (result)this[u].d[''+n][0]++;else this[u].d[''+n][1]++;return result}";
+    private String decisionRecorderJS = "function(result, u, n) {if (result)this[u].be[''+n][0]++;else this[u].be[''+n][1]++;return result}";
     private String header;
     private Configuration config;
 
@@ -25,7 +25,7 @@ public class Instrumenter {
 
     public Instrumenter(Configuration config) {
         this.config = config;
-        this.header = format("if (!%s) var %s = {dF: %s};\n", config.getCoverVariableName(), config.getCoverVariableName(), decisionRecorderJS);
+        this.header = format("if (!%s) var %s = {beF: %s};\n", config.getCoverVariableName(), config.getCoverVariableName(), decisionRecorderJS);
     }
 
     public String instrument(String urlPath, String code) {
@@ -37,7 +37,7 @@ public class Instrumenter {
         NodeWalker nodeWalker = new NodeWalker();
         NodeVisitorForStatements statementsVisitor = new NodeVisitorForStatements(config.getCoverVariableName(), sourceFile);
         NodeVisitorForFunctions functionVisitor = new NodeVisitorForFunctions(config.getCoverVariableName(), sourceFile);
-        NodeVisitorForConditions conditionVisitor = new NodeVisitorForConditions(config.getCoverVariableName(), sourceFile, true);
+        NodeVisitorForBooleanExpressions conditionVisitor = new NodeVisitorForBooleanExpressions(config.getCoverVariableName(), sourceFile, true);
         conditionVisitor = instrument(sourceFile, jsRoot, nodeWalker, statementsVisitor, functionVisitor, conditionVisitor);
 
         log.log(Level.FINEST, "{0}", jsRoot.toStringTree());
@@ -47,7 +47,7 @@ public class Instrumenter {
         return header + body;
     }
 
-    private NodeVisitorForConditions instrument(SourceFile sourceFile, Node jsRoot, NodeWalker nodeWalker, NodeVisitorForStatements statementsVisitor, NodeVisitorForFunctions functionVisitor, NodeVisitorForConditions conditionVisitor) {
+    private NodeVisitorForBooleanExpressions instrument(SourceFile sourceFile, Node jsRoot, NodeWalker nodeWalker, NodeVisitorForStatements statementsVisitor, NodeVisitorForFunctions functionVisitor, NodeVisitorForBooleanExpressions conditionVisitor) {
         if (config.isIncludeStatements()) {
             nodeWalker.visit(jsRoot, statementsVisitor);
         }
@@ -55,7 +55,7 @@ public class Instrumenter {
             nodeWalker.visit(jsRoot, functionVisitor);
         }
         if (config.isIncludeBranches()) {
-            if (config.isIncludeDecisions()) {
+            if (config.isIncludeBooleanExpressions()) {
                 conditionVisitor = processConditions(sourceFile, jsRoot, nodeWalker);
             } else {
                 nodeWalker.visit(jsRoot, conditionVisitor);
@@ -64,8 +64,8 @@ public class Instrumenter {
         return conditionVisitor;
     }
 
-    private NodeVisitorForConditions processConditions(SourceFile sourceFile, Node jsRoot, NodeWalker nodeWalker) {
-        NodeVisitorForConditions conditionVisitor = new NodeVisitorForConditions(config.getCoverVariableName(), sourceFile, false);
+    private NodeVisitorForBooleanExpressions processConditions(SourceFile sourceFile, Node jsRoot, NodeWalker nodeWalker) {
+        NodeVisitorForBooleanExpressions conditionVisitor = new NodeVisitorForBooleanExpressions(config.getCoverVariableName(), sourceFile, false);
         int parses = 0;
         while (++parses <= config.getMaxParses()) {
             if (parses > 1)
@@ -82,12 +82,12 @@ public class Instrumenter {
         return conditionVisitor;
     }
 
-    private String buildHeader(String urlPath, NodeVisitorForStatements statementsVisitor, NodeVisitorForFunctions functionVisitor, NodeVisitorForConditions conditionVisitor, LineNumberTable lineNumberTable) {
+    private String buildHeader(String urlPath, NodeVisitorForStatements statementsVisitor, NodeVisitorForFunctions functionVisitor, NodeVisitorForBooleanExpressions conditionVisitor, LineNumberTable lineNumberTable) {
         StringBuilder sb = new StringBuilder(header);
         sb.append(format("if (!%s['%s']) {\n", config.getCoverVariableName(), urlPath));
         sb.append(format("  %s['%s'] = {\n", config.getCoverVariableName(), urlPath));
         addStatements(sb, statementsVisitor, lineNumberTable);
-        addBranches(sb, conditionVisitor, lineNumberTable);
+        addBooleanExpressions(sb, conditionVisitor, lineNumberTable);
         addFunctions(sb, functionVisitor, lineNumberTable);
         sb.append("  }\n");
         sb.append("}\n");
@@ -113,21 +113,21 @@ public class Instrumenter {
         sb.append("},\n");
     }
 
-    private void addBranches(StringBuilder sb, NodeVisitorForConditions nodeVisitor, LineNumberTable lineNumberTable) {
-        sb.append("    \"d\":{");
+    private void addBooleanExpressions(StringBuilder sb, NodeVisitorForBooleanExpressions nodeVisitor, LineNumberTable lineNumberTable) {
+        sb.append("    \"be\":{");
         for (int i = 1; i <= nodeVisitor.getBranches().size(); i++) {
             if (i > 1)
                 sb.append(",");
             sb.append(format("\"%d\":[0,0]", i));
         }
         sb.append("},\n");
-        sb.append("    \"dM\":{");
+        sb.append("    \"beM\":{");
         for (int i = 1; i <= nodeVisitor.getBranches().size(); i++) {
-            Decision decision = nodeVisitor.getBranches().get(i - 1);
+            BooleanExpression booleanExpression = nodeVisitor.getBranches().get(i - 1);
             if (i > 1)
                 sb.append(",");
-            int col = lineNumberTable.getColumn(decision.getNode().getSourceOffset());
-            sb.append(format("\"%d\":{\"pos\":{\"line\":%d,\"col\":%d,\"len\":%d},\"br\":\"%s\"}", i, decision.getNode().getLineno(), col, decision.getNode().getLength(), decision.isBranch()));
+            int col = lineNumberTable.getColumn(booleanExpression.getNode().getSourceOffset());
+            sb.append(format("\"%d\":{\"pos\":{\"line\":%d,\"col\":%d,\"len\":%d},\"br\":\"%s\"}", i, booleanExpression.getNode().getLineno(), col, booleanExpression.getNode().getLength(), booleanExpression.isBranch()));
         }
         sb.append("},\n");
     }

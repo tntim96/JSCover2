@@ -63,7 +63,7 @@ public class SwitchTest {
         assertThat(engine.eval("jscover['test.js'].s['3']"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['4']"), nullValue());
         assertThat(engine.eval("JSON.stringify(jscover['test.js'].sM)"), equalTo("{\"1\":{\"pos\":{\"line\":1,\"col\":0,\"len\":10}},\"2\":{\"pos\":{\"line\":2,\"col\":10,\"len\":10}},\"3\":{\"pos\":{\"line\":3,\"col\":11,\"len\":12}}}"));
-        assertThat(engine.eval("JSON.stringify(jscover['test.js'].dM)"), equalTo("{}"));
+        assertThat(engine.eval("JSON.stringify(jscover['test.js'].beM)"), equalTo("{}"));
         assertThat(engine.eval("JSON.stringify(jscover['test.js'].fM)"), equalTo("{}"));
     }
 }

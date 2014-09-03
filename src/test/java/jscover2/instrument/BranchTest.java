@@ -20,7 +20,7 @@ public class BranchTest {
     @Before
     public void before() throws ScriptException {
         config.setCoverVariableName("jscover");
-        config.setIncludeDecisions(false);
+        config.setIncludeBooleanExpressions(false);
         instrumenter = new Instrumenter(config);
         String code = "function condition(a, b, c) {\n" +
                 "    if ((a || b) && c)\n" +
@@ -40,10 +40,10 @@ public class BranchTest {
         assertThat(engine.eval("jscover['test.js'].s['4']"), equalTo(0));
         assertThat(engine.eval("jscover['test.js'].s['5']"), nullValue());
         assertThat(engine.eval("jscover['test.js'].f['1']"), equalTo(1));
-        assertThat(engine.eval("jscover['test.js'].dM['1'].br"), equalTo("true"));
-        assertThat(engine.eval("jscover['test.js'].dM['2']"), nullValue());
-        assertThat(engine.eval("jscover['test.js'].d['1'][0]"), equalTo(1));
-        assertThat(engine.eval("jscover['test.js'].d['1'][1]"), equalTo(0));
+        assertThat(engine.eval("jscover['test.js'].beM['1'].br"), equalTo("true"));
+        assertThat(engine.eval("jscover['test.js'].beM['2']"), nullValue());
+        assertThat(engine.eval("jscover['test.js'].be['1'][0]"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].be['1'][1]"), equalTo(0));
     }
 
     @Test
@@ -56,9 +56,9 @@ public class BranchTest {
         assertThat(engine.eval("jscover['test.js'].s['4']"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['5']"), nullValue());
         assertThat(engine.eval("jscover['test.js'].f['1']"), equalTo(1));
-        assertThat(engine.eval("jscover['test.js'].dM['1'].br"), equalTo("true"));
-        assertThat(engine.eval("jscover['test.js'].dM['2']"), nullValue());
-        assertThat(engine.eval("jscover['test.js'].d['1'][0]"), equalTo(0));
-        assertThat(engine.eval("jscover['test.js'].d['1'][1]"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].beM['1'].br"), equalTo("true"));
+        assertThat(engine.eval("jscover['test.js'].beM['2']"), nullValue());
+        assertThat(engine.eval("jscover['test.js'].be['1'][0]"), equalTo(0));
+        assertThat(engine.eval("jscover['test.js'].be['1'][1]"), equalTo(1));
     }
 }

@@ -28,7 +28,7 @@ public class InstrumenterTest {
         assertThat(engine.eval(instrumented), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));
         assertThat(engine.eval("JSON.stringify(jscover['test.js'].sM)"), equalTo("{\"1\":{\"pos\":{\"line\":1,\"col\":0,\"len\":6}}}"));
-        assertThat(engine.eval("JSON.stringify(jscover['test.js'].dM)"), equalTo("{}"));
+        assertThat(engine.eval("JSON.stringify(jscover['test.js'].beM)"), equalTo("{}"));
         assertThat(engine.eval("JSON.stringify(jscover['test.js'].fM)"), equalTo("{}"));
     }
 
@@ -106,8 +106,8 @@ public class InstrumenterTest {
         assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['2']"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['3']"), equalTo(0));
-        assertThat(engine.eval("jscover['test.js'].d['1'][0]"), equalTo(0));
-        assertThat(engine.eval("jscover['test.js'].d['1'][1]"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].be['1'][0]"), equalTo(0));
+        assertThat(engine.eval("jscover['test.js'].be['1'][1]"), equalTo(1));
     }
 
     @Test
@@ -119,7 +119,7 @@ public class InstrumenterTest {
         assertThat(engine.eval("jscover['test.js'].s['3']"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].f['1']"), equalTo(1));
         assertThat(engine.eval("JSON.stringify(jscover['test.js'].sM)"), equalTo("{\"1\":{\"pos\":{\"line\":1,\"col\":0,\"len\":32}},\"2\":{\"pos\":{\"line\":2,\"col\":2,\"len\":11}},\"3\":{\"pos\":{\"line\":4,\"col\":0,\"len\":6}}}"));
-        assertThat(engine.eval("JSON.stringify(jscover['test.js'].dM)"), equalTo("{}"));
+        assertThat(engine.eval("JSON.stringify(jscover['test.js'].beM)"), equalTo("{}"));
         assertThat(engine.eval("JSON.stringify(jscover['test.js'].fM)"), equalTo("{\"1\":{\"pos\":{\"line\":1,\"col\":0,\"len\":32}}}"));
     }
 
@@ -141,8 +141,8 @@ public class InstrumenterTest {
         assertThat(engine.eval("jscover['test.js'].s['2']"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['3']"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['4']"), equalTo(0));
-        assertThat(engine.eval("jscover['test.js'].d['1'][0]"), equalTo(1));
-        assertThat(engine.eval("jscover['test.js'].d['1'][1]"), equalTo(0));
+        assertThat(engine.eval("jscover['test.js'].be['1'][0]"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].be['1'][1]"), equalTo(0));
     }
 
     @Test
@@ -154,8 +154,8 @@ public class InstrumenterTest {
         assertThat(engine.eval("jscover['test.js'].s['2']"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['3']"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['4']"), equalTo(0));
-        assertThat(engine.eval("jscover['test.js'].d['1'][0]"), equalTo(1));
-        assertThat(engine.eval("jscover['test.js'].d['1'][1]"), equalTo(0));
+        assertThat(engine.eval("jscover['test.js'].be['1'][0]"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].be['1'][1]"), equalTo(0));
     }
 
     @Test
@@ -168,18 +168,18 @@ public class InstrumenterTest {
         assertThat(engine.eval("jscover['test.js'].s['4']"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['5']"), equalTo(0));
         assertThat(engine.eval("jscover['test.js'].s['6']"), equalTo(1));
-        assertThat(engine.eval("jscover['test.js'].d['1'][0]"), equalTo(0));
-        assertThat(engine.eval("jscover['test.js'].d['1'][1]"), equalTo(1));
-        assertThat(engine.eval("jscover['test.js'].d['2'][0]"), equalTo(0));
-        assertThat(engine.eval("jscover['test.js'].d['2'][1]"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].be['1'][0]"), equalTo(0));
+        assertThat(engine.eval("jscover['test.js'].be['1'][1]"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].be['2'][0]"), equalTo(0));
+        assertThat(engine.eval("jscover['test.js'].be['2'][1]"), equalTo(1));
     }
 
     @Test
     public void shouldCreateBranchDataSet() throws ScriptException {
         String instrumented = instrumenter.instrument("test.js", "var x = 0;\nif (x < 0)\n  x++;");
         engine.eval(instrumented);
-        assertThat(engine.eval("jscover['test.js'].dM['1'].pos.line"), equalTo(2));
-        assertThat(engine.eval("jscover['test.js'].dM['1'].pos.col"), equalTo(4));
-        assertThat(engine.eval("jscover['test.js'].dM['1'].pos.len"), equalTo(5));
+        assertThat(engine.eval("jscover['test.js'].beM['1'].pos.line"), equalTo(2));
+        assertThat(engine.eval("jscover['test.js'].beM['1'].pos.col"), equalTo(4));
+        assertThat(engine.eval("jscover['test.js'].beM['1'].pos.len"), equalTo(5));
     }
 }

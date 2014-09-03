@@ -5,13 +5,14 @@ import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import java.util.HashSet;
 import java.util.Set;
 
+import static jscover2.report.Constants.zero;
+
 public class CoverageSummaryData {
-    private final Integer zero = new Integer(0);
-    private CoverageItem statements;
-    private CoverageItem lines;
-    private CoverageItem functions;
-    private CoverageItem branches;
-    private CoverageItem booleanExpressions;
+    private CoverageSummaryItem statements;
+    private CoverageSummaryItem lines;
+    private CoverageSummaryItem functions;
+    private CoverageSummaryItem branches;
+    private CoverageSummaryItem booleanExpressions;
 
     public CoverageSummaryData(ScriptObjectMirror mirror) {
         processStatements(mirror);
@@ -34,8 +35,8 @@ public class CoverageSummaryData {
                 linesCovered.add(line);
             }
         }
-        statements = new CoverageItem(totalStatements, coveredStatements);
-        lines = new CoverageItem(linesTotal.size(), linesCovered.size());
+        statements = new CoverageSummaryItem(totalStatements, coveredStatements);
+        lines = new CoverageSummaryItem(linesTotal.size(), linesCovered.size());
     }
 
     private void processBooleanExpressions(ScriptObjectMirror mirror) {
@@ -60,8 +61,8 @@ public class CoverageSummaryData {
                     branchesCovered++;
             }
         }
-        booleanExpressions = new CoverageItem(totalBEs, coveredBEs);
-        branches = new CoverageItem(branchesTotal, branchesCovered);
+        booleanExpressions = new CoverageSummaryItem(totalBEs, coveredBEs);
+        branches = new CoverageSummaryItem(branchesTotal, branchesCovered);
     }
 
     private void processFunctions(ScriptObjectMirror mirror) {
@@ -72,26 +73,26 @@ public class CoverageSummaryData {
             if (!zero.equals(data.get(count)))
                 covered++;
         }
-        functions = new CoverageItem(total, covered);
+        functions = new CoverageSummaryItem(total, covered);
     }
 
-    public CoverageItem getStatements() {
+    public CoverageSummaryItem getStatements() {
         return statements;
     }
 
-    public CoverageItem getLines() {
+    public CoverageSummaryItem getLines() {
         return lines;
     }
 
-    public CoverageItem getFunctions() {
+    public CoverageSummaryItem getFunctions() {
         return functions;
     }
 
-    public CoverageItem getBranches() {
+    public CoverageSummaryItem getBranches() {
         return branches;
     }
 
-    public CoverageItem getBooleanExpressions() {
+    public CoverageSummaryItem getBooleanExpressions() {
         return booleanExpressions;
     }
 }

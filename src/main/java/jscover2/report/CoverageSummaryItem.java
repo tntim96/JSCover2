@@ -1,10 +1,10 @@
 package jscover2.report;
 
-public class CoverageItem {
+public class CoverageSummaryItem {
     private int total;
     private int covered;
 
-    public CoverageItem(int total, int covered) {
+    public CoverageSummaryItem(int total, int covered) {
         this.total = total;
         this.covered = covered;
     }

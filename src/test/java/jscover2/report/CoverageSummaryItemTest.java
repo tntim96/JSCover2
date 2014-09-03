@@ -5,10 +5,10 @@ import org.junit.Test;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;
 
-public class CoverageItemTest {
+public class CoverageSummaryItemTest {
     @Test
     public void shouldCalculateCoverageRatio() {
-        CoverageItem coverageItem = new CoverageItem(100, 25);
-        assertThat(coverageItem.getRatio(), equalTo(.25f));
+        CoverageSummaryItem coverageSummaryItem = new CoverageSummaryItem(100, 25);
+        assertThat(coverageSummaryItem.getRatio(), equalTo(.25f));
     }
 }

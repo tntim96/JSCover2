@@ -146,6 +146,8 @@ public class FileDataTest {
         int pB = getConditionNumber(beM, 14, 1);
         int pC = getConditionNumber(beM, 20, 1);
 
+        assertThat(fileData.getBranches().size(), is(1));
+        assertThat(fileData.getBranches().iterator().next(), is(fileData.getBooleanExpressions().get(pABC)));
         assertThat(fileData.getBooleanExpressions().size(), is(5));
         assertThat(fileData.getBooleanExpressions().get(pABC).isBranch(), is(true));
         assertThat(fileData.getBooleanExpressions().get(pABC).getPosition().getLine(), is(2));

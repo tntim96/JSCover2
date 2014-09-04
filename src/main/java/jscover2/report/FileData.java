@@ -2,16 +2,17 @@ package jscover2.report;
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
-import java.util.*;
-
-import static jscover2.report.Constants.zero;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class FileData {
     private List<CoverageData> statements = new ArrayList<>();
     private List<LineData> lines = new ArrayList<>();
     private List<CoverageData> functions = new ArrayList<>();
     private List<BooleanExpressionData> booleanExpressions = new ArrayList<>();
-    //TODO and simple branch data
+    private List<BooleanExpressionData> branches = new ArrayList<>();
 
     public FileData(ScriptObjectMirror mirror) {
         processStatements(mirror);
@@ -48,12 +49,15 @@ public class FileData {
         ScriptObjectMirror data = (ScriptObjectMirror) mirror.get("be");
         ScriptObjectMirror map = (ScriptObjectMirror) mirror.get("beM");
         for (String count : data.keySet()) {
-            int trueHits = (int) ((ScriptObjectMirror)data.get(count)).get(0);
-            int falseHits = (int) ((ScriptObjectMirror)data.get(count)).get(1);
+            int trueHits = (int) ((ScriptObjectMirror) data.get(count)).get(0);
+            int falseHits = (int) ((ScriptObjectMirror) data.get(count)).get(1);
             ScriptObjectMirror pos = (ScriptObjectMirror) ((ScriptObjectMirror) map.get(count)).get("pos");
             PositionData positionData = new PositionData(pos);
             boolean branch = ((ScriptObjectMirror) map.get(count)).get("br").equals("true");
-        booleanExpressions.add(new BooleanExpressionData(falseHits, trueHits, positionData, branch));
+            BooleanExpressionData be = new BooleanExpressionData(falseHits, trueHits, positionData, branch);
+            booleanExpressions.add(be);
+            if (branch)
+                branches.add(be);
         }
     }
 
@@ -71,5 +75,9 @@ public class FileData {
 
     public List<BooleanExpressionData> getBooleanExpressions() {
         return booleanExpressions;
+    }
+
+    public List<BooleanExpressionData> getBranches() {
+        return branches;
     }
 }

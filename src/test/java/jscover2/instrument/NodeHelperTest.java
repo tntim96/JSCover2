@@ -34,6 +34,14 @@ public class NodeHelperTest {
     }
 
     @Test
+    public void shouldCreateBranchIncrementNode() throws IOException {
+        Node expected = parse("coverVar['urlPath'].b['7'][4]++;");
+        Node actual = nodeHelper.createBranchIncrementNode("coverVar", "urlPath", 7, 4);
+
+        assertThat(new CodePrinter.Builder(actual).build(), equalTo(new CodePrinter.Builder(expected).build()));
+    }
+
+    @Test
     public void shouldWrapConditionNode() throws IOException {
         Node node = new Node(Token.LT);
         node.addChildToFront(Node.newString(Token.NAME, "x"));

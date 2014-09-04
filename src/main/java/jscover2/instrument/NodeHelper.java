@@ -12,15 +12,29 @@ public class NodeHelper {
         return createIncrementNode(coverVarName, urlPath, "f", i);
     }
 
-    private Node createIncrementNode(String coverVarName, String urlPath, String prop, int i) {
+    private Node createIncrementNode(String coverVarName, String urlPath, String propName, int i) {
+        Node getNumber = getCoverageNode(coverVarName, urlPath, propName, i);
+        Node inc = new Node(Token.INC, getNumber);
+        inc.putBooleanProp(Node.INCRDECR_PROP, true);
+        return new Node(Token.EXPR_RESULT, inc);
+    }
+
+    private Node getCoverageNode(String coverVarName, String urlPath, String propName, int i) {
         Node coverVar = Node.newString(Token.NAME, coverVarName);
         Node path = Node.newString(Token.STRING, urlPath);
-        Node elementGet = new Node(Token.GETELEM, coverVar, path);
-        Node statementProp = Node.newString(Token.STRING, prop);
-        Node propGet = new Node(Token.GETPROP, elementGet, statementProp);
-        Node statementNumber = Node.newString(Token.STRING, "" + i);
-        Node elementGet2 = new Node(Token.GETELEM, propGet, statementNumber);
-        Node inc = new Node(Token.INC, elementGet2);
+        Node getURI = new Node(Token.GETELEM, coverVar, path);
+        Node prop = Node.newString(Token.STRING, propName);
+        Node propGet = new Node(Token.GETPROP, getURI, prop);
+        Node number = Node.newString(Token.STRING, "" + i);
+        return new Node(Token.GETELEM, propGet, number);
+    }
+
+    public Node createBranchIncrementNode(String coverVarName, String urlPath, int branchNumber, int pathNumber) {
+        Node getNumber = getCoverageNode(coverVarName, urlPath, "b", branchNumber);
+        Node path = Node.newNumber(pathNumber);
+        Node getPath = new Node(Token.GETELEM, getNumber, path);
+
+        Node inc = new Node(Token.INC, getPath);
         inc.putBooleanProp(Node.INCRDECR_PROP, true);
         return new Node(Token.EXPR_RESULT, inc);
     }

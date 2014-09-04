@@ -60,7 +60,7 @@ public class BooleanExpressionTest {
     private void verify(int[] brABC, int[] brAB, int[] brA, int[] brB, int[] brC, int calls) throws ScriptException {
         /*
         "beM":{
-        "1":{"pos":{"line":2,"col":12,"len":13}},//all
+        "1":{"pos":{"line":2,"col":12,"len":13}},//abc
         "2":{"pos":{"line":2,"col":13,"len":6}}, //a||b
         "3":{"pos":{"line":2,"col":13,"len":1}}, //a
         "4":{"pos":{"line":2,"col":24,"len":1}}, //c

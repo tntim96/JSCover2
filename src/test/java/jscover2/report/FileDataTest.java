@@ -11,6 +11,10 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static java.lang.String.format;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -62,6 +66,7 @@ public class FileDataTest {
         engine.eval(instrumented);
         ScriptObjectMirror json = (ScriptObjectMirror) engine.eval("jscover['test.js']");
         FileData fileData = new FileData(json);
+
         assertThat(fileData.getStatements().size(), is(2));
         assertThat(fileData.getStatements().get(0).getHits(), is(1));
         assertThat(fileData.getStatements().get(0).getPosition().getLine(), is(1));
@@ -110,5 +115,103 @@ public class FileDataTest {
         fileData = new FileData(json);
         assertThat(fileData.getFunctions().get(0).getHits(), is(1));
         assertThat(fileData.getFunctions().get(1).getHits(), is(1));
+    }
+
+    @Test
+    public void shouldCalculateBooleanExpressionAndBranchCoverage() throws Exception {
+        String code = "function condition(a, b, c) {\n" +
+                "    if ((a || b) && c)\n" +
+                "        return true;\n" +
+                "    else;\n" +
+                "        return false;\n" +
+                "}";
+        String instrumented = instrumenter.instrument("test.js", code);
+        engine.eval(instrumented);
+        ScriptObjectMirror json = (ScriptObjectMirror) engine.eval("jscover['test.js']");
+        FileData fileData = new FileData(json);
+        
+        /*
+        "beM":{
+        "1":{"pos":{"line":2,"col":8,"len":13},"br":"true"},//abc
+        "2":{"pos":{"line":2,"col":9,"len":6},"br":"false"},//a||b
+        "3":{"pos":{"line":2,"col":9,"len":1},"br":"false"},//a
+        "4":{"pos":{"line":2,"col":20,"len":1},"br":"false"},//c
+        "5":{"pos":{"line":2,"col":14,"len":1},"br":"false"}},//b      
+         */
+
+        String beM = (String) engine.eval("JSON.stringify(jscover['test.js'].beM)");
+        int pABC = getConditionNumber(beM, 8, 13);
+        int pAB = getConditionNumber(beM, 9, 6);
+        int pA = getConditionNumber(beM, 9, 1);
+        int pB = getConditionNumber(beM, 14, 1);
+        int pC = getConditionNumber(beM, 20, 1);
+
+        assertThat(fileData.getBooleanExpressions().size(), is(5));
+        assertThat(fileData.getBooleanExpressions().get(pABC).isBranch(), is(true));
+        assertThat(fileData.getBooleanExpressions().get(pABC).getPosition().getLine(), is(2));
+        assertThat(fileData.getBooleanExpressions().get(pABC).getPosition().getColumn(), is(8));
+        assertThat(fileData.getBooleanExpressions().get(pABC).getPosition().getLength(), is(13));
+        assertThat(fileData.getBooleanExpressions().get(pABC).getFalseHits(), is(0));
+        assertThat(fileData.getBooleanExpressions().get(pABC).getTrueHits(), is(0));
+        assertThat(fileData.getBooleanExpressions().get(pAB).getFalseHits(), is(0));
+        assertThat(fileData.getBooleanExpressions().get(pAB).getTrueHits(), is(0));
+        assertThat(fileData.getBooleanExpressions().get(pA).getFalseHits(), is(0));
+        assertThat(fileData.getBooleanExpressions().get(pA).getTrueHits(), is(0));
+        assertThat(fileData.getBooleanExpressions().get(pB).getFalseHits(), is(0));
+        assertThat(fileData.getBooleanExpressions().get(pB).getTrueHits(), is(0));
+        assertThat(fileData.getBooleanExpressions().get(pC).getFalseHits(), is(0));
+        assertThat(fileData.getBooleanExpressions().get(pC).getTrueHits(), is(0));
+
+        assertThat(invocable.invokeFunction("condition", false, false, true), is(false));
+        json = (ScriptObjectMirror) engine.eval("jscover['test.js']");
+        fileData = new FileData(json);
+        assertThat(fileData.getBooleanExpressions().get(pABC).getTrueHits(), is(0));
+        assertThat(fileData.getBooleanExpressions().get(pABC).getFalseHits(), is(1));
+        assertThat(fileData.getBooleanExpressions().get(pAB).getTrueHits(), is(0));
+        assertThat(fileData.getBooleanExpressions().get(pAB).getFalseHits(), is(1));
+        assertThat(fileData.getBooleanExpressions().get(pA).getTrueHits(), is(0));
+        assertThat(fileData.getBooleanExpressions().get(pA).getFalseHits(), is(1));
+        assertThat(fileData.getBooleanExpressions().get(pB).getTrueHits(), is(0));
+        assertThat(fileData.getBooleanExpressions().get(pB).getFalseHits(), is(1));
+        assertThat(fileData.getBooleanExpressions().get(pC).getTrueHits(), is(0));
+        assertThat(fileData.getBooleanExpressions().get(pC).getFalseHits(), is(0));
+
+        assertThat(invocable.invokeFunction("condition", true, false, true), is(true));
+        json = (ScriptObjectMirror) engine.eval("jscover['test.js']");
+        fileData = new FileData(json);
+        assertThat(fileData.getBooleanExpressions().get(pABC).getTrueHits(), is(1));
+        assertThat(fileData.getBooleanExpressions().get(pABC).getFalseHits(), is(1));
+        assertThat(fileData.getBooleanExpressions().get(pAB).getTrueHits(), is(1));
+        assertThat(fileData.getBooleanExpressions().get(pAB).getFalseHits(), is(1));
+        assertThat(fileData.getBooleanExpressions().get(pA).getTrueHits(), is(1));
+        assertThat(fileData.getBooleanExpressions().get(pA).getFalseHits(), is(1));
+        assertThat(fileData.getBooleanExpressions().get(pB).getTrueHits(), is(0));
+        assertThat(fileData.getBooleanExpressions().get(pB).getFalseHits(), is(1));
+        assertThat(fileData.getBooleanExpressions().get(pC).getTrueHits(), is(1));
+        assertThat(fileData.getBooleanExpressions().get(pC).getFalseHits(), is(0));
+
+        assertThat(invocable.invokeFunction("condition", false, true, false), is(false));
+        json = (ScriptObjectMirror) engine.eval("jscover['test.js']");
+        fileData = new FileData(json);
+        assertThat(fileData.getBooleanExpressions().get(pABC).getTrueHits(), is(1));
+        assertThat(fileData.getBooleanExpressions().get(pABC).getFalseHits(), is(2));
+        assertThat(fileData.getBooleanExpressions().get(pAB).getTrueHits(), is(2));
+        assertThat(fileData.getBooleanExpressions().get(pAB).getFalseHits(), is(1));
+        assertThat(fileData.getBooleanExpressions().get(pA).getTrueHits(), is(1));
+        assertThat(fileData.getBooleanExpressions().get(pA).getFalseHits(), is(2));
+        assertThat(fileData.getBooleanExpressions().get(pB).getTrueHits(), is(1));
+        assertThat(fileData.getBooleanExpressions().get(pB).getFalseHits(), is(1));
+        assertThat(fileData.getBooleanExpressions().get(pC).getTrueHits(), is(1));
+        assertThat(fileData.getBooleanExpressions().get(pC).getFalseHits(), is(1));
+    }
+
+
+    private int getConditionNumber(String json, int column, int length) {
+        String regex = format("^.*\"(\\d+)\":\\{\"pos\":\\{\"line\":2,\"col\":%d,\"len\":%d}.*$", column, length);
+        Pattern pattern = Pattern.compile(regex);
+        Matcher m = pattern.matcher(json);
+        if (m.matches())
+            return new Integer(m.group(1))-1;
+        throw new RuntimeException();
     }
 }

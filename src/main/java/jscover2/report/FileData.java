@@ -10,10 +10,13 @@ public class FileData {
     private List<CoverageData> statements = new ArrayList<>();
     private List<LineData> lines = new ArrayList<>();
     private List<CoverageData> functions = new ArrayList<>();
+    private List<BooleanExpressionData> booleanExpressions = new ArrayList<>();
+    //TODO and simple branch data
 
     public FileData(ScriptObjectMirror mirror) {
         processStatements(mirror);
         processFunctions(mirror);
+        processBooleanExpressions(mirror);
     }
 
     private void processStatements(ScriptObjectMirror mirror) {
@@ -41,6 +44,19 @@ public class FileData {
         }
     }
 
+    private void processBooleanExpressions(ScriptObjectMirror mirror) {
+        ScriptObjectMirror data = (ScriptObjectMirror) mirror.get("be");
+        ScriptObjectMirror map = (ScriptObjectMirror) mirror.get("beM");
+        for (String count : data.keySet()) {
+            int trueHits = (int) ((ScriptObjectMirror)data.get(count)).get(0);
+            int falseHits = (int) ((ScriptObjectMirror)data.get(count)).get(1);
+            ScriptObjectMirror pos = (ScriptObjectMirror) ((ScriptObjectMirror) map.get(count)).get("pos");
+            PositionData positionData = new PositionData(pos);
+            boolean branch = ((ScriptObjectMirror) map.get(count)).get("br").equals("true");
+        booleanExpressions.add(new BooleanExpressionData(falseHits, trueHits, positionData, branch));
+        }
+    }
+
     public List<CoverageData> getStatements() {
         return statements;
     }
@@ -51,5 +67,9 @@ public class FileData {
 
     public List<CoverageData> getFunctions() {
         return functions;
+    }
+
+    public List<BooleanExpressionData> getBooleanExpressions() {
+        return booleanExpressions;
     }
 }

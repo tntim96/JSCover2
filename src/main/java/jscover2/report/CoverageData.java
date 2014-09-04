@@ -1,10 +1,10 @@
 package jscover2.report;
 
-public class StatementData {
+public class CoverageData {
     private int hits;
     private PositionData position;
 
-    public StatementData(int hits, PositionData position) {
+    public CoverageData(int hits, PositionData position) {
         this.hits = hits;
         this.position = position;
     }

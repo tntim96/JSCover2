@@ -4,12 +4,16 @@ import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
 import java.util.*;
 
+import static jscover2.report.Constants.zero;
+
 public class FileData {
-    private List<StatementData> statements = new ArrayList<>();
+    private List<CoverageData> statements = new ArrayList<>();
     private List<LineData> lines = new ArrayList<>();
+    private List<CoverageData> functions = new ArrayList<>();
 
     public FileData(ScriptObjectMirror mirror) {
         processStatements(mirror);
+        processFunctions(mirror);
     }
 
     private void processStatements(ScriptObjectMirror mirror) {
@@ -19,21 +23,33 @@ public class FileData {
         for (String count : data.keySet()) {
             int hits = (int) data.get(count);
             ScriptObjectMirror pos = (ScriptObjectMirror) ((ScriptObjectMirror) map.get(count)).get("pos");
-            int line = (int) pos.get("line");
-            int column = (int) pos.get("col");
-            int length = (int) pos.get("len");
-            PositionData positionData = new PositionData(line, column, length);
-            statements.add(new StatementData(hits, positionData));
-            if (processedLines.add(line))
-                lines.add(new LineData(hits, line));
+            PositionData positionData = new PositionData(pos);
+            statements.add(new CoverageData(hits, positionData));
+            if (processedLines.add(positionData.getLine()))
+                lines.add(new LineData(hits, positionData.getLine()));
         }
     }
 
-    public List<StatementData> getStatements() {
+    private void processFunctions(ScriptObjectMirror mirror) {
+        ScriptObjectMirror data = (ScriptObjectMirror) mirror.get("f");
+        ScriptObjectMirror map = (ScriptObjectMirror) mirror.get("fM");
+        for (String count : data.keySet()) {
+            int hits = (int) data.get(count);
+            ScriptObjectMirror pos = (ScriptObjectMirror) ((ScriptObjectMirror) map.get(count)).get("pos");
+            PositionData positionData = new PositionData(pos);
+            functions.add(new CoverageData(hits, positionData));
+        }
+    }
+
+    public List<CoverageData> getStatements() {
         return statements;
     }
 
     public List<LineData> getLines() {
         return lines;
+    }
+
+    public List<CoverageData> getFunctions() {
+        return functions;
     }
 }

@@ -1,14 +1,16 @@
 package jscover2.report;
 
+import jdk.nashorn.api.scripting.ScriptObjectMirror;
+
 public class PositionData {
     private int line;
     private int column;
     private int length;
 
-    protected PositionData(int line, int column, int length) {
-        this.line = line;
-        this.column = column;
-        this.length = length;
+    protected PositionData(ScriptObjectMirror pos) {
+        this.line = (int) pos.get("line");
+        this.column = (int) pos.get("col");
+        this.length = (int) pos.get("len");
     }
 
     public int getLine() {

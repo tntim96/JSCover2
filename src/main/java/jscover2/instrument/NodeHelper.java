@@ -51,6 +51,17 @@ public class NodeHelper {
         return call;
     }
 
+    public boolean isInstrumentation(Node n, String coverVarName) {
+        //if (n == null)
+        //    return false;
+        if (n.getSourceFileName() == null)
+            return true;
+        Node child = n.getFirstChild();
+        if (child !=null && child.isGetProp() && child.getFirstChild().getString().equals(coverVarName))
+            return true;
+        return false;
+    }
+
     public boolean isWrapped(Node node, String coverVarName) {
         Node parent = node.getParent();
         //if (parent == null)

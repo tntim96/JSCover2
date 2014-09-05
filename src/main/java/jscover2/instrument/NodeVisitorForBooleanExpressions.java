@@ -23,25 +23,25 @@ public class NodeVisitorForBooleanExpressions implements AstAlteredNodeCallback 
         this.excludeConditions = excludeConditions;
     }
 
-    public List<BooleanExpression> getBranches() {
+    public List<BooleanExpression> getBooleanExpressions() {
         return branches;
     }
 
     @Override
     public boolean visit(Node n) {
-        if (isInstrumentation(n)) {
+        if (nodeHelper.isInstrumentation(n, coverVarName)) {
             return false;
         }
         log.log(Level.FINEST, "Visiting {0}", n);
         if (isBranch(n) &&
-                !isInstrumentation(n.getFirstChild())) {
+                !nodeHelper.isInstrumentation(n.getFirstChild(), coverVarName)) {
             addBranchRecorder(n);
             return true;
         } else if (!excludeConditions) {
-            if (isBooleanJoin(n.getParent()) && !isInstrumentation(n.getParent())) {
+            if (isBooleanJoin(n.getParent()) && !nodeHelper.isInstrumentation(n.getParent(), coverVarName)) {
                 addConditionRecorder(n);
                 return true;
-            } else if (isBooleanTest(n) && !isInstrumentation(n.getParent())) {
+            } else if (isBooleanTest(n) && !nodeHelper.isInstrumentation(n.getParent(), coverVarName)) {
                 addConditionRecorder(n);
                 return true;
             }
@@ -81,17 +81,6 @@ public class NodeVisitorForBooleanExpressions implements AstAlteredNodeCallback 
             default:
                 return false;
         }
-    }
-
-    private boolean isInstrumentation(Node n) {
-        if (n == null)
-            return false;
-        if (n.getSourceFileName() == null)
-            return true;
-        Node child = n.getFirstChild();
-        if (child !=null && child.isGetProp() && child.getFirstChild().getString().equals(coverVarName))
-            return true;
-        return false;
     }
 
     private void addBranchRecorder(Node n) {

@@ -8,4 +8,6 @@
     <suppress checks="CyclomaticComplexity" files="instrument.NodeVisitorForStatements.java"/>
     <suppress checks="CyclomaticComplexity" files="instrument.NodeVisitorForBooleanExpressions.java"/>
     <suppress checks="MethodLength" files="report.CoverageSummaryData.java"/>
+    <suppress checks="MethodLength" files="instrument.Instrumenter.java"/>
+    <suppress checks="FileLength" files="instrument.Instrumenter.java"/>
 </suppressions>

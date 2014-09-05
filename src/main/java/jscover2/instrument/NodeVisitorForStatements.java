@@ -2,16 +2,16 @@ package jscover2.instrument;
 
 import com.google.javascript.jscomp.SourceFile;
 import com.google.javascript.rhino.Node;
-import com.google.javascript.rhino.Token;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Map;
 
 public class NodeVisitorForStatements implements NodeCallback {
     private NodeHelper nodeHelper = new NodeHelper();
     public List<Node> statements = new ArrayList<>();
+    public Map<Node, List<Node>> branches = new HashMap<>();
     private String coverVarName;
     private SourceFile sourceFile;
 
@@ -24,12 +24,31 @@ public class NodeVisitorForStatements implements NodeCallback {
         return statements;
     }
 
-    @Override
-    public void visit(Node n) {
-        if (isStatementToBeInstrumented(n))
-            addStatementRecorder(n);
+    public Map<Node, List<Node>> getBranches() {
+        return branches;
     }
 
+    @Override
+    public void visit(Node n) {
+        if (nodeHelper.isInstrumentation(n, coverVarName))
+            return;
+        if (isStatementToBeInstrumented(n))
+            addStatementRecorder(n);
+        else if (n.isCase() || n.isDefaultCase())
+            addCaseBranchRecorder(n);
+    }
+
+    private void addCaseBranchRecorder(Node n) {
+        Node switchNode = n.getParent();
+        if (!branches.containsKey(switchNode))
+            branches.put(switchNode, new ArrayList<>());
+        branches.get(switchNode).add(n);
+        int branchNumber = branches.size();
+        int pathArrayIndex = branches.get(switchNode).size()-1;
+        Node branchRecordingNode = nodeHelper.createBranchIncrementNode(coverVarName, sourceFile.getName(), branchNumber, pathArrayIndex);
+        Node block = n.getLastChild();
+        block.addChildToFront(branchRecordingNode);
+    }
 
     private boolean isStatementToBeInstrumented(Node n) {
         if (n.getParent() != null && !n.getParent().isBlock() && !n.getParent().isScript())

@@ -69,9 +69,9 @@ public class Instrumenter {
         int parses = 0;
         while (++parses <= config.getMaxParses()) {
             log.log(Level.FINEST, "Condition parse number {0}", parses);
-            int conditions = conditionVisitor.getBranches().size();
+            int conditions = conditionVisitor.getBooleanExpressions().size();
             nodeWalker.visitAndExitOnAstChange(jsRoot, conditionVisitor);
-            if (conditions == conditionVisitor.getBranches().size()) {
+            if (conditions == conditionVisitor.getBooleanExpressions().size()) {
                 log.log(Level.FINE, "No AST condition changes after parse {0}", parses);
                 break;
             }
@@ -86,6 +86,7 @@ public class Instrumenter {
         sb.append(format("if (!%s['%s']) {\n", config.getCoverVariableName(), urlPath));
         sb.append(format("  %s['%s'] = {\n", config.getCoverVariableName(), urlPath));
         addStatements(sb, statementsVisitor, lineNumberTable);
+        addBranches(sb, statementsVisitor, lineNumberTable);
         addBooleanExpressions(sb, conditionVisitor, lineNumberTable);
         addFunctions(sb, functionVisitor, lineNumberTable);
         sb.append("  }\n");
@@ -112,17 +113,58 @@ public class Instrumenter {
         sb.append("},\n");
     }
 
+    private void addBranches(StringBuilder sb, NodeVisitorForStatements nodeVisitor, LineNumberTable lineNumberTable) {
+        sb.append("    \"b\":{");
+        buildBranchProperty(sb, nodeVisitor);
+        buildBranchMap(sb, nodeVisitor, lineNumberTable);
+    }
+
+    private void buildBranchMap(StringBuilder sb, NodeVisitorForStatements nodeVisitor, LineNumberTable lineNumberTable) {
+        int i = 0;
+        for (Node parent : nodeVisitor.getBranches().keySet()) {
+            if (++i > 1)
+                sb.append(",");
+            sb.append(format("\"%d\":[", i));
+            int j = 0;
+            for (Node branch : nodeVisitor.getBranches().get(parent)) {
+                if (++j > 1)
+                    sb.append(",");
+                int col = lineNumberTable.getColumn(branch.getSourceOffset());
+                sb.append(format("{\"pos\":{\"line\":%d,\"col\":%d,\"len\":%d}}", branch.getLineno(), col, branch.getLength()));
+            }
+            sb.append("]\n");
+        }
+        sb.append("},\n");
+    }
+
+    private void buildBranchProperty(StringBuilder sb, NodeVisitorForStatements nodeVisitor) {
+        int i = 0;
+        for (Node parent : nodeVisitor.getBranches().keySet()) {
+            if (++i > 1)
+                sb.append(",");
+            sb.append(format("\"%d\":[", i));
+            for (int j = 1; j <= nodeVisitor.getBranches().get(parent).size(); j++) {
+                if (j > 1)
+                    sb.append(",");
+                sb.append("0");
+            }
+            sb.append("]");
+        }
+        sb.append("},\n");
+        sb.append("    \"bM\":{");
+    }
+
     private void addBooleanExpressions(StringBuilder sb, NodeVisitorForBooleanExpressions nodeVisitor, LineNumberTable lineNumberTable) {
         sb.append("    \"be\":{");
-        for (int i = 1; i <= nodeVisitor.getBranches().size(); i++) {
+        for (int i = 1; i <= nodeVisitor.getBooleanExpressions().size(); i++) {
             if (i > 1)
                 sb.append(",");
             sb.append(format("\"%d\":[0,0]", i));
         }
         sb.append("},\n");
         sb.append("    \"beM\":{");
-        for (int i = 1; i <= nodeVisitor.getBranches().size(); i++) {
-            BooleanExpression booleanExpression = nodeVisitor.getBranches().get(i - 1);
+        for (int i = 1; i <= nodeVisitor.getBooleanExpressions().size(); i++) {
+            BooleanExpression booleanExpression = nodeVisitor.getBooleanExpressions().get(i - 1);
             if (i > 1)
                 sb.append(",");
             int col = lineNumberTable.getColumn(booleanExpression.getNode().getSourceOffset());

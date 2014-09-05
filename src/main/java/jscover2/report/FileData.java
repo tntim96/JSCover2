@@ -12,12 +12,14 @@ public class FileData {
     private List<LineData> lines = new ArrayList<>();
     private List<CoverageData> functions = new ArrayList<>();
     private List<BooleanExpressionData> booleanExpressions = new ArrayList<>();
-    private List<BooleanExpressionData> branches = new ArrayList<>();
+    private List<BooleanExpressionData> booleanBranches = new ArrayList<>();
+    private List<CoverageData> branchPaths = new ArrayList<>();
 
     public FileData(ScriptObjectMirror mirror) {
         processStatements(mirror);
         processFunctions(mirror);
         processBooleanExpressions(mirror);
+        processBranchPaths(mirror);
     }
 
     private void processStatements(ScriptObjectMirror mirror) {
@@ -57,7 +59,23 @@ public class FileData {
             BooleanExpressionData be = new BooleanExpressionData(falseHits, trueHits, positionData, branch);
             booleanExpressions.add(be);
             if (branch)
-                branches.add(be);
+                booleanBranches.add(be);
+        }
+    }
+
+    private void processBranchPaths(ScriptObjectMirror mirror) {
+        ScriptObjectMirror data = (ScriptObjectMirror) mirror.get("b");
+        ScriptObjectMirror map = (ScriptObjectMirror) mirror.get("bM");
+        for (String count : data.keySet()) {
+            ScriptObjectMirror branchArray = (ScriptObjectMirror) map.get(count);
+            ScriptObjectMirror hitArray = (ScriptObjectMirror) data.get(count);
+            for (String index : hitArray.keySet()) {
+                ScriptObjectMirror branchMap = (ScriptObjectMirror) branchArray.get(index);
+                ScriptObjectMirror pos = (ScriptObjectMirror) branchMap.get("pos");
+                PositionData positionData = new PositionData(pos);
+                int hits = (Integer) hitArray.get(index);
+                branchPaths.add(new CoverageData(hits,positionData));
+            }
         }
     }
 
@@ -77,7 +95,11 @@ public class FileData {
         return booleanExpressions;
     }
 
-    public List<BooleanExpressionData> getBranches() {
-        return branches;
+    public List<BooleanExpressionData> getBooleanBranches() {
+        return booleanBranches;
+    }
+
+    public List<CoverageData> getBranchPaths() {
+        return branchPaths;
     }
 }

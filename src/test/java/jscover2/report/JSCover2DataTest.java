@@ -17,7 +17,6 @@ import static org.junit.Assert.*;
 
 public class JSCover2DataTest {
     private ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
-    private Invocable invocable = (Invocable) engine;
     private Configuration config = new Configuration();
     private Instrumenter instrumenter;
 

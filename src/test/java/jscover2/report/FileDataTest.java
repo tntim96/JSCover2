@@ -15,7 +15,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.lang.String.format;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 public class FileDataTest {
@@ -26,6 +26,7 @@ public class FileDataTest {
 
     @Before
     public void before() throws ScriptException {
+        engine.eval("jscover = null");//Should we need this - get errors without
         config.setCoverVariableName("jscover");
         instrumenter = new Instrumenter(config);
     }
@@ -146,8 +147,8 @@ public class FileDataTest {
         int pB = getConditionNumber(beM, 14, 1);
         int pC = getConditionNumber(beM, 20, 1);
 
-        assertThat(fileData.getBranches().size(), is(1));
-        assertThat(fileData.getBranches().iterator().next(), is(fileData.getBooleanExpressions().get(pABC)));
+        assertThat(fileData.getBooleanBranches().size(), is(1));
+        assertThat(fileData.getBooleanBranches().iterator().next(), is(fileData.getBooleanExpressions().get(pABC)));
         assertThat(fileData.getBooleanExpressions().size(), is(5));
         assertThat(fileData.getBooleanExpressions().get(pABC).isBranch(), is(true));
         assertThat(fileData.getBooleanExpressions().get(pABC).getPosition().getLine(), is(2));
@@ -207,6 +208,43 @@ public class FileDataTest {
         assertThat(fileData.getBooleanExpressions().get(pC).getFalseHits(), is(1));
     }
 
+    @Test
+    public void shouldCalculateBranchCoverage() throws Exception {
+        String code = "function sw1(x) {\nvar y; switch(x) {\ncase 1:\ncase 2:\ncase 3: return y = 'three'; break;\ncase 4: \nreturn y;\n}\n}\n"
+                + "function sw2(x) {\nvar y; switch(x) {default: y = 10}\nreturn y;\n}";
+        String instrumented = instrumenter.instrument("test.js", code);
+        engine.eval(instrumented);
+        ScriptObjectMirror json = (ScriptObjectMirror) engine.eval("jscover['test.js']");
+        FileData fileData = new FileData(json);
+        assertThat(fileData.getBranchPaths().size(), is(5));
+        assertThat(fileData.getBranchPaths().get(0).getHits(), is(0));
+        assertThat(fileData.getBranchPaths().get(1).getHits(), is(0));
+        assertThat(fileData.getBranchPaths().get(2).getHits(), is(0));
+        assertThat(fileData.getBranchPaths().get(3).getHits(), is(0));
+        assertThat(fileData.getBranchPaths().get(4).getHits(), is(0));
+
+        assertThat(invocable.invokeFunction("sw1", 2), equalTo("three"));
+        String jsonObj = (String)engine.eval("JSON.stringify(jscover)");
+        fileData = new FileData(json);
+        for (CoverageData bp : fileData.getBranchPaths()) {
+            if (bp.getPosition().getLine() == 3) assertThat(bp.getHits(), is(0));
+            if (bp.getPosition().getLine() == 4) assertThat(bp.getHits(), is(1));
+            if (bp.getPosition().getLine() == 5) assertThat(bp.getHits(), is(1));
+            if (bp.getPosition().getLine() == 6) assertThat(bp.getHits(), is(0));
+            if (bp.getPosition().getLine() == 11) assertThat(bp.getHits(), is(0));
+        }
+
+        assertThat(invocable.invokeFunction("sw2", 2), equalTo(10));
+        fileData = new FileData(json);
+        assertThat(fileData.getBranchPaths().get(4).getHits(), is(1));
+        for (CoverageData bp : fileData.getBranchPaths()) {
+            if (bp.getPosition().getLine() == 3) assertThat(bp.getHits(), is(0));
+            if (bp.getPosition().getLine() == 4) assertThat(bp.getHits(), is(1));
+            if (bp.getPosition().getLine() == 5) assertThat(bp.getHits(), is(1));
+            if (bp.getPosition().getLine() == 6) assertThat(bp.getHits(), is(0));
+            if (bp.getPosition().getLine() == 11) assertThat(bp.getHits(), is(1));
+        }
+    }
 
     private int getConditionNumber(String json, int column, int length) {
         String regex = format("^.*\"(\\d+)\":\\{\"pos\":\\{\"line\":2,\"col\":%d,\"len\":%d}.*$", column, length);

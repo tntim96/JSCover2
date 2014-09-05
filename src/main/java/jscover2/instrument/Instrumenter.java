@@ -25,7 +25,7 @@ public class Instrumenter {
 
     public Instrumenter(Configuration config) {
         this.config = config;
-        this.header = format("if (!%s) var %s = {beF: %s};\n", config.getCoverVariableName(), config.getCoverVariableName(), decisionRecorderJS);
+        this.header = format("if (!%s) var %s = {beF: %s}\n", config.getCoverVariableName(), config.getCoverVariableName(), decisionRecorderJS);
     }
 
     public String instrument(String urlPath, String code) {

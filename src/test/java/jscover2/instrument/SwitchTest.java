@@ -108,6 +108,9 @@ public class SwitchTest {
 
         assertThat(engine.eval("jscover['test.js'].bM['1'][0].pos.line"), equalTo(3));
         assertThat(engine.eval("jscover['test.js'].bM['2'][0].pos.line"), equalTo(11));
+        assertThat(engine.eval("jscover['test.js'].bM['1'][4]"), nullValue());
+        assertThat(engine.eval("jscover['test.js'].bM['2'][1]"), nullValue());
+        assertThat(engine.eval("jscover['test.js'].bM['3']"), nullValue());
 
         assertThat(invocable.invokeFunction("sw2", "anything"), equalTo(10));
         assertThat(engine.eval("jscover['test.js'].b['2'][0]"), equalTo(1));

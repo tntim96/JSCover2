@@ -121,10 +121,10 @@ public class Instrumenter {
 
     private void buildBranchMap(StringBuilder sb, NodeVisitorForStatements nodeVisitor, LineNumberTable lineNumberTable) {
         int i = 0;
-        for (Node parent : nodeVisitor.getBranches().keySet()) {
+        for (NodeWrapper parent : nodeVisitor.getBranches().keySet()) {
             if (++i > 1)
                 sb.append(",");
-            sb.append(format("\"%d\":[", i));
+            sb.append(format("\"%d\":[", parent.getId()));
             int j = 0;
             for (Node branch : nodeVisitor.getBranches().get(parent)) {
                 if (++j > 1)
@@ -132,17 +132,17 @@ public class Instrumenter {
                 int col = lineNumberTable.getColumn(branch.getSourceOffset());
                 sb.append(format("{\"pos\":{\"line\":%d,\"col\":%d,\"len\":%d}}", branch.getLineno(), col, branch.getLength()));
             }
-            sb.append("]\n");
+            sb.append("]");
         }
         sb.append("},\n");
     }
 
     private void buildBranchProperty(StringBuilder sb, NodeVisitorForStatements nodeVisitor) {
         int i = 0;
-        for (Node parent : nodeVisitor.getBranches().keySet()) {
+        for (NodeWrapper parent : nodeVisitor.getBranches().keySet()) {
             if (++i > 1)
                 sb.append(",");
-            sb.append(format("\"%d\":[", i));
+            sb.append(format("\"%d\":[", parent.getId()));
             for (int j = 1; j <= nodeVisitor.getBranches().get(parent).size(); j++) {
                 if (j > 1)
                     sb.append(",");

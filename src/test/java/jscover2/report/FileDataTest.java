@@ -26,7 +26,6 @@ public class FileDataTest {
 
     @Before
     public void before() throws ScriptException {
-        engine.eval("jscover = null");//Should we need this - get errors without
         config.setCoverVariableName("jscover");
         instrumenter = new Instrumenter(config);
     }
@@ -224,7 +223,6 @@ public class FileDataTest {
         assertThat(fileData.getBranchPaths().get(4).getHits(), is(0));
 
         assertThat(invocable.invokeFunction("sw1", 2), equalTo("three"));
-        String jsonObj = (String)engine.eval("JSON.stringify(jscover)");
         fileData = new FileData(json);
         for (CoverageData bp : fileData.getBranchPaths()) {
             if (bp.getPosition().getLine() == 3) assertThat(bp.getHits(), is(0));

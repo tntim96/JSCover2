@@ -11,7 +11,7 @@ import java.util.Map;
 public class NodeVisitorForStatements implements NodeCallback {
     private NodeHelper nodeHelper = new NodeHelper();
     public List<Node> statements = new ArrayList<>();
-    public Map<Node, List<Node>> branches = new HashMap<>();
+    public Map<NodeWrapper, List<Node>> branches = new HashMap<>();
     private String coverVarName;
     private SourceFile sourceFile;
 
@@ -24,7 +24,7 @@ public class NodeVisitorForStatements implements NodeCallback {
         return statements;
     }
 
-    public Map<Node, List<Node>> getBranches() {
+    public Map<NodeWrapper, List<Node>> getBranches() {
         return branches;
     }
 
@@ -40,11 +40,12 @@ public class NodeVisitorForStatements implements NodeCallback {
 
     private void addCaseBranchRecorder(Node n) {
         Node switchNode = n.getParent();
-        if (!branches.containsKey(switchNode))
-            branches.put(switchNode, new ArrayList<>());
-        branches.get(switchNode).add(n);
+        NodeWrapper nodeWrapper = new NodeWrapper(branches.size() + 1, switchNode);
+        if (!branches.containsKey(nodeWrapper))
+            branches.put(nodeWrapper, new ArrayList<>());
+        branches.get(nodeWrapper).add(n);
         int branchNumber = branches.size();
-        int pathArrayIndex = branches.get(switchNode).size()-1;
+        int pathArrayIndex = branches.get(nodeWrapper).size() - 1;
         Node branchRecordingNode = nodeHelper.createBranchIncrementNode(coverVarName, sourceFile.getName(), branchNumber, pathArrayIndex);
         Node block = n.getLastChild();
         block.addChildToFront(branchRecordingNode);

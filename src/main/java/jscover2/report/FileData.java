@@ -15,6 +15,8 @@ public class FileData {
     private List<BooleanExpressionData> booleanBranches = new ArrayList<>();
     private List<CoverageData> branchPaths = new ArrayList<>();
 
+    private FileData() {}
+
     public FileData(ScriptObjectMirror mirror) {
         processStatements(mirror);
         processFunctions(mirror);
@@ -66,9 +68,9 @@ public class FileData {
     private void processBranchPaths(ScriptObjectMirror mirror) {
         ScriptObjectMirror data = (ScriptObjectMirror) mirror.get("b");
         ScriptObjectMirror map = (ScriptObjectMirror) mirror.get("bM");
-        for (String count : data.keySet()) {
-            ScriptObjectMirror branchArray = (ScriptObjectMirror) map.get(count);
-            ScriptObjectMirror hitArray = (ScriptObjectMirror) data.get(count);
+        for (String indexProp : data.keySet()) {
+            ScriptObjectMirror branchArray = (ScriptObjectMirror) map.get(indexProp);
+            ScriptObjectMirror hitArray = (ScriptObjectMirror) data.get(indexProp);
             for (String index : hitArray.keySet()) {
                 ScriptObjectMirror branchMap = (ScriptObjectMirror) branchArray.get(index);
                 ScriptObjectMirror pos = (ScriptObjectMirror) branchMap.get("pos");

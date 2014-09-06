@@ -1,7 +1,13 @@
 package jscover2.report;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 public class CoverageSummaryData {
     private CoverageSummaryItem statements;
+    private CoverageSummaryItem lines;
 
     public CoverageSummaryData(FileData fileData) {
         processStatements(fileData);
@@ -12,15 +18,31 @@ public class CoverageSummaryData {
     }
 
     private void procesStatements(FileData fileData) {
-        int covered = 0;
+        Map<Integer, Boolean> linesHit = new HashMap<>();
+        int statementsCovered = 0;
         for (CoverageData coverageData : fileData.getStatements()) {
-            if (coverageData.getHits() > 0)
-                covered++;
+            int line = coverageData.getPosition().getLine();
+            if (!linesHit.keySet().contains(line))
+                linesHit.put(line, false);
+            if (coverageData.getHits() > 0) {
+                statementsCovered++;
+                linesHit.put(line, true);
+            }
         }
-        statements = new CoverageSummaryItem(fileData.getStatements().size(), covered);
+        int linesCovered = 0;
+        for (boolean hit : linesHit.values())
+            if (hit)
+                linesCovered++;
+
+        statements = new CoverageSummaryItem(fileData.getStatements().size(), statementsCovered);
+        lines = new CoverageSummaryItem(linesHit.size(), linesCovered);
     }
 
     public CoverageSummaryItem getStatements() {
         return statements;
+    }
+
+    public CoverageSummaryItem getLines() {
+        return lines;
     }
 }

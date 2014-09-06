@@ -22,7 +22,7 @@ public class CoverageSummaryDataTest {
                 .withStatementCoverage(new CoverageData(1, positionData))
                 .build();
         CoverageSummaryData summaryData = new CoverageSummaryData(fileData);
-        assertThat(summaryData.getStatements().getRatio(), equalTo(0.5f));
+        assertThat(summaryData.getStatementCoverage().getRatio(), equalTo(0.5f));
     }
 
     @Test
@@ -38,7 +38,7 @@ public class CoverageSummaryDataTest {
 
         CoverageSummaryData summaryData = new CoverageSummaryData(fileData);
 
-        assertThat(summaryData.getLines().getRatio(), equalTo(0.5f));
+        assertThat(summaryData.getLineCoverage().getRatio(), equalTo(0.5f));
     }
 
     @Test
@@ -54,7 +54,7 @@ public class CoverageSummaryDataTest {
 
         CoverageSummaryData summaryData = new CoverageSummaryData(fileData);
 
-        assertThat(summaryData.getLines().getRatio(), equalTo(1f));
+        assertThat(summaryData.getLineCoverage().getRatio(), equalTo(1f));
     }
 
     @Test
@@ -64,7 +64,7 @@ public class CoverageSummaryDataTest {
                 .withFunctionCoverage(new CoverageData(1, null))
                 .build();
         CoverageSummaryData summaryData = new CoverageSummaryData(fileData);
-        assertThat(summaryData.getFunctions().getRatio(), equalTo(0.5f));
+        assertThat(summaryData.getFunctionCoverage().getRatio(), equalTo(0.5f));
     }
 
     @Test
@@ -74,6 +74,6 @@ public class CoverageSummaryDataTest {
                 .withBooleanExpressionsCoverage(new BooleanExpressionData(1, 1, null, false))
                 .build();
         CoverageSummaryData summaryData = new CoverageSummaryData(fileData);
-        assertThat(summaryData.getBooleanExpressions().getRatio(), equalTo(0.5f));
+        assertThat(summaryData.getBooleanExpressionCoverage().getRatio(), equalTo(0.5f));
     }
 }

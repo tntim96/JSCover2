@@ -67,4 +67,13 @@ public class CoverageSummaryDataTest {
         assertThat(summaryData.getFunctions().getRatio(), equalTo(0.5f));
     }
 
+    @Test
+    public void shouldCalculateBooleanExpressionCoverage() {
+        FileData fileData = new FileDataBuilder()
+                .withBooleanExpressionsCoverage(new BooleanExpressionData(0, 0, null, false))
+                .withBooleanExpressionsCoverage(new BooleanExpressionData(1, 1, null, false))
+                .build();
+        CoverageSummaryData summaryData = new CoverageSummaryData(fileData);
+        assertThat(summaryData.getBooleanExpressions().getRatio(), equalTo(0.5f));
+    }
 }

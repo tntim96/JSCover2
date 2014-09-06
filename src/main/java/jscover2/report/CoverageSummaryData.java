@@ -7,10 +7,12 @@ public class CoverageSummaryData {
     private CoverageSummaryItem statements;
     private CoverageSummaryItem lines;
     private CoverageSummaryItem functions;
+    private CoverageSummaryItem booleanExpressions;
 
     public CoverageSummaryData(FileData fileData) {
         processStatements(fileData);
         processFunctions(fileData);
+        processBooleanExpressions(fileData);
     }
 
     private void processStatements(FileData fileData) {
@@ -42,6 +44,16 @@ public class CoverageSummaryData {
         functions = new CoverageSummaryItem(fileData.getFunctions().size(), covered);
     }
 
+    private void processBooleanExpressions(FileData fileData) {
+        int covered = 0;
+        for (BooleanExpressionData coverageData : fileData.getBooleanExpressions()) {
+            if (coverageData.getFalseHits() > 0 && coverageData.getTrueHits() > 0)
+                covered++;
+        }
+
+        booleanExpressions = new CoverageSummaryItem(fileData.getBooleanExpressions().size(), covered);
+    }
+
     public CoverageSummaryItem getStatements() {
         return statements;
     }
@@ -52,5 +64,9 @@ public class CoverageSummaryData {
 
     public CoverageSummaryItem getFunctions() {
         return functions;
+    }
+
+    public CoverageSummaryItem getBooleanExpressions() {
+        return booleanExpressions;
     }
 }

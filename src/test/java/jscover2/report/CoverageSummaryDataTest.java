@@ -56,4 +56,15 @@ public class CoverageSummaryDataTest {
 
         assertThat(summaryData.getLines().getRatio(), equalTo(1f));
     }
+
+    @Test
+    public void shouldCalculateFunctionCoverage() {
+        FileData fileData = new FileDataBuilder()
+                .withFunctionCoverage(new CoverageData(0, null))
+                .withFunctionCoverage(new CoverageData(1, null))
+                .build();
+        CoverageSummaryData summaryData = new CoverageSummaryData(fileData);
+        assertThat(summaryData.getFunctions().getRatio(), equalTo(0.5f));
+    }
+
 }

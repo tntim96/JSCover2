@@ -9,15 +9,22 @@ import java.util.List;
 
 public class FileDataBuilder {
     private List<CoverageData> statements = new ArrayList<>();
+    private List<CoverageData> functions = new ArrayList<>();
 
     public FileDataBuilder withStatementCoverage(CoverageData data) {
         this.statements.add(data);
         return this;
     }
 
+    public FileDataBuilder withFunctionCoverage(CoverageData data) {
+        this.functions.add(data);
+        return this;
+    }
+
     public FileData build() {
         FileData fileData = ReflectionUtils.newInstance(FileData.class);
         ReflectionUtils.setField(fileData, "statements", statements);
+        ReflectionUtils.setField(fileData, "functions", functions);
         return fileData;
     }
 }

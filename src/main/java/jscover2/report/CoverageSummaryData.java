@@ -9,11 +9,13 @@ public class CoverageSummaryData {
     private CoverageSummaryItem lineCoverage;
     private CoverageSummaryItem functionCoverage;
     private CoverageSummaryItem booleanExpressionCoverage;
+    private CoverageSummaryItem branchPathCoverage;
 
     public CoverageSummaryData(FileData fileData) {
         processStatements(fileData.getStatements());
         processFunctions(fileData.getFunctions());
         processBooleanExpressions(fileData.getBooleanExpressions());
+        calculateBranchPathCoverage(fileData.getBooleanBranches(), fileData.getBranchPaths());
     }
 
     private void processStatements(List<CoverageData> statements) {
@@ -45,13 +47,26 @@ public class CoverageSummaryData {
         functionCoverage = new CoverageSummaryItem(functions.size(), covered);
     }
 
-    private void processBooleanExpressions(List<BooleanExpressionData> booleanExpressions) {
+    private void calculateBranchPathCoverage(List<BooleanExpressionData> booleanBranches, List<CoverageData> branchPaths) {
         int covered = 0;
-        for (BooleanExpressionData coverageData : booleanExpressions) {
-            if (coverageData.getFalseHits() > 0 && coverageData.getTrueHits() > 0)
+        for (BooleanExpressionData coverageData : booleanBranches) {
+            if (coverageData.getFalseHits() > 0)
+                covered++;
+            if (coverageData.getTrueHits() > 0)
                 covered++;
         }
+        for (CoverageData coverageData : branchPaths)
+            if (coverageData.getHits() > 0)
+                covered++;
+        int total = booleanBranches.size() * 2 + branchPaths.size();
+        branchPathCoverage = new CoverageSummaryItem(total, covered);
+    }
 
+    private void processBooleanExpressions(List<BooleanExpressionData> booleanExpressions) {
+        int covered = 0;
+        for (BooleanExpressionData coverageData : booleanExpressions)
+            if (coverageData.getFalseHits() > 0 && coverageData.getTrueHits() > 0)
+                covered++;
         booleanExpressionCoverage = new CoverageSummaryItem(booleanExpressions.size(), covered);
     }
 
@@ -69,5 +84,9 @@ public class CoverageSummaryData {
 
     public CoverageSummaryItem getBooleanExpressionCoverage() {
         return booleanExpressionCoverage;
+    }
+
+    public CoverageSummaryItem getBranchPathCoverage() {
+        return branchPathCoverage;
     }
 }

@@ -76,4 +76,36 @@ public class CoverageSummaryDataTest {
         CoverageSummaryData summaryData = new CoverageSummaryData(fileData);
         assertThat(summaryData.getBooleanExpressionCoverage().getRatio(), equalTo(0.5f));
     }
+
+    @Test
+    public void shouldCalculateBranchPathCoverageWithBoolean() {
+        FileData fileData = new FileDataBuilder()
+                .withBooleanBranch(new BooleanExpressionData(0, 0, null, false))
+                .withBooleanBranch(new BooleanExpressionData(0, 1, null, false))
+                .build();
+        CoverageSummaryData summaryData = new CoverageSummaryData(fileData);
+        assertThat(summaryData.getBranchPathCoverage().getRatio(), equalTo(0.25f));
+    }
+
+    @Test
+    public void shouldCalculateBranchPathCoverageWithBranch() {
+        FileData fileData = new FileDataBuilder()
+                .withBranchPath(new CoverageData(0, positionData))
+                .withBranchPath(new CoverageData(1, positionData))
+                .build();
+        CoverageSummaryData summaryData = new CoverageSummaryData(fileData);
+        assertThat(summaryData.getBranchPathCoverage().getRatio(), equalTo(0.5f));
+    }
+
+    @Test
+    public void shouldCalculateBranchPathCoverageWithBooleanAndBranch() {
+        FileData fileData = new FileDataBuilder()
+                .withBooleanBranch(new BooleanExpressionData(1, 0, null, false))
+                .withBooleanBranch(new BooleanExpressionData(0, 1, null, false))
+                .withBranchPath(new CoverageData(0, positionData))
+                .withBranchPath(new CoverageData(1, positionData))
+                .build();
+        CoverageSummaryData summaryData = new CoverageSummaryData(fileData);
+        assertThat(summaryData.getBranchPathCoverage().getRatio(), equalTo(0.5f));
+    }
 }

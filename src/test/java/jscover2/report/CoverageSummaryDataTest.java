@@ -122,12 +122,14 @@ public class CoverageSummaryDataTest {
     public void shouldAdd() {
         CoverageSummaryData data1 = new CoverageSummaryDataBuilder()
                 .withStatementCoverage(1, 3)
+                .withLineCoverage(2, 6)
                 .withFunctionCoverage(10, 30)
                 .withBranchPath(100, 300)
                 .withBooleanExpressionsCoverage(1000, 3000)
                 .build();
         CoverageSummaryData data2 = new CoverageSummaryDataBuilder()
                 .withStatementCoverage(4, 7)
+                .withLineCoverage(8, 14)
                 .withFunctionCoverage(40, 70)
                 .withBranchPath(400, 700)
                 .withBooleanExpressionsCoverage(4000, 7000)
@@ -137,6 +139,9 @@ public class CoverageSummaryDataTest {
         assertThat(data1.getStatementCoverage().getCovered(), equalTo(5));
         assertThat(data1.getStatementCoverage().getTotal(), equalTo(10));
         assertThat(data1.getStatementCoverage().getRatio(), equalTo(0.5f));
+        assertThat(data1.getLineCoverage().getCovered(), equalTo(10));
+        assertThat(data1.getLineCoverage().getTotal(), equalTo(20));
+        assertThat(data1.getLineCoverage().getRatio(), equalTo(0.5f));
         assertThat(data1.getFunctionCoverage().getCovered(), equalTo(50));
         assertThat(data1.getFunctionCoverage().getTotal(), equalTo(100));
         assertThat(data1.getFunctionCoverage().getRatio(), equalTo(0.5f));

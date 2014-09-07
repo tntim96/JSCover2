@@ -7,6 +7,8 @@ public class JSCover2CoverageSummary {
     private Map<String, CoverageSummaryData> map = new HashMap<>();
     private CoverageSummaryData summary = new CoverageSummaryData();
 
+    private JSCover2CoverageSummary() {}
+
     public JSCover2CoverageSummary(JSCover2Data data) {
         for (String uriPath : data.getDataMap().keySet()) {
             FileData fileData = data.getDataMap().get(uriPath);

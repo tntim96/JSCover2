@@ -1,8 +1,5 @@
-package jscover2.instrument;
+package jscover2.report;
 
-import jscover2.report.BooleanExpressionData;
-import jscover2.report.CoverageData;
-import jscover2.report.FileData;
 import jscover2.utils.ReflectionUtils;
 
 import java.util.ArrayList;

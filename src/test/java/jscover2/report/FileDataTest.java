@@ -61,7 +61,7 @@ public class FileDataTest {
     }
 
     @Test
-    public void shouldCalculateStatementAndLineCoverageOSingleLine() throws Exception {
+    public void shouldCalculateStatementAndLineCoverageOnSingleLine() throws Exception {
         String instrumented = instrumenter.instrument("test.js", "function sq(x){return x * x;}");
         engine.eval(instrumented);
         ScriptObjectMirror json = (ScriptObjectMirror) engine.eval("jscover['test.js']");

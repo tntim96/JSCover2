@@ -77,6 +77,16 @@ public class CoverageSummaryDataTest {
     }
 
     @Test
+    public void shouldCalculateBooleanExpressionCoverageWithPartiallyEvaluatedPaths() {
+        FileData fileData = new FileDataBuilder()
+                .withBooleanExpressionsCoverage(new BooleanExpressionData(0, 1, null, false))
+                .withBooleanExpressionsCoverage(new BooleanExpressionData(1, 0, null, false))
+                .build();
+        CoverageSummaryData summaryData = new CoverageSummaryData(fileData);
+        assertThat(summaryData.getBooleanExpressionCoverage().getRatio(), equalTo(0f));
+    }
+
+    @Test
     public void shouldCalculateBranchPathCoverageWithBoolean() {
         FileData fileData = new FileDataBuilder()
                 .withBooleanBranch(new BooleanExpressionData(0, 0, null, false))

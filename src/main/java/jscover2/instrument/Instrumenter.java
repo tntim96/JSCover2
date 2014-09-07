@@ -15,7 +15,7 @@ import static java.lang.String.format;
 
 public class Instrumenter {
     private static final Logger log = Logger.getLogger(Instrumenter.class.getName());
-    private String decisionRecorderJS = "function(result, u, n) {if (result)this[u].be[''+n][0]++;else this[u].be[''+n][1]++;return result}";
+    private String booleanExpressionRecorderJS = "function(result, u, n) {if (result)this[u].be[''+n][0]++;else this[u].be[''+n][1]++;return result}";
     private String header;
     private Configuration config;
 
@@ -25,7 +25,7 @@ public class Instrumenter {
 
     public Instrumenter(Configuration config) {
         this.config = config;
-        this.header = format("if (!%s) var %s = {beF: %s}\n", config.getCoverVariableName(), config.getCoverVariableName(), decisionRecorderJS);
+        this.header = format("if (!%s) var %s = {beF: %s}\n", config.getCoverVariableName(), config.getCoverVariableName(), booleanExpressionRecorderJS);
     }
 
     public String instrument(String urlPath, String code) {

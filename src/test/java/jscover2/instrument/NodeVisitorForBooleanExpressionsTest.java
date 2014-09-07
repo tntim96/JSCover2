@@ -35,12 +35,6 @@ public class NodeVisitorForBooleanExpressionsTest {
         setSourceFile(expressionResult);
         visitor.visit(a);
         visitor.visit(b);
-        or = NodeUtil.findFirst(expressionResult, new NodeTest() {
-            @Override
-            public boolean test(Node node) {
-                return node.isOr();
-            }
-        });
         visitor.visit(a);
         visitor.visit(b);
         CodePrinter.Builder builder = new CodePrinter.Builder(expressionResult);

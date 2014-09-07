@@ -23,7 +23,7 @@ public class TextReportTest {
     @Test
     public void shouldFormatSummaryResultsInTable() {
         JSCover2CoverageSummary summary = new JSCover2CoverageSummaryBuilder()
-                .withData(data)
+                .withTotal(data)
                 .build();
 
         String report = textReport.getTableFormattedSummary(summary);
@@ -39,6 +39,14 @@ public class TextReportTest {
 
     @Test
     public void shouldFormatFileSummaryResultsInTable() {
+        CoverageSummaryData total = new CoverageSummaryDataBuilder()
+                .withName("Total")
+                .withStatementCoverage(60, 90)
+                .withLineCoverage(21, 24)
+                .withFunctionCoverage(7, 9)
+                .withBranchPath(36, 45)
+                .withBooleanExpressionsCoverage(54, 75)
+                .build();
         CoverageSummaryData data2 = new CoverageSummaryDataBuilder()
                 .withName("file2")
                 .withStatementCoverage(19, 30)
@@ -56,6 +64,7 @@ public class TextReportTest {
                 .withBooleanExpressionsCoverage(19, 25)
                 .build();
         JSCover2CoverageSummary summary = new JSCover2CoverageSummaryBuilder()
+                .withTotal(total)
                 .withFileData(data)
                 .withFileData(data2)
                 .withFileData(data3)
@@ -64,6 +73,7 @@ public class TextReportTest {
         String report = textReport.getTableFormattedFileSummary(summary);
         String expected =
                 "URI   |          Statements |               Lines |           Functions |            Branches | Boolean Expressions\n" +
+                "Total |    60 / 90     66.7 |    21 / 24     87.5 |     7 / 9      77.8 |    36 / 45     80.0 |    54 / 75     72.0\n" +
                 "file1 |    20 / 30     66.7 |     7 / 8      87.5 |     3 / 3     100.0 |    12 / 15     80.0 |    19 / 25     76.0\n" +
                 "file2 |    19 / 30     63.3 |     6 / 8      75.0 |     2 / 3      66.7 |    11 / 15     73.3 |    17 / 25     68.0\n" +
                 "file3 |    21 / 30     70.0 |     8 / 8     100.0 |     3 / 3     100.0 |    13 / 15     86.7 |    19 / 25     76.0\n";

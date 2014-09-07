@@ -9,7 +9,7 @@ public class JSCover2CoverageSummaryBuilder {
     private List<CoverageSummaryData> files = new ArrayList<>();
     private CoverageSummaryData totals = new CoverageSummaryData();
 
-    public JSCover2CoverageSummaryBuilder withData(CoverageSummaryData data) {
+    public JSCover2CoverageSummaryBuilder withTotal(CoverageSummaryData data) {
         this.totals = data;
         return this;
     }

@@ -35,6 +35,11 @@ public class TextReport {
 
         StringBuilder sb = new StringBuilder();
         sb.append(format(fileHeadFormat, fileHeadings));
+
+        CoverageSummaryData totals = summary.getTotals();
+        sb.append(format(uriPathFormat, totals.getName()));
+        appendCoverageData(sb, totals);
+
         for (CoverageSummaryData data : summary.getFiles()) {
             sb.append(format(uriPathFormat, data.getName()));
             appendCoverageData(sb, data);

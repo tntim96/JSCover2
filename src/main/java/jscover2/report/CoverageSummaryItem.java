@@ -11,6 +11,12 @@ public class CoverageSummaryItem {
         this.ratio = (float) covered / total;
     }
 
+    public void merge(CoverageSummaryItem item) {
+        this.total += item.total;
+        this.covered += item.covered;
+        this.ratio = (float) covered / total;
+    }
+
     public float getRatio() {
         return ratio;
     }

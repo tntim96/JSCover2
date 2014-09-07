@@ -11,4 +11,12 @@ public class CoverageSummaryItemTest {
         CoverageSummaryItem coverageSummaryItem = new CoverageSummaryItem(100, 25);
         assertThat(coverageSummaryItem.getRatio(), equalTo(.25f));
     }
+
+    @Test
+    public void shouldMergeItems() {
+        CoverageSummaryItem item1 = new CoverageSummaryItem(60, 20);
+        CoverageSummaryItem item2 = new CoverageSummaryItem(40, 5);
+        item1.merge(item2);
+        assertThat(item1.getRatio(), equalTo(.25f));
+    }
 }

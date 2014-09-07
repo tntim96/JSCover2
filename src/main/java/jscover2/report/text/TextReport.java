@@ -6,7 +6,7 @@ import jscover2.report.JSCover2CoverageSummary;
 
 import static java.lang.String.format;
 
-public class TextFormat {
+public class TextReport {
     private String headFormat = "%-19s %4s %5s %5s\n";
     private String dataFormat = "%-19s %4d %5d %5.1f\n";
     private String headings[] = {"Coverage type", "Hits", "Total", "%"};
@@ -15,11 +15,11 @@ public class TextFormat {
     public String getTableFormattedSummary(JSCover2CoverageSummary summary) {
         StringBuilder sb = new StringBuilder();
         sb.append(format(headFormat, headings));
-        sb.append(getReportLine("Statements", summary.getSummary().getStatementCoverage()));
-        sb.append(getReportLine("Lines", summary.getSummary().getLineCoverage()));
-        sb.append(getReportLine("Functions", summary.getSummary().getFunctionCoverage()));
-        sb.append(getReportLine("Branches", summary.getSummary().getBranchPathCoverage()));
-        sb.append(getReportLine("Boolean Expressions", summary.getSummary().getBooleanExpressionCoverage()));
+        sb.append(getReportLine("Statements", summary.getTotals().getStatementCoverage()));
+        sb.append(getReportLine("Lines", summary.getTotals().getLineCoverage()));
+        sb.append(getReportLine("Functions", summary.getTotals().getFunctionCoverage()));
+        sb.append(getReportLine("Branches", summary.getTotals().getBranchPathCoverage()));
+        sb.append(getReportLine("Boolean Expressions", summary.getTotals().getBooleanExpressionCoverage()));
         return sb.toString();
     }
 
@@ -35,9 +35,9 @@ public class TextFormat {
 
         StringBuilder sb = new StringBuilder();
         sb.append(format(fileHeadFormat, fileHeadings));
-        for (String uriPath : summary.getMap().keySet()) {
-            sb.append(format(uriPathFormat, uriPath));
-            appendCoverageData(sb, summary.getMap().get(uriPath));
+        for (CoverageSummaryData data : summary.getFiles()) {
+            sb.append(format(uriPathFormat, data.getName()));
+            appendCoverageData(sb, data);
         }
         return sb.toString();
     }
@@ -57,9 +57,9 @@ public class TextFormat {
 
     private int getMaximumUriPathLength(JSCover2CoverageSummary summary) {
         int maxLength = 0;
-        for (String uriPath : summary.getMap().keySet())
-            if (uriPath.length() > maxLength)
-                maxLength = uriPath.length();
+        for (CoverageSummaryData data : summary.getFiles())
+            if (data.getName().length() > maxLength)
+                maxLength = data.getName().length();
         return maxLength;
     }
 }

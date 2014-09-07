@@ -10,8 +10,9 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 public class TextReportTest {
-    private TextFormat textFormat = new TextFormat();
+    private TextReport textReport = new TextReport();
     private CoverageSummaryData data = new CoverageSummaryDataBuilder()
+            .withName("file1")
             .withStatementCoverage(20, 30)
             .withLineCoverage(7, 8)
             .withFunctionCoverage(3, 3)
@@ -25,7 +26,7 @@ public class TextReportTest {
                 .withData(data)
                 .build();
 
-        String report = textFormat.getTableFormattedSummary(summary);
+        String report = textReport.getTableFormattedSummary(summary);
         String expected =
                 "Coverage type       Hits Total     %\n" +
                 "Statements            20    30  66.7\n" +
@@ -39,6 +40,7 @@ public class TextReportTest {
     @Test
     public void shouldFormatFileSummaryResultsInTable() {
         CoverageSummaryData data2 = new CoverageSummaryDataBuilder()
+                .withName("file2")
                 .withStatementCoverage(19, 30)
                 .withLineCoverage(6, 8)
                 .withFunctionCoverage(2, 3)
@@ -46,6 +48,7 @@ public class TextReportTest {
                 .withBooleanExpressionsCoverage(17, 25)
                 .build();
         CoverageSummaryData data3 = new CoverageSummaryDataBuilder()
+                .withName("file3")
                 .withStatementCoverage(21, 30)
                 .withLineCoverage(8, 8)
                 .withFunctionCoverage(3, 3)
@@ -53,12 +56,12 @@ public class TextReportTest {
                 .withBooleanExpressionsCoverage(19, 25)
                 .build();
         JSCover2CoverageSummary summary = new JSCover2CoverageSummaryBuilder()
-                .withFileData("file1", data)
-                .withFileData("file2", data2)
-                .withFileData("file3", data3)
+                .withFileData(data)
+                .withFileData(data2)
+                .withFileData(data3)
                 .build();
 
-        String report = textFormat.getTableFormattedFileSummary(summary);
+        String report = textReport.getTableFormattedFileSummary(summary);
         String expected =
                 "URI   |          Statements |               Lines |           Functions |            Branches | Boolean Expressions\n" +
                 "file1 |    20 / 30     66.7 |     7 / 8      87.5 |     3 / 3     100.0 |    12 / 15     80.0 |    19 / 25     76.0\n" +

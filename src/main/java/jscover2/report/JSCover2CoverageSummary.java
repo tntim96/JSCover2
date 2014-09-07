@@ -1,12 +1,11 @@
 package jscover2.report;
 
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 
 public class JSCover2CoverageSummary {
-    private SortedMap<String, CoverageSummaryData> map = new TreeMap<>();
-    private CoverageSummaryData summary = new CoverageSummaryData();
+    private List<CoverageSummaryData> files = new ArrayList<>();
+    private CoverageSummaryData totals = new CoverageSummaryData();
+    private CoverageSummaryDataSorter sorter = new CoverageSummaryDataSorter();
 
     private JSCover2CoverageSummary() {}
 
@@ -14,16 +13,17 @@ public class JSCover2CoverageSummary {
         for (String uriPath : data.getDataMap().keySet()) {
             FileData fileData = data.getDataMap().get(uriPath);
             CoverageSummaryData fileSummary = new CoverageSummaryData(uriPath, fileData);
-            map.put(uriPath, fileSummary);
-            summary.add(fileSummary);
+            files.add(fileSummary);
+            totals.add(fileSummary);
         }
+        Collections.sort(files, sorter.byName());
     }
 
-    public Map<String, CoverageSummaryData> getMap() {
-        return map;
+    public List<CoverageSummaryData> getFiles() {
+        return files;
     }
 
-    public CoverageSummaryData getSummary() {
-        return summary;
+    public CoverageSummaryData getTotals() {
+        return totals;
     }
 }

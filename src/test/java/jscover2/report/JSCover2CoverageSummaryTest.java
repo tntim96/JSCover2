@@ -29,12 +29,12 @@ public class JSCover2CoverageSummaryTest {
                 .build();
         JSCover2CoverageSummary summary = new JSCover2CoverageSummary(jsCover2Data);
 
-        assertThat(summary.getSummary().getStatementCoverage().getCovered(), equalTo(3));
-        assertThat(summary.getSummary().getStatementCoverage().getTotal(), equalTo(5));
+        assertThat(summary.getTotals().getStatementCoverage().getCovered(), equalTo(3));
+        assertThat(summary.getTotals().getStatementCoverage().getTotal(), equalTo(5));
 
-        assertThat(summary.getMap().get("file1").getStatementCoverage().getCovered(), equalTo(1));
-        assertThat(summary.getMap().get("file1").getStatementCoverage().getTotal(), equalTo(2));
-        assertThat(summary.getMap().get("file2").getStatementCoverage().getCovered(), equalTo(2));
-        assertThat(summary.getMap().get("file2").getStatementCoverage().getTotal(), equalTo(3));
+        assertThat(summary.getFiles().get(0).getStatementCoverage().getCovered(), equalTo(1));
+        assertThat(summary.getFiles().get(0).getStatementCoverage().getTotal(), equalTo(2));
+        assertThat(summary.getFiles().get(1).getStatementCoverage().getCovered(), equalTo(2));
+        assertThat(summary.getFiles().get(1).getStatementCoverage().getTotal(), equalTo(3));
     }
 }

@@ -8,6 +8,7 @@ import java.util.Map;
 public class JSCover2Data {
     private Map<String, FileData> dataMap = new HashMap<>();
 
+    private JSCover2Data() {}
 
     public JSCover2Data(ScriptObjectMirror mirror) {
         for (String prop : mirror.keySet())

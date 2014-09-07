@@ -2,11 +2,11 @@ package jscover2.report;
 
 import jscover2.utils.ReflectionUtils;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class JSCover2CoverageSummaryBuilder {
-    private Map<String, CoverageSummaryData> map = new HashMap<>();
+    private SortedMap<String, CoverageSummaryData> map = new TreeMap<>();
     private CoverageSummaryData summary = new CoverageSummaryData();
 
     public JSCover2CoverageSummaryBuilder withData(CoverageSummaryData summary) {

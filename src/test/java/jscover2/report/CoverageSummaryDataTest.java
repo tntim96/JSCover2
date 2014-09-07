@@ -1,6 +1,5 @@
 package jscover2.report;
 
-import jscover2.instrument.FileDataBuilder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -107,5 +106,35 @@ public class CoverageSummaryDataTest {
                 .build();
         CoverageSummaryData summaryData = new CoverageSummaryData(fileData);
         assertThat(summaryData.getBranchPathCoverage().getRatio(), equalTo(0.5f));
+    }
+
+    @Test
+    public void shouldAdd() {
+        CoverageSummaryData data1 = new CoverageSummaryDataBuilder()
+                .withStatementCoverage(1, 3)
+                .withFunctionCoverage(10, 30)
+                .withBranchPath(100, 300)
+                .withBooleanExpressionsCoverage(1000, 3000)
+                .build();
+        CoverageSummaryData data2 = new CoverageSummaryDataBuilder()
+                .withStatementCoverage(4, 7)
+                .withFunctionCoverage(40, 70)
+                .withBranchPath(400, 700)
+                .withBooleanExpressionsCoverage(4000, 7000)
+                .build();
+
+        data1.add(data2);
+        assertThat(data1.getStatementCoverage().getCovered(), equalTo(5));
+        assertThat(data1.getStatementCoverage().getTotal(), equalTo(10));
+        assertThat(data1.getStatementCoverage().getRatio(), equalTo(0.5f));
+        assertThat(data1.getFunctionCoverage().getCovered(), equalTo(50));
+        assertThat(data1.getFunctionCoverage().getTotal(), equalTo(100));
+        assertThat(data1.getFunctionCoverage().getRatio(), equalTo(0.5f));
+        assertThat(data1.getBranchPathCoverage().getCovered(), equalTo(500));
+        assertThat(data1.getBranchPathCoverage().getTotal(), equalTo(1000));
+        assertThat(data1.getBranchPathCoverage().getRatio(), equalTo(0.5f));
+        assertThat(data1.getBooleanExpressionCoverage().getCovered(), equalTo(5000));
+        assertThat(data1.getBooleanExpressionCoverage().getTotal(), equalTo(10000));
+        assertThat(data1.getBooleanExpressionCoverage().getRatio(), equalTo(0.5f));
     }
 }

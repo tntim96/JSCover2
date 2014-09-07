@@ -11,11 +11,27 @@ public class CoverageSummaryData {
     private CoverageSummaryItem booleanExpressionCoverage;
     private CoverageSummaryItem branchPathCoverage;
 
+    public CoverageSummaryData() {
+        statementCoverage = new CoverageSummaryItem(0, 0);
+        lineCoverage = new CoverageSummaryItem(0, 0);
+        functionCoverage = new CoverageSummaryItem(0, 0);
+        booleanExpressionCoverage = new CoverageSummaryItem(0, 0);
+        branchPathCoverage = new CoverageSummaryItem(0, 0);
+    }
+
     public CoverageSummaryData(FileData fileData) {
         processStatements(fileData.getStatements());
         processFunctions(fileData.getFunctions());
         processBooleanExpressions(fileData.getBooleanExpressions());
         calculateBranchPathCoverage(fileData.getBooleanBranches(), fileData.getBranchPaths());
+    }
+
+    public void add(CoverageSummaryData data) {
+        statementCoverage.add(data.getStatementCoverage());
+        lineCoverage.add(data.getLineCoverage());
+        functionCoverage.add(data.getFunctionCoverage());
+        booleanExpressionCoverage.add(data.getBooleanExpressionCoverage());
+        branchPathCoverage.add(data.getBranchPathCoverage());
     }
 
     private void processStatements(List<CoverageData> statements) {
@@ -35,8 +51,8 @@ public class CoverageSummaryData {
             if (hit)
                 linesCovered++;
 
-        statementCoverage = new CoverageSummaryItem(statements.size(), covered);
-        lineCoverage = new CoverageSummaryItem(linesHit.size(), linesCovered);
+        statementCoverage = new CoverageSummaryItem(covered, statements.size());
+        lineCoverage = new CoverageSummaryItem(linesCovered, linesHit.size());
     }
 
     private void processFunctions(List<CoverageData> functions) {
@@ -44,7 +60,7 @@ public class CoverageSummaryData {
         for (CoverageData coverageData : functions)
             if (coverageData.getHits() > 0)
                 covered++;
-        functionCoverage = new CoverageSummaryItem(functions.size(), covered);
+        functionCoverage = new CoverageSummaryItem(covered, functions.size());
     }
 
     private void calculateBranchPathCoverage(List<BooleanExpressionData> booleanBranches, List<CoverageData> branchPaths) {
@@ -59,7 +75,7 @@ public class CoverageSummaryData {
             if (coverageData.getHits() > 0)
                 covered++;
         int total = booleanBranches.size() * 2 + branchPaths.size();
-        branchPathCoverage = new CoverageSummaryItem(total, covered);
+        branchPathCoverage = new CoverageSummaryItem(covered, total);
     }
 
     private void processBooleanExpressions(List<BooleanExpressionData> booleanExpressions) {
@@ -67,7 +83,7 @@ public class CoverageSummaryData {
         for (BooleanExpressionData coverageData : booleanExpressions)
             if (coverageData.getFalseHits() > 0 && coverageData.getTrueHits() > 0)
                 covered++;
-        booleanExpressionCoverage = new CoverageSummaryItem(booleanExpressions.size(), covered);
+        booleanExpressionCoverage = new CoverageSummaryItem(covered, booleanExpressions.size());
     }
 
     public CoverageSummaryItem getStatementCoverage() {

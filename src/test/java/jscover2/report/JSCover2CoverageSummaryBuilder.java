@@ -9,8 +9,13 @@ public class JSCover2CoverageSummaryBuilder {
     private Map<String, CoverageSummaryData> map = new HashMap<>();
     private CoverageSummaryData summary = new CoverageSummaryData();
 
-    public JSCover2CoverageSummaryBuilder withCoverageSummaryData(CoverageSummaryData summary) {
+    public JSCover2CoverageSummaryBuilder withData(CoverageSummaryData summary) {
         this.summary = summary;
+        return this;
+    }
+
+    public JSCover2CoverageSummaryBuilder withFileData(String uriPath, CoverageSummaryData summary) {
+        this.map.put(uriPath, summary);
         return this;
     }
 

@@ -4,7 +4,6 @@ import jscover2.utils.ReflectionUtils;
 
 public class CoverageSummaryDataBuilder {
     private CoverageSummaryItem statementCoverage;
-    private CoverageSummaryItem lineCoverage;
     private CoverageSummaryItem functionCoverage;
     private CoverageSummaryItem booleanExpressionCoverage;
     private CoverageSummaryItem branchPathCoverage;

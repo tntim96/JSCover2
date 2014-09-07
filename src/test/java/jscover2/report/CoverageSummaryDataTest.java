@@ -13,6 +13,7 @@ import static org.mockito.Mockito.mock;
 @RunWith(MockitoJUnitRunner.class)
 public class CoverageSummaryDataTest {
     @Mock PositionData positionData;
+    private String uriPath = "test.js";
 
     @Test
     public void shouldCalculateStatementCoverage() {
@@ -20,7 +21,7 @@ public class CoverageSummaryDataTest {
                 .withStatementCoverage(new CoverageData(0, positionData))
                 .withStatementCoverage(new CoverageData(1, positionData))
                 .build();
-        CoverageSummaryData summaryData = new CoverageSummaryData(fileData);
+        CoverageSummaryData summaryData = new CoverageSummaryData(uriPath, fileData);
         assertThat(summaryData.getStatementCoverage().getRatio(), equalTo(0.5f));
     }
 
@@ -35,7 +36,7 @@ public class CoverageSummaryDataTest {
         given(positionData.getLine()).willReturn(1);
         given(positionData2.getLine()).willReturn(2);
 
-        CoverageSummaryData summaryData = new CoverageSummaryData(fileData);
+        CoverageSummaryData summaryData = new CoverageSummaryData(uriPath, fileData);
 
         assertThat(summaryData.getLineCoverage().getRatio(), equalTo(0.5f));
     }
@@ -51,7 +52,7 @@ public class CoverageSummaryDataTest {
         given(positionData.getLine()).willReturn(1);
         given(positionData2.getLine()).willReturn(1);
 
-        CoverageSummaryData summaryData = new CoverageSummaryData(fileData);
+        CoverageSummaryData summaryData = new CoverageSummaryData(uriPath, fileData);
 
         assertThat(summaryData.getLineCoverage().getRatio(), equalTo(1f));
     }
@@ -62,7 +63,7 @@ public class CoverageSummaryDataTest {
                 .withFunctionCoverage(new CoverageData(0, null))
                 .withFunctionCoverage(new CoverageData(1, null))
                 .build();
-        CoverageSummaryData summaryData = new CoverageSummaryData(fileData);
+        CoverageSummaryData summaryData = new CoverageSummaryData(uriPath, fileData);
         assertThat(summaryData.getFunctionCoverage().getRatio(), equalTo(0.5f));
     }
 
@@ -72,7 +73,7 @@ public class CoverageSummaryDataTest {
                 .withBooleanExpressionsCoverage(new BooleanExpressionData(0, 0, null, false))
                 .withBooleanExpressionsCoverage(new BooleanExpressionData(1, 1, null, false))
                 .build();
-        CoverageSummaryData summaryData = new CoverageSummaryData(fileData);
+        CoverageSummaryData summaryData = new CoverageSummaryData(uriPath, fileData);
         assertThat(summaryData.getBooleanExpressionCoverage().getRatio(), equalTo(0.5f));
     }
 
@@ -82,7 +83,7 @@ public class CoverageSummaryDataTest {
                 .withBooleanExpressionsCoverage(new BooleanExpressionData(0, 1, null, false))
                 .withBooleanExpressionsCoverage(new BooleanExpressionData(1, 0, null, false))
                 .build();
-        CoverageSummaryData summaryData = new CoverageSummaryData(fileData);
+        CoverageSummaryData summaryData = new CoverageSummaryData(uriPath, fileData);
         assertThat(summaryData.getBooleanExpressionCoverage().getRatio(), equalTo(0f));
     }
 
@@ -92,7 +93,7 @@ public class CoverageSummaryDataTest {
                 .withBooleanBranch(new BooleanExpressionData(0, 0, null, false))
                 .withBooleanBranch(new BooleanExpressionData(0, 1, null, false))
                 .build();
-        CoverageSummaryData summaryData = new CoverageSummaryData(fileData);
+        CoverageSummaryData summaryData = new CoverageSummaryData(uriPath, fileData);
         assertThat(summaryData.getBranchPathCoverage().getRatio(), equalTo(0.25f));
     }
 
@@ -102,7 +103,7 @@ public class CoverageSummaryDataTest {
                 .withBranchPath(new CoverageData(0, positionData))
                 .withBranchPath(new CoverageData(1, positionData))
                 .build();
-        CoverageSummaryData summaryData = new CoverageSummaryData(fileData);
+        CoverageSummaryData summaryData = new CoverageSummaryData(uriPath, fileData);
         assertThat(summaryData.getBranchPathCoverage().getRatio(), equalTo(0.5f));
     }
 
@@ -114,7 +115,7 @@ public class CoverageSummaryDataTest {
                 .withBranchPath(new CoverageData(0, positionData))
                 .withBranchPath(new CoverageData(1, positionData))
                 .build();
-        CoverageSummaryData summaryData = new CoverageSummaryData(fileData);
+        CoverageSummaryData summaryData = new CoverageSummaryData(uriPath, fileData);
         assertThat(summaryData.getBranchPathCoverage().getRatio(), equalTo(0.5f));
     }
 

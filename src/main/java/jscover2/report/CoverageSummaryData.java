@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 public class CoverageSummaryData {
+    private String name;
     private CoverageSummaryItem statementCoverage;
     private CoverageSummaryItem lineCoverage;
     private CoverageSummaryItem functionCoverage;
@@ -12,6 +13,7 @@ public class CoverageSummaryData {
     private CoverageSummaryItem branchPathCoverage;
 
     public CoverageSummaryData() {
+        name = "Total";
         statementCoverage = new CoverageSummaryItem(0, 0);
         lineCoverage = new CoverageSummaryItem(0, 0);
         functionCoverage = new CoverageSummaryItem(0, 0);
@@ -19,7 +21,8 @@ public class CoverageSummaryData {
         branchPathCoverage = new CoverageSummaryItem(0, 0);
     }
 
-    public CoverageSummaryData(FileData fileData) {
+    public CoverageSummaryData(String name, FileData fileData) {
+        this.name = name;
         processStatements(fileData.getStatements());
         processFunctions(fileData.getFunctions());
         processBooleanExpressions(fileData.getBooleanExpressions());
@@ -84,6 +87,10 @@ public class CoverageSummaryData {
             if (coverageData.getFalseHits() > 0 && coverageData.getTrueHits() > 0)
                 covered++;
         booleanExpressionCoverage = new CoverageSummaryItem(covered, booleanExpressions.size());
+    }
+
+    public String getName() {
+        return name;
     }
 
     public CoverageSummaryItem getStatementCoverage() {

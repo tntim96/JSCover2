@@ -1,8 +1,8 @@
 package jscover2.report;
 
 public class CoverageSummaryItem {
-    private int total;
     private int covered;
+    private int total;
     private float ratio;
 
     public CoverageSummaryItem(int covered, int total) {

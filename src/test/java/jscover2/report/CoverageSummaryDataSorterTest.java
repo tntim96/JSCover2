@@ -23,13 +23,15 @@ public class CoverageSummaryDataSorterTest {
     }
 
     @Test
-    public void shouldSortByStatementCoverage() {
+    public void shouldSortByDescendingStatementCoverageThenName() {
         List<CoverageSummaryData> list = new ArrayList<>();
-        list.add(new CoverageSummaryDataBuilder().withName("1").withStatementCoverage(1, 3).build());
-        list.add(new CoverageSummaryDataBuilder().withName("2").withStatementCoverage(2, 3).build());
-        list.add(new CoverageSummaryDataBuilder().withName("3").withStatementCoverage(2, 6).build());
+        list.add(new CoverageSummaryDataBuilder().withName("3").withStatementCoverage(2, 8).build());
+        list.add(new CoverageSummaryDataBuilder().withName("1").withStatementCoverage(1, 4).build());
+        list.add(new CoverageSummaryDataBuilder().withName("2").withStatementCoverage(3, 4).build());
         Collections.sort(list, sorter.byStatementCoverageDesc());
 
         assertThat(list.get(0).getName(), equalTo("2"));
+        assertThat(list.get(1).getName(), equalTo("1"));
+        assertThat(list.get(2).getName(), equalTo("3"));
     }
 }

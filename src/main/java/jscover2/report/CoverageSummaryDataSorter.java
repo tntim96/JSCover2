@@ -20,7 +20,7 @@ public class CoverageSummaryDataSorter {
                     return 1;
                 else if (o1.getStatementCoverage().getRatio() > o2.getStatementCoverage().getRatio())
                     return -1;
-                return 0;
+                return o1.getName().compareTo(o2.getName());
             }
         };
     }

@@ -67,6 +67,18 @@ public class NodeHelperTest {
     }
 
     @Test
+    public void shouldDetectInstrumentation() throws IOException {
+        Node jscover = Node.newString("jscover");
+        Node getProp = new Node(Token.GETPROP, jscover);
+        Node call = new Node(Token.CALL, getProp);
+
+        assertThat(nodeHelper.isInstrumentation(call, "anything"), is(true));//No source so must be synthetic
+        call.setSourceFileForTesting("Hey");
+        assertThat(nodeHelper.isInstrumentation(call, "jscover"), is(true));
+        assertThat(nodeHelper.isInstrumentation(call, "jscovery"), is(false));
+    }
+
+    @Test
     public void shouldDetectWrappedNode() throws IOException {
         Node lt = new Node(Token.LT);
         buildLessThanNodeWithParent(lt);

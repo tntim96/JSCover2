@@ -16,7 +16,7 @@ public class JSCover2CoverageSummary {
             files.add(fileSummary);
             totals.add(fileSummary);
         }
-        Collections.sort(files, sorter.byName());
+        Collections.sort(files, sorter.byStatementCoverageDesc());
     }
 
     public List<CoverageSummaryData> getFiles() {

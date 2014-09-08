@@ -21,4 +21,15 @@ public class CoverageSummaryDataSorterTest {
 
         assertThat(list.get(0).getName(), equalTo("aaa"));
     }
+
+    @Test
+    public void shouldSortByStatementCoverage() {
+        List<CoverageSummaryData> list = new ArrayList<>();
+        list.add(new CoverageSummaryDataBuilder().withName("1").withStatementCoverage(1, 3).build());
+        list.add(new CoverageSummaryDataBuilder().withName("2").withStatementCoverage(2, 3).build());
+        list.add(new CoverageSummaryDataBuilder().withName("3").withStatementCoverage(2, 6).build());
+        Collections.sort(list, sorter.byStatementCoverageDesc());
+
+        assertThat(list.get(0).getName(), equalTo("2"));
+    }
 }

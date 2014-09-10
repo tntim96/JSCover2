@@ -13,6 +13,10 @@ public class BooleanExpressionData {
         this.branch = branch;
     }
 
+    public boolean hit() {
+        return falseHits > 0 && trueHits > 0;
+    }
+
     public int getFalseHits() {
         return falseHits;
     }

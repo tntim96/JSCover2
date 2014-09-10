@@ -37,10 +37,11 @@ public class FileDataTest {
         ScriptObjectMirror json = (ScriptObjectMirror) engine.eval("jscover['test.js']");
         FileData fileData = new FileData(json);
         assertThat(fileData.getStatements().size(), is(2));
-        assertThat(fileData.getStatements().get(0).getHits(), is(1));
-        assertThat(fileData.getStatements().get(0).getPosition().getLine(), is(1));
-        assertThat(fileData.getStatements().get(0).getPosition().getColumn(), is(0));
-        assertThat(fileData.getStatements().get(0).getPosition().getLength(), is(34));
+        CoverageData firstStatement = fileData.getStatements().get(0);
+        assertThat(firstStatement.getHits(), is(1));
+        assertThat(firstStatement.getPosition().getLine(), is(1));
+        assertThat(firstStatement.getPosition().getColumn(), is(0));
+        assertThat(firstStatement.getPosition().getLength(), is(34));
         assertThat(fileData.getStatements().get(1).getHits(), is(0));
         assertThat(fileData.getStatements().get(1).getPosition().getLine(), is(3));
         assertThat(fileData.getStatements().get(1).getPosition().getColumn(), is(2));
@@ -58,6 +59,18 @@ public class FileDataTest {
         assertThat(fileData.getStatements().get(1).getHits(), is(1));
         assertThat(fileData.getLines().get(0).getHits(), is(1));
         assertThat(fileData.getLines().get(1).getHits(), is(1));
+    }
+
+    @Test
+    public void shouldCalculateAddStatementsToLineData() throws Exception {
+        String instrumented = instrumenter.instrument("test.js", "function sq(x)\n{\n  return x * x;\n}");
+        engine.eval(instrumented);
+        ScriptObjectMirror json = (ScriptObjectMirror) engine.eval("jscover['test.js']");
+        FileData fileData = new FileData(json);
+        assertThat(fileData.getLineData().get(0), nullValue());
+        assertThat(fileData.getLineData().get(1).getStatements().size(), is(1));
+        assertThat(fileData.getLineData().get(2), nullValue());
+        assertThat(fileData.getLineData().get(3).getStatements().size(), is(1));
     }
 
     @Test

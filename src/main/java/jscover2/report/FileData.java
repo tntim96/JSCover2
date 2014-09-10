@@ -2,10 +2,7 @@ package jscover2.report;
 
 import jdk.nashorn.api.scripting.ScriptObjectMirror;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class FileData {
     private List<CoverageData> statements = new ArrayList<>();
@@ -14,6 +11,7 @@ public class FileData {
     private List<BooleanExpressionData> booleanExpressions = new ArrayList<>();
     private List<BooleanExpressionData> booleanBranches = new ArrayList<>();
     private List<CoverageData> branchPaths = new ArrayList<>();
+    private SortedMap<Integer, LineCompleteData> lineData = new TreeMap<>();
 
     private FileData() {}
 
@@ -24,6 +22,15 @@ public class FileData {
         processBranchPaths(mirror);
     }
 
+    private LineCompleteData getOrCreateLineData(int line) {
+        LineCompleteData lineCompleteData = lineData.get(line);
+        if (lineCompleteData == null) {
+            lineCompleteData = new LineCompleteData();
+            lineData.put(line, lineCompleteData);
+        }
+        return lineCompleteData;
+    }
+
     private void processStatements(ScriptObjectMirror mirror) {
         Set<Integer> processedLines = new HashSet<>();
         ScriptObjectMirror data = (ScriptObjectMirror) mirror.get("s");
@@ -32,9 +39,11 @@ public class FileData {
             int hits = (int) data.get(count);
             ScriptObjectMirror pos = (ScriptObjectMirror) ((ScriptObjectMirror) map.get(count)).get("pos");
             PositionData positionData = new PositionData(pos);
-            statements.add(new CoverageData(hits, positionData));
+            CoverageData statement = new CoverageData(hits, positionData);
+            statements.add(statement);
             if (processedLines.add(positionData.getLine()))
                 lines.add(new LineData(hits, positionData.getLine()));
+            getOrCreateLineData(positionData.getLine()).addStatement(statement);
         }
     }
 
@@ -103,5 +112,9 @@ public class FileData {
 
     public List<CoverageData> getBranchPaths() {
         return branchPaths;
+    }
+
+    public SortedMap<Integer, LineCompleteData> getLineData() {
+        return lineData;
     }
 }

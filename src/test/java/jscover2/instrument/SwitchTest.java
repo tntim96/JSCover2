@@ -32,41 +32,51 @@ public class SwitchTest {
         engine.eval(instrumented);
         assertThat(engine.eval("x"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));
-        assertThat(engine.eval("jscover['test.js'].s['2']"), nullValue());
+        assertThat(engine.eval("jscover['test.js'].s['2']"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].s['3']"), nullValue());
     }
 
     @Test
-    public void shouldCoverSwitchPath1() throws ScriptException {
+    public void shouldCoverSwitchPath1AndBreak() throws ScriptException {
         String instrumented = instrumenter.instrument("test.js", "var x = 1;switch(x) {\n  case 1: x = \"one\"; break;\n  case 2: x = \"two\"; break;\n}");
-        assertThat(engine.eval(instrumented), equalTo("one"));
+        engine.eval(instrumented);
         assertThat(engine.eval("x"), equalTo("one"));
         assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['2']"), equalTo(1));
-        assertThat(engine.eval("jscover['test.js'].s['3']"), equalTo(0));
-        assertThat(engine.eval("jscover['test.js'].s['4']"), nullValue());
+        assertThat(engine.eval("jscover['test.js'].s['3']"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].s['4']"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].s['5']"), equalTo(0));
+        assertThat(engine.eval("jscover['test.js'].s['6']"), equalTo(0));
+        assertThat(engine.eval("jscover['test.js'].s['7']"), nullValue());
     }
 
     @Test
     public void shouldCoverSwitchPath2() throws ScriptException {
         String instrumented = instrumenter.instrument("test.js", "var x = 2;switch(x) {\n  case 1: x = \"one\"; break;\n  case 2: x = \"two\"; break;\n}");
-        assertThat(engine.eval(instrumented), equalTo("two"));
+        engine.eval(instrumented);
         assertThat(engine.eval("x"), equalTo("two"));
         assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));
-        assertThat(engine.eval("jscover['test.js'].s['2']"), equalTo(0));
-        assertThat(engine.eval("jscover['test.js'].s['3']"), equalTo(1));
-        assertThat(engine.eval("jscover['test.js'].s['4']"), nullValue());
+        assertThat(engine.eval("jscover['test.js'].s['2']"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].s['3']"), equalTo(0));
+        assertThat(engine.eval("jscover['test.js'].s['4']"), equalTo(0));
+        assertThat(engine.eval("jscover['test.js'].s['5']"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].s['6']"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].s['7']"), nullValue());
     }
 
     @Test
     public void shouldCoverSwitchDefaultPath() throws ScriptException {
         String instrumented = instrumenter.instrument("test.js", "var x = 4;switch(x) {\n  case 1: x = \"one\"; break;\n  default: x = \"other\"; break;\n}");
-        assertThat(engine.eval(instrumented), equalTo("other"));
+        engine.eval(instrumented);
         assertThat(engine.eval("x"), equalTo("other"));
         assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));
-        assertThat(engine.eval("jscover['test.js'].s['2']"), equalTo(0));
-        assertThat(engine.eval("jscover['test.js'].s['3']"), equalTo(1));
-        assertThat(engine.eval("jscover['test.js'].s['4']"), nullValue());
-        assertThat(engine.eval("JSON.stringify(jscover['test.js'].sM)"), equalTo("{\"1\":{\"pos\":{\"line\":1,\"col\":0,\"len\":10}},\"2\":{\"pos\":{\"line\":2,\"col\":10,\"len\":10}},\"3\":{\"pos\":{\"line\":3,\"col\":11,\"len\":12}}}"));
+        assertThat(engine.eval("jscover['test.js'].s['2']"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].s['3']"), equalTo(0));
+        assertThat(engine.eval("jscover['test.js'].s['4']"), equalTo(0));
+        assertThat(engine.eval("jscover['test.js'].s['5']"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].s['6']"), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].s['7']"), nullValue());
+        assertThat(engine.eval("JSON.stringify(jscover['test.js'].sM)"), equalTo("{\"1\":{\"pos\":{\"line\":1,\"col\":0,\"len\":10}},\"2\":{\"pos\":{\"line\":1,\"col\":10,\"len\":72}},\"3\":{\"pos\":{\"line\":2,\"col\":10,\"len\":10}},\"4\":{\"pos\":{\"line\":2,\"col\":21,\"len\":6}},\"5\":{\"pos\":{\"line\":3,\"col\":11,\"len\":12}},\"6\":{\"pos\":{\"line\":3,\"col\":24,\"len\":6}}}"));
         assertThat(engine.eval("JSON.stringify(jscover['test.js'].beM)"), equalTo("{}"));
         assertThat(engine.eval("JSON.stringify(jscover['test.js'].fM)"), equalTo("{}"));
     }

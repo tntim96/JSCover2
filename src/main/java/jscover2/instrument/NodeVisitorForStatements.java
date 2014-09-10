@@ -61,6 +61,8 @@ public class NodeVisitorForStatements implements NodeCallback {
                 || n.isDo()
                 || n.isWhile()
                 || n.isFor()
+                || n.isBreak()
+                || n.isSwitch()
                 || n.isReturn();
     }
 

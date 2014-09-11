@@ -138,11 +138,12 @@ public class FileDataTest {
                 "    else;\n" +
                 "        return false;\n" +
                 "}";
+        SourceCodeRetriever codeRetriever = new SourceCodeRetriever("test.js", code);
         String instrumented = instrumenter.instrument("test.js", code);
         engine.eval(instrumented);
         ScriptObjectMirror json = (ScriptObjectMirror) engine.eval("jscover['test.js']");
         FileData fileData = new FileData(json);
-        
+
         /*
         "beM":{
         "1":{"pos":{"line":2,"col":8,"len":13},"br":"true"},//abc
@@ -166,16 +167,21 @@ public class FileDataTest {
         assertThat(fileData.getBooleanExpressions().get(pABC).getPosition().getLine(), is(2));
         assertThat(fileData.getBooleanExpressions().get(pABC).getPosition().getColumn(), is(8));
         assertThat(fileData.getBooleanExpressions().get(pABC).getPosition().getLength(), is(13));
+        assertThat(codeRetriever.getSource(fileData.getBooleanExpressions().get(pABC).getPosition()), equalTo("(a || b) && c"));
         assertThat(fileData.getBooleanExpressions().get(pABC).getFalseHits(), is(0));
         assertThat(fileData.getBooleanExpressions().get(pABC).getTrueHits(), is(0));
         assertThat(fileData.getBooleanExpressions().get(pAB).getFalseHits(), is(0));
         assertThat(fileData.getBooleanExpressions().get(pAB).getTrueHits(), is(0));
+        assertThat(codeRetriever.getSource(fileData.getBooleanExpressions().get(pAB).getPosition()), equalTo("a || b"));
         assertThat(fileData.getBooleanExpressions().get(pA).getFalseHits(), is(0));
         assertThat(fileData.getBooleanExpressions().get(pA).getTrueHits(), is(0));
+        assertThat(codeRetriever.getSource(fileData.getBooleanExpressions().get(pA).getPosition()), equalTo("a"));
         assertThat(fileData.getBooleanExpressions().get(pB).getFalseHits(), is(0));
         assertThat(fileData.getBooleanExpressions().get(pB).getTrueHits(), is(0));
+        assertThat(codeRetriever.getSource(fileData.getBooleanExpressions().get(pB).getPosition()), equalTo("b"));
         assertThat(fileData.getBooleanExpressions().get(pC).getFalseHits(), is(0));
         assertThat(fileData.getBooleanExpressions().get(pC).getTrueHits(), is(0));
+        assertThat(codeRetriever.getSource(fileData.getBooleanExpressions().get(pC).getPosition()), equalTo("c"));
 
         assertThat(invocable.invokeFunction("condition", false, false, true), is(false));
         json = (ScriptObjectMirror) engine.eval("jscover['test.js']");

@@ -7,6 +7,8 @@ public class PositionData {
     private int column;
     private int length;
 
+    private PositionData() {}
+
     protected PositionData(ScriptObjectMirror pos) {
         this.line = (int) pos.get("line");
         this.column = (int) pos.get("col");

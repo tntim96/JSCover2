@@ -149,6 +149,15 @@ public class FileDataTest {
         int pB = getConditionNumber(beM, 14, 1);
         int pC = getConditionNumber(beM, 20, 1);
 
+        assertThat(fileData.getLineData().get(0), nullValue());
+        assertThat(fileData.getLineData().get(1).getBooleanExpressions().size(), is(0));
+        assertThat(fileData.getLineData().get(2).getBooleanExpressions().size(), is(5));
+        assertThat(fileData.getLineData().get(2).isBooleanMissed(), is(true));
+        assertThat(fileData.getLineData().get(3).getBooleanExpressions().size(), is(0));
+        assertThat(fileData.getLineData().get(4), nullValue());
+        assertThat(fileData.getLineData().get(5).getBooleanExpressions().size(), is(0));
+        assertThat(fileData.getLineData().get(6), nullValue());
+
         assertThat(fileData.getBooleanBranches().size(), is(1));
         assertThat(fileData.getBooleanBranches().iterator().next(), is(fileData.getBooleanExpressions().get(pABC)));
         assertThat(fileData.getBooleanExpressions().size(), is(5));
@@ -185,6 +194,7 @@ public class FileDataTest {
         assertThat(fileData.getBooleanExpressions().get(pB).getFalseHits(), is(1));
         assertThat(fileData.getBooleanExpressions().get(pC).getTrueHits(), is(0));
         assertThat(fileData.getBooleanExpressions().get(pC).getFalseHits(), is(0));
+        assertThat(fileData.getLineData().get(2).isBooleanMissed(), is(true));
 
         assertThat(invocable.invokeFunction("condition", true, false, true), is(true));
         json = (ScriptObjectMirror) engine.eval("jscover['test.js']");
@@ -199,6 +209,7 @@ public class FileDataTest {
         assertThat(fileData.getBooleanExpressions().get(pB).getFalseHits(), is(1));
         assertThat(fileData.getBooleanExpressions().get(pC).getTrueHits(), is(1));
         assertThat(fileData.getBooleanExpressions().get(pC).getFalseHits(), is(0));
+        assertThat(fileData.getLineData().get(2).isBooleanMissed(), is(true));
 
         assertThat(invocable.invokeFunction("condition", false, true, false), is(false));
         json = (ScriptObjectMirror) engine.eval("jscover['test.js']");
@@ -213,6 +224,7 @@ public class FileDataTest {
         assertThat(fileData.getBooleanExpressions().get(pB).getFalseHits(), is(1));
         assertThat(fileData.getBooleanExpressions().get(pC).getTrueHits(), is(1));
         assertThat(fileData.getBooleanExpressions().get(pC).getFalseHits(), is(1));
+        assertThat(fileData.getLineData().get(2).isBooleanMissed(), is(false));
     }
 
     @Test

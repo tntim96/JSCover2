@@ -65,6 +65,7 @@ public class FileData {
             boolean branch = ((ScriptObjectMirror) map.get(count)).get("br").equals("true");
             BooleanExpressionData be = new BooleanExpressionData(falseHits, trueHits, positionData, branch);
             booleanExpressions.add(be);
+            getOrCreateLineData(positionData.getLine()).addBooleanExpression(be);
             if (branch)
                 booleanBranches.add(be);
         }

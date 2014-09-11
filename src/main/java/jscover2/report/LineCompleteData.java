@@ -6,7 +6,9 @@ import java.util.List;
 public class LineCompleteData {
     private List<CoverageData> statements = new ArrayList<>();
     private List<CoverageData> branchPaths = new ArrayList<>();
+    private List<BooleanExpressionData> booleanExpressions = new ArrayList<>();
     private int lineHits = 0;
+    private boolean booleanMissed;
 
     public LineCompleteData() {
     }
@@ -23,6 +25,12 @@ public class LineCompleteData {
             lineHits = data.getHits();
     }
 
+    void addBooleanExpression(BooleanExpressionData data) {
+        booleanExpressions.add(data);
+        if (!data.hit())
+            booleanMissed = true;
+    }
+
     public boolean hit() {
         return lineHits > 0;
     }
@@ -31,11 +39,19 @@ public class LineCompleteData {
         return lineHits;
     }
 
+    public boolean isBooleanMissed() {
+        return booleanMissed;
+    }
+
     public List<CoverageData> getStatements() {
         return statements;
     }
 
     public List<CoverageData> getBranchPaths() {
         return branchPaths;
+    }
+
+    public List<BooleanExpressionData> getBooleanExpressions() {
+        return booleanExpressions;
     }
 }

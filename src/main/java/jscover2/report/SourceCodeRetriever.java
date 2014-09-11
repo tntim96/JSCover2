@@ -1,30 +1,44 @@
 package jscover2.report;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class SourceCodeRetriever {
     private static final Logger log = Logger.getLogger(SourceCodeRetriever.class.getName());
 
-    private final String[] sourceLines;
+    private String code;
+    private List<Integer> lineIndexes = new ArrayList<>();
     private String name;
 
     public SourceCodeRetriever(String name, String code) {
         this.name = name;
-        sourceLines = code.split("\n");
+        this.code = code;
+        lineIndexes.add(0);
+        for (int i = 0; i < code.length(); i++) {
+            if (code.charAt(i) == '\n')
+                lineIndexes.add(i+1);
+        }
     }
 
     public String getSource(PositionData pos) {
-        if (pos.getLine() > sourceLines.length) {
+        if (pos.getLine() > lineIndexes.size()) {
             log.log(Level.WARNING, "Couldn''t find line {0} in file ''{1}''", new Object[]{pos.getLine(), name});
             return null;
         }
-        String line = sourceLines[pos.getLine() - 1];
-        int endIndex = pos.getColumn() + pos.getLength();
-        if (endIndex > line.length()) {
-            log.log(Level.WARNING, "Couldn''t end index {0} in line ''{1}''", new Object[]{endIndex, line});
+        Integer lineOffset = lineIndexes.get(pos.getLine() - 1);
+        log.log(Level.INFO, "Line offset for line {0} is {1}", new Object[]{pos.getLine(), lineOffset});
+        int startIndex = lineOffset + pos.getColumn();
+        int endIndex = startIndex + pos.getLength();
+        if (startIndex > code.length()) {
+            log.log(Level.WARNING, "Couldn''t end index {0} in file ''{1}''", new Object[]{endIndex, name});
             return null;
         }
-        return line.substring(pos.getColumn(), endIndex);
+        if (endIndex > code.length()) {
+            log.log(Level.WARNING, "Couldn''t end index {0} in file ''{1}''", new Object[]{endIndex, name});
+            endIndex = code.length();
+        }
+        return code.substring(startIndex, endIndex);
     }
 }

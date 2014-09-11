@@ -22,6 +22,10 @@ public class SourceCodeRetriever {
         }
     }
 
+    public int getNumberOfLines() {
+        return lineIndexes.size();
+    }
+
     public String getSource(PositionData pos) {
         if (pos.getLine() > lineIndexes.size()) {
             log.log(Level.WARNING, "Couldn''t find line {0} in file ''{1}''", new Object[]{pos.getLine(), name});

@@ -13,6 +13,7 @@ public class SourceCodeRetrieverTest {
     @Test
     public void shouldRetrieveCodeSnippet() {
         SourceCodeRetriever retriever = new SourceCodeRetriever("test.js", code);
+        assertThat(retriever.getNumberOfLines(), equalTo(5));
         assertThat(retriever.getSource(PositionDataBuilder.getPositionData(1, 2, 6)), equalTo("Line 1"));
         assertThat(retriever.getSource(PositionDataBuilder.getPositionData(4, 8, 5)), equalTo("x * x"));
     }

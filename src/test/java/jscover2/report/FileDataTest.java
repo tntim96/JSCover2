@@ -31,7 +31,7 @@ public class FileDataTest {
     }
 
     @Test
-    public void shouldCalculateStatementAndLineCoverage() throws Exception {
+    public void shouldCalculateStatementCoverage() throws Exception {
         String instrumented = instrumenter.instrument("test.js", "function sq(x)\n{\n  return x * x;\n}");
         engine.eval(instrumented);
         ScriptObjectMirror json = (ScriptObjectMirror) engine.eval("jscover['test.js']");
@@ -46,19 +46,12 @@ public class FileDataTest {
         assertThat(fileData.getStatements().get(1).getPosition().getLine(), is(3));
         assertThat(fileData.getStatements().get(1).getPosition().getColumn(), is(2));
         assertThat(fileData.getStatements().get(1).getPosition().getLength(), is(13));
-        assertThat(fileData.getLines().size(), is(2));
-        assertThat(fileData.getLines().get(0).getHits(), is(1));
-        assertThat(fileData.getLines().get(0).getLine(), is(1));
-        assertThat(fileData.getLines().get(1).getHits(), is(0));
-        assertThat(fileData.getLines().get(1).getLine(), is(3));
 
         assertThat(invocable.invokeFunction("sq", 5), is(25.0));
         json = (ScriptObjectMirror) engine.eval("jscover['test.js']");
         fileData = new FileData(json);
         assertThat(fileData.getStatements().get(0).getHits(), is(1));
         assertThat(fileData.getStatements().get(1).getHits(), is(1));
-        assertThat(fileData.getLines().get(0).getHits(), is(1));
-        assertThat(fileData.getLines().get(1).getHits(), is(1));
     }
 
     @Test
@@ -89,16 +82,12 @@ public class FileDataTest {
         assertThat(fileData.getStatements().get(1).getPosition().getLine(), is(1));
         assertThat(fileData.getStatements().get(1).getPosition().getColumn(), is(15));
         assertThat(fileData.getStatements().get(1).getPosition().getLength(), is(13));
-        assertThat(fileData.getLines().size(), is(1));
-        assertThat(fileData.getLines().get(0).getHits(), is(1));
-        assertThat(fileData.getLines().get(0).getLine(), is(1));
 
         assertThat(invocable.invokeFunction("sq", 5), is(25.0));
         json = (ScriptObjectMirror) engine.eval("jscover['test.js']");
         fileData = new FileData(json);
         assertThat(fileData.getStatements().get(0).getHits(), is(1));
         assertThat(fileData.getStatements().get(1).getHits(), is(1));
-        assertThat(fileData.getLines().get(0).getHits(), is(1));
     }
 
     @Test
@@ -234,6 +223,17 @@ public class FileDataTest {
         engine.eval(instrumented);
         ScriptObjectMirror json = (ScriptObjectMirror) engine.eval("jscover['test.js']");
         FileData fileData = new FileData(json);
+
+        assertThat(fileData.getLineData().get(0), nullValue());
+        assertThat(fileData.getLineData().get(1).getBranchPaths().size(), is(0));
+        assertThat(fileData.getLineData().get(2).getBranchPaths().size(), is(0));
+        assertThat(fileData.getLineData().get(3).getBranchPaths().size(), is(1));
+        assertThat(fileData.getLineData().get(4).getBranchPaths().size(), is(1));
+        assertThat(fileData.getLineData().get(5).getBranchPaths().size(), is(1));
+        assertThat(fileData.getLineData().get(6).getBranchPaths().size(), is(1));
+        assertThat(fileData.getLineData().get(7).getBranchPaths().size(), is(0));
+        assertThat(fileData.getLineData().get(8), nullValue());
+
         assertThat(fileData.getBranchPaths().size(), is(5));
         assertThat(fileData.getBranchPaths().get(0).getHits(), is(0));
         assertThat(fileData.getBranchPaths().get(1).getHits(), is(0));

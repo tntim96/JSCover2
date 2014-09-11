@@ -6,7 +6,6 @@ import java.util.*;
 
 public class FileData {
     private List<CoverageData> statements = new ArrayList<>();
-    private List<LineData> lines = new ArrayList<>();
     private List<CoverageData> functions = new ArrayList<>();
     private List<BooleanExpressionData> booleanExpressions = new ArrayList<>();
     private List<BooleanExpressionData> booleanBranches = new ArrayList<>();
@@ -32,7 +31,6 @@ public class FileData {
     }
 
     private void processStatements(ScriptObjectMirror mirror) {
-        Set<Integer> processedLines = new HashSet<>();
         ScriptObjectMirror data = (ScriptObjectMirror) mirror.get("s");
         ScriptObjectMirror map = (ScriptObjectMirror) mirror.get("sM");
         for (String count : data.keySet()) {
@@ -41,8 +39,6 @@ public class FileData {
             PositionData positionData = new PositionData(pos);
             CoverageData statement = new CoverageData(hits, positionData);
             statements.add(statement);
-            if (processedLines.add(positionData.getLine()))
-                lines.add(new LineData(hits, positionData.getLine()));
             getOrCreateLineData(positionData.getLine()).addStatement(statement);
         }
     }
@@ -85,17 +81,15 @@ public class FileData {
                 ScriptObjectMirror pos = (ScriptObjectMirror) branchMap.get("pos");
                 PositionData positionData = new PositionData(pos);
                 int hits = (Integer) hitArray.get(index);
-                branchPaths.add(new CoverageData(hits,positionData));
+                CoverageData branchPathData = new CoverageData(hits, positionData);
+                branchPaths.add(branchPathData);
+                getOrCreateLineData(positionData.getLine()).addBranch(branchPathData);
             }
         }
     }
 
     public List<CoverageData> getStatements() {
         return statements;
-    }
-
-    public List<LineData> getLines() {
-        return lines;
     }
 
     public List<CoverageData> getFunctions() {

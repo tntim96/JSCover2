@@ -9,8 +9,8 @@ public class SourceCodeRetriever {
     private static final Logger log = Logger.getLogger(SourceCodeRetriever.class.getName());
 
     private String code;
-    private List<Integer> lineIndexes = new ArrayList<>();
     private String name;
+    private List<Integer> lineIndexes = new ArrayList<>();
 
     public SourceCodeRetriever(String name, String code) {
         this.name = name;

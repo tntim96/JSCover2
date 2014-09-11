@@ -9,6 +9,13 @@ public class LineCompleteData {
     public LineCompleteData() {
     }
 
+    public boolean hit() {
+        for (CoverageData statement : statements)
+            if (statement.getHits() > 0)
+                return true;
+        return false;
+    }
+
     void addStatement(CoverageData data) {
         statements.add(data);
     }

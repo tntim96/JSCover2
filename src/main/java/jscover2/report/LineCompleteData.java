@@ -5,19 +5,23 @@ import java.util.List;
 
 public class LineCompleteData {
     private List<CoverageData> statements = new ArrayList<>();
-    private int hits = 0;
+    private int lineHits = 0;
 
     public LineCompleteData() {
     }
 
     void addStatement(CoverageData data) {
         statements.add(data);
-        if (hits == 0)
-            hits = data.getHits();
+        if (lineHits == 0)
+            lineHits = data.getHits();
+    }
+
+    public boolean hit() {
+        return lineHits > 0;
     }
 
     public int getLineHits() {
-        return hits;
+        return lineHits;
     }
 
     public List<CoverageData> getStatements() {

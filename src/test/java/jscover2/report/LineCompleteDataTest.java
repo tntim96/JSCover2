@@ -10,13 +10,7 @@ public class LineCompleteDataTest {
 
     @Test
     public void shouldDetectHit() {
-        data.addStatement(new CoverageData(1, PositionDataBuilder.getPositionData(1, 1, 1)));
-        assertThat(data.hit(), is(true));
-    }
-
-    @Test
-    public void shouldNotDetectHit() {
-        data.addStatement(new CoverageData(0, PositionDataBuilder.getPositionData(1, 1, 1)));
-        assertThat(data.hit(), is(false));
+        data.addStatement(new CoverageData(12, PositionDataBuilder.getPositionData(1, 1, 1)));
+        assertThat(data.getLineHits(), is(12));
     }
 }

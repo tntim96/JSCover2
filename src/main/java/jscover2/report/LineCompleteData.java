@@ -7,7 +7,8 @@ public class LineCompleteData {
     private List<CoverageData> statements = new ArrayList<>();
     private List<CoverageData> branchPaths = new ArrayList<>();
     private List<BooleanExpressionData> booleanExpressions = new ArrayList<>();
-    private int lineHits = 0;
+    private int lineHits;
+    private boolean branchMissed;
     private boolean booleanMissed;
 
     public LineCompleteData() {
@@ -23,6 +24,8 @@ public class LineCompleteData {
         branchPaths.add(data);
         if (lineHits == 0)
             lineHits = data.getHits();
+        if (data.getHits() == 0)
+            branchMissed = true;
     }
 
     void addBooleanExpression(BooleanExpressionData data) {
@@ -31,12 +34,16 @@ public class LineCompleteData {
             booleanMissed = true;
     }
 
-    public boolean hit() {
+    public boolean hitLine() {
         return lineHits > 0;
     }
 
     public int getLineHits() {
         return lineHits;
+    }
+
+    public boolean isBranchMissed() {
+        return branchMissed;
     }
 
     public boolean isBooleanMissed() {

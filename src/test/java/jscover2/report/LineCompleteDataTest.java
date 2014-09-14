@@ -11,7 +11,7 @@ public class LineCompleteDataTest {
     @Test
     public void shouldDetectLineHit() {
         data.addStatement(new CoverageData(12, PositionDataBuilder.getPositionData(1, 1, 1)));
-        assertThat(data.hitLine(), is(true));
+        assertThat(data.isLineHit(), is(true));
         assertThat(data.getLineHits(), is(12));
     }
 
@@ -19,7 +19,7 @@ public class LineCompleteDataTest {
     public void shouldDetectLineMiss() {
         data.addStatement(new CoverageData(0, PositionDataBuilder.getPositionData(1, 1, 1)));
         data.addStatement(new CoverageData(0, PositionDataBuilder.getPositionData(1, 1, 1)));
-        assertThat(data.hitLine(), is(false));
+        assertThat(data.isLineHit(), is(false));
         assertThat(data.getLineHits(), is(0));
     }
 

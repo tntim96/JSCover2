@@ -34,7 +34,7 @@ public class LineCompleteData {
             booleanMissed = true;
     }
 
-    public boolean hitLine() {
+    public boolean isLineHit() {
         return lineHits > 0;
     }
 

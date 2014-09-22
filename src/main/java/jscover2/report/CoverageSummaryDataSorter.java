@@ -106,4 +106,25 @@ public class CoverageSummaryDataSorter {
             }
         };
     }
+
+    public Comparator<CoverageSummaryData> byLineCoverageDesc() {
+        return byLineCoverage(true);
+    }
+
+    public Comparator<CoverageSummaryData> byLineCoverageAsc() {
+        return byLineCoverage(false);
+    }
+
+    private Comparator<CoverageSummaryData> byLineCoverage(final boolean ascending) {
+        return new Comparator<CoverageSummaryData>() {
+            @Override
+            public int compare(CoverageSummaryData o1, CoverageSummaryData o2) {
+                if (o1.getLineCoverage().getRatio() < o2.getLineCoverage().getRatio())
+                    return ascending ? 1 : -1;
+                else if (o1.getLineCoverage().getRatio() > o2.getLineCoverage().getRatio())
+                    return ascending ? -1 : 1;
+                return o1.getName().compareTo(o2.getName());
+            }
+        };
+    }
 }

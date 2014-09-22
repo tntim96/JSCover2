@@ -96,4 +96,22 @@ public class CoverageSummaryDataSorterTest {
         assertThat(list.get(1).getName(), equalTo("3"));
         assertThat(list.get(2).getName(), equalTo("2"));
     }
+
+    @Test
+    public void shouldSortByLineCoverageThenName() {
+        List<CoverageSummaryData> list = new ArrayList<>();
+        list.add(new CoverageSummaryDataBuilder().withName("3").withLineCoverage(2, 8).build());
+        list.add(new CoverageSummaryDataBuilder().withName("1").withLineCoverage(1, 4).build());
+        list.add(new CoverageSummaryDataBuilder().withName("2").withLineCoverage(3, 4).build());
+
+        Collections.sort(list, sorter.byLineCoverageDesc());
+        assertThat(list.get(0).getName(), equalTo("2"));
+        assertThat(list.get(1).getName(), equalTo("1"));
+        assertThat(list.get(2).getName(), equalTo("3"));
+
+        Collections.sort(list, sorter.byLineCoverageAsc());
+        assertThat(list.get(0).getName(), equalTo("1"));
+        assertThat(list.get(1).getName(), equalTo("3"));
+        assertThat(list.get(2).getName(), equalTo("2"));
+    }
 }

@@ -78,4 +78,22 @@ public class CoverageSummaryDataSorterTest {
         assertThat(list.get(1).getName(), equalTo("3"));
         assertThat(list.get(2).getName(), equalTo("2"));
     }
+
+    @Test
+    public void shouldSortByFunctionCoverageThenName() {
+        List<CoverageSummaryData> list = new ArrayList<>();
+        list.add(new CoverageSummaryDataBuilder().withName("3").withFunctionCoverage(2, 8).build());
+        list.add(new CoverageSummaryDataBuilder().withName("1").withFunctionCoverage(1, 4).build());
+        list.add(new CoverageSummaryDataBuilder().withName("2").withFunctionCoverage(3, 4).build());
+
+        Collections.sort(list, sorter.byFunctionCoverageDesc());
+        assertThat(list.get(0).getName(), equalTo("2"));
+        assertThat(list.get(1).getName(), equalTo("1"));
+        assertThat(list.get(2).getName(), equalTo("3"));
+
+        Collections.sort(list, sorter.byFunctionCoverageAsc());
+        assertThat(list.get(0).getName(), equalTo("1"));
+        assertThat(list.get(1).getName(), equalTo("3"));
+        assertThat(list.get(2).getName(), equalTo("2"));
+    }
 }

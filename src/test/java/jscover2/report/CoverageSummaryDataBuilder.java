@@ -35,7 +35,7 @@ public class CoverageSummaryDataBuilder {
         return this;
     }
 
-    public CoverageSummaryDataBuilder withBranchPath(int hits, int total) {
+    public CoverageSummaryDataBuilder withBranchPathCoverage(int hits, int total) {
         branchPathCoverage = new CoverageSummaryItem(hits, total);
         return this;
     }

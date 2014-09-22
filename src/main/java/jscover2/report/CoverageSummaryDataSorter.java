@@ -43,4 +43,25 @@ public class CoverageSummaryDataSorter {
             }
         };
     }
+
+    public Comparator<CoverageSummaryData> byBranchCoverageDesc() {
+        return byBranchCoverage(true);
+    }
+
+    public Comparator<CoverageSummaryData> byBranchCoverageAsc() {
+        return byBranchCoverage(false);
+    }
+
+    private Comparator<CoverageSummaryData> byBranchCoverage(final boolean ascending) {
+        return new Comparator<CoverageSummaryData>() {
+            @Override
+            public int compare(CoverageSummaryData o1, CoverageSummaryData o2) {
+                if (o1.getBranchPathCoverage().getRatio() < o2.getBranchPathCoverage().getRatio())
+                    return ascending ? 1 : -1;
+                else if (o1.getBranchPathCoverage().getRatio() > o2.getBranchPathCoverage().getRatio())
+                    return ascending ? -1 : 1;
+                return o1.getName().compareTo(o2.getName());
+            }
+        };
+    }
 }

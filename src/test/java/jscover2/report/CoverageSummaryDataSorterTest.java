@@ -26,7 +26,7 @@ public class CoverageSummaryDataSorterTest {
     }
 
     @Test
-    public void shouldSortByDescendingStatementCoverageThenName() {
+    public void shouldSortByStatementCoverageThenName() {
         List<CoverageSummaryData> list = new ArrayList<>();
         list.add(new CoverageSummaryDataBuilder().withName("3").withStatementCoverage(2, 8).build());
         list.add(new CoverageSummaryDataBuilder().withName("1").withStatementCoverage(1, 4).build());
@@ -38,6 +38,24 @@ public class CoverageSummaryDataSorterTest {
         assertThat(list.get(2).getName(), equalTo("3"));
 
         Collections.sort(list, sorter.byStatementCoverageAsc());
+        assertThat(list.get(0).getName(), equalTo("1"));
+        assertThat(list.get(1).getName(), equalTo("3"));
+        assertThat(list.get(2).getName(), equalTo("2"));
+    }
+
+    @Test
+    public void shouldSortByBranchCoverageThenName() {
+        List<CoverageSummaryData> list = new ArrayList<>();
+        list.add(new CoverageSummaryDataBuilder().withName("3").withBranchPathCoverage(2, 8).build());
+        list.add(new CoverageSummaryDataBuilder().withName("1").withBranchPathCoverage(1, 4).build());
+        list.add(new CoverageSummaryDataBuilder().withName("2").withBranchPathCoverage(3, 4).build());
+
+        Collections.sort(list, sorter.byBranchCoverageDesc());
+        assertThat(list.get(0).getName(), equalTo("2"));
+        assertThat(list.get(1).getName(), equalTo("1"));
+        assertThat(list.get(2).getName(), equalTo("3"));
+
+        Collections.sort(list, sorter.byBranchCoverageAsc());
         assertThat(list.get(0).getName(), equalTo("1"));
         assertThat(list.get(1).getName(), equalTo("3"));
         assertThat(list.get(2).getName(), equalTo("2"));

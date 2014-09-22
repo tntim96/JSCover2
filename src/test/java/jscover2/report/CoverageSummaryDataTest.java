@@ -126,14 +126,14 @@ public class CoverageSummaryDataTest {
                 .withLineCoverage(2, 6)
                 .withFunctionCoverage(10, 30)
                 .withBranchPathCoverage(100, 300)
-                .withBooleanExpressionsCoverage(1000, 3000)
+                .withBooleanExpressionCoverage(1000, 3000)
                 .build();
         CoverageSummaryData data2 = new CoverageSummaryDataBuilder()
                 .withStatementCoverage(4, 7)
                 .withLineCoverage(8, 14)
                 .withFunctionCoverage(40, 70)
                 .withBranchPathCoverage(400, 700)
-                .withBooleanExpressionsCoverage(4000, 7000)
+                .withBooleanExpressionCoverage(4000, 7000)
                 .build();
 
         data1.add(data2);

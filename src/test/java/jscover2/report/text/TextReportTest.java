@@ -14,7 +14,7 @@ public class TextReportTest {
             .withLineCoverage(7, 8)
             .withFunctionCoverage(3, 3)
             .withBranchPathCoverage(12, 15)
-            .withBooleanExpressionsCoverage(19, 25)
+            .withBooleanExpressionCoverage(19, 25)
             .build();
 
     @Test
@@ -42,7 +42,7 @@ public class TextReportTest {
                 .withLineCoverage(21, 24)
                 .withFunctionCoverage(7, 9)
                 .withBranchPathCoverage(36, 45)
-                .withBooleanExpressionsCoverage(54, 75)
+                .withBooleanExpressionCoverage(54, 75)
                 .build();
         CoverageSummaryData data2 = new CoverageSummaryDataBuilder()
                 .withName("file2")
@@ -50,7 +50,7 @@ public class TextReportTest {
                 .withLineCoverage(6, 8)
                 .withFunctionCoverage(2, 3)
                 .withBranchPathCoverage(11, 15)
-                .withBooleanExpressionsCoverage(17, 25)
+                .withBooleanExpressionCoverage(17, 25)
                 .build();
         CoverageSummaryData data3 = new CoverageSummaryDataBuilder()
                 .withName("file3")
@@ -58,7 +58,7 @@ public class TextReportTest {
                 .withLineCoverage(8, 8)
                 .withFunctionCoverage(3, 3)
                 .withBranchPathCoverage(13, 15)
-                .withBooleanExpressionsCoverage(19, 25)
+                .withBooleanExpressionCoverage(19, 25)
                 .build();
         JSCover2CoverageSummary summary = new JSCover2CoverageSummaryBuilder()
                 .withTotal(total)

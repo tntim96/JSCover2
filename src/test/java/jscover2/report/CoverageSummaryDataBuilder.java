@@ -30,7 +30,7 @@ public class CoverageSummaryDataBuilder {
         return this;
     }
 
-    public CoverageSummaryDataBuilder withBooleanExpressionsCoverage(int hits, int total) {
+    public CoverageSummaryDataBuilder withBooleanExpressionCoverage(int hits, int total) {
         booleanExpressionCoverage = new CoverageSummaryItem(hits, total);
         return this;
     }

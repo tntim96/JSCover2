@@ -60,4 +60,22 @@ public class CoverageSummaryDataSorterTest {
         assertThat(list.get(1).getName(), equalTo("3"));
         assertThat(list.get(2).getName(), equalTo("2"));
     }
+
+    @Test
+    public void shouldSortByBooleanExpressionCoverageThenName() {
+        List<CoverageSummaryData> list = new ArrayList<>();
+        list.add(new CoverageSummaryDataBuilder().withName("3").withBooleanExpressionCoverage(2, 8).build());
+        list.add(new CoverageSummaryDataBuilder().withName("1").withBooleanExpressionCoverage(1, 4).build());
+        list.add(new CoverageSummaryDataBuilder().withName("2").withBooleanExpressionCoverage(3, 4).build());
+
+        Collections.sort(list, sorter.byBooleanExpressionCoverageDesc());
+        assertThat(list.get(0).getName(), equalTo("2"));
+        assertThat(list.get(1).getName(), equalTo("1"));
+        assertThat(list.get(2).getName(), equalTo("3"));
+
+        Collections.sort(list, sorter.byBooleanExpressionCoverageAsc());
+        assertThat(list.get(0).getName(), equalTo("1"));
+        assertThat(list.get(1).getName(), equalTo("3"));
+        assertThat(list.get(2).getName(), equalTo("2"));
+    }
 }

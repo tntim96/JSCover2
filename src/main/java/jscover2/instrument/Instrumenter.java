@@ -196,7 +196,7 @@ public class Instrumenter {
         Node script = ParserRunner.parse(
                 sourceFile,
                 source,
-                ParserRunner.createConfig(true, false, config.getJavaScriptVersion(), false, null),
+                ParserRunner.createConfig(true, config.getJavaScriptVersion(), false, null),
                 null).ast;
         log.log(Level.FINEST, script.toStringTree());
         return script;

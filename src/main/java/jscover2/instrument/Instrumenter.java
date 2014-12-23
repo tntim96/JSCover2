@@ -29,7 +29,7 @@ public class Instrumenter {
     }
 
     public String instrument(String urlPath, String code) {
-        SourceFile sourceFile = SourceFile.fromCode(urlPath, urlPath, code);
+        SourceFile sourceFile = SourceFile.fromCode(urlPath, code);
         com.google.javascript.jscomp.parsing.parser.SourceFile sf = new com.google.javascript.jscomp.parsing.parser.SourceFile(urlPath, code);
         LineNumberTable lineNumberTable = new LineNumberTable(sf);
         Node jsRoot = parse(code, sourceFile);

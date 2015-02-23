@@ -15,6 +15,7 @@ import static java.lang.String.format;
 
 public class Instrumenter {
     private static final Logger log = Logger.getLogger(Instrumenter.class.getName());
+    private ParserUtils parserUtils = ParserUtils.getInstance();
     private String booleanExpressionRecorderJS = "function(result, u, n) {if (result)this[u].be[''+n][0]++;else this[u].be[''+n][1]++;return result}";
     private String header;
     private Configuration config;
@@ -108,7 +109,7 @@ public class Instrumenter {
             if (i > 1)
                 sb.append(",");
             int lineNo = n.getLineno();
-            int col = n.getSourceOffset() - lineNumberTable.offsetOfLine(lineNo - 1);
+            int col = getColumnOffset(lineNumberTable, n, lineNo);
             sb.append(format("\"%d\":{\"pos\":{\"line\":%d,\"col\":%d,\"len\":%d}}", i, lineNo, col, n.getLength()));
         }
         sb.append("},\n");
@@ -131,7 +132,7 @@ public class Instrumenter {
                 if (++j > 1)
                     sb.append(",");
                 int lineNo = branch.getLineno();
-                int col = branch.getSourceOffset() - lineNumberTable.offsetOfLine(lineNo - 1);
+                int col = getColumnOffset(lineNumberTable, branch, lineNo);
                 sb.append(format("{\"pos\":{\"line\":%d,\"col\":%d,\"len\":%d}}", lineNo, col, branch.getLength()));
             }
             sb.append("]");
@@ -170,7 +171,7 @@ public class Instrumenter {
             if (i > 1)
                 sb.append(",");
             int lineNo = booleanExpression.getNode().getLineno();
-            int col = booleanExpression.getNode().getSourceOffset() - lineNumberTable.offsetOfLine(lineNo - 1);
+            int col = getColumnOffset(lineNumberTable, booleanExpression.getNode(), lineNo);
             sb.append(format("\"%d\":{\"pos\":{\"line\":%d,\"col\":%d,\"len\":%d},\"br\":\"%s\"}", i, lineNo, col, booleanExpression.getNode().getLength(), booleanExpression.isBranch()));
         }
         sb.append("},\n");
@@ -190,10 +191,14 @@ public class Instrumenter {
             if (i > 1)
                 sb.append(",");
             int lineNo = n.getLineno();
-            int col = n.getSourceOffset() - lineNumberTable.offsetOfLine(lineNo - 1);
+            int col = getColumnOffset(lineNumberTable, n, lineNo);
             sb.append(format("\"%d\":{\"pos\":{\"line\":%d,\"col\":%d,\"len\":%d}}", i, lineNo, col, n.getLength()));
         }
         sb.append("}\n");
+    }
+
+    private int getColumnOffset(LineNumberTable lineNumberTable, Node n, int lineNo) {
+        return n.getSourceOffset() - parserUtils.getLineOffset(lineNumberTable, lineNo);
     }
 
     private Node parse(String source, StaticSourceFile sourceFile) {

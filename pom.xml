@@ -30,12 +30,13 @@
             <id>central</id>
             <url>http://repo1.maven.org/maven2/</url>
         </repository>
-        <!-- Testing snapshot development -->
+        <!-- Testing snapshot development
         <repository>
             <id>Sonatype repository</id>
             <name>Sonatype's Maven repository</name>
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </repository>
+        -->
         <!-- Testing staged release
         <repository>
             <id>sonatype</id>
@@ -49,7 +50,7 @@
         <dependency>
             <groupId>com.google.javascript</groupId>
             <artifactId>closure-compiler</artifactId>
-            <version>v20141215</version>
+            <version>v20150126</version>
         </dependency>
         <!--
         <dependency>

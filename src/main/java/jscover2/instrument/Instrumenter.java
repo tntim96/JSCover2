@@ -107,8 +107,9 @@ public class Instrumenter {
             Node n = nodeVisitor.getStatements().get(i - 1);
             if (i > 1)
                 sb.append(",");
-            int col = lineNumberTable.getColumn(n.getSourceOffset());
-            sb.append(format("\"%d\":{\"pos\":{\"line\":%d,\"col\":%d,\"len\":%d}}", i, n.getLineno(), col, n.getLength()));
+            int lineNo = n.getLineno();
+            int col = n.getSourceOffset() - lineNumberTable.offsetOfLine(lineNo - 1);
+            sb.append(format("\"%d\":{\"pos\":{\"line\":%d,\"col\":%d,\"len\":%d}}", i, lineNo, col, n.getLength()));
         }
         sb.append("},\n");
     }
@@ -129,8 +130,9 @@ public class Instrumenter {
             for (Node branch : nodeVisitor.getBranches().get(parent)) {
                 if (++j > 1)
                     sb.append(",");
-                int col = lineNumberTable.getColumn(branch.getSourceOffset());
-                sb.append(format("{\"pos\":{\"line\":%d,\"col\":%d,\"len\":%d}}", branch.getLineno(), col, branch.getLength()));
+                int lineNo = branch.getLineno();
+                int col = branch.getSourceOffset() - lineNumberTable.offsetOfLine(lineNo - 1);
+                sb.append(format("{\"pos\":{\"line\":%d,\"col\":%d,\"len\":%d}}", lineNo, col, branch.getLength()));
             }
             sb.append("]");
         }
@@ -167,8 +169,9 @@ public class Instrumenter {
             BooleanExpression booleanExpression = nodeVisitor.getBooleanExpressions().get(i - 1);
             if (i > 1)
                 sb.append(",");
-            int col = lineNumberTable.getColumn(booleanExpression.getNode().getSourceOffset());
-            sb.append(format("\"%d\":{\"pos\":{\"line\":%d,\"col\":%d,\"len\":%d},\"br\":\"%s\"}", i, booleanExpression.getNode().getLineno(), col, booleanExpression.getNode().getLength(), booleanExpression.isBranch()));
+            int lineNo = booleanExpression.getNode().getLineno();
+            int col = booleanExpression.getNode().getSourceOffset() - lineNumberTable.offsetOfLine(lineNo - 1);
+            sb.append(format("\"%d\":{\"pos\":{\"line\":%d,\"col\":%d,\"len\":%d},\"br\":\"%s\"}", i, lineNo, col, booleanExpression.getNode().getLength(), booleanExpression.isBranch()));
         }
         sb.append("},\n");
     }
@@ -186,8 +189,9 @@ public class Instrumenter {
             Node n = nodeVisitor.getFunctions().get(i - 1);
             if (i > 1)
                 sb.append(",");
-            int col = lineNumberTable.getColumn(n.getSourceOffset());
-            sb.append(format("\"%d\":{\"pos\":{\"line\":%d,\"col\":%d,\"len\":%d}}", i, n.getLineno(), col, n.getLength()));
+            int lineNo = n.getLineno();
+            int col = n.getSourceOffset() - lineNumberTable.offsetOfLine(lineNo - 1);
+            sb.append(format("\"%d\":{\"pos\":{\"line\":%d,\"col\":%d,\"len\":%d}}", i, lineNo, col, n.getLength()));
         }
         sb.append("}\n");
     }

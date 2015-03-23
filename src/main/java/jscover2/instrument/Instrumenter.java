@@ -5,7 +5,7 @@ import com.google.javascript.jscomp.SourceFile;
 import com.google.javascript.jscomp.parsing.ParserRunner;
 import com.google.javascript.jscomp.parsing.parser.LineNumberTable;
 import com.google.javascript.rhino.Node;
-import com.google.javascript.rhino.jstype.StaticSourceFile;
+import com.google.javascript.rhino.StaticSourceFile;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

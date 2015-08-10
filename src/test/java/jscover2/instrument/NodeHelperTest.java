@@ -113,7 +113,7 @@ public class NodeHelperTest {
         return ParserRunner.parse(
                 new SourceFile("test.js"),
                 source,
-                ParserRunner.createConfig(true, Config.LanguageMode.ECMASCRIPT3, false, null),
+                ParserRunner.createConfig(true, Config.LanguageMode.ECMASCRIPT3, null),
                 null).ast;
     }
 

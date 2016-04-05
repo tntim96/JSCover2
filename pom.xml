@@ -16,6 +16,10 @@
 
     <url>http://tntim96.github.com/JSCover2/</url>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <scm>
         <url>http://github.com/tntim96/JSCover2/</url>
         <connection>scm:git:git://github.com/tntim96/JSCover2.git</connection>

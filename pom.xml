@@ -25,10 +25,6 @@
         <connection>scm:git:git://github.com/tntim96/JSCover2.git</connection>
     </scm>
     <repositories>
-        <repository>
-            <id>central</id>
-            <url>http://repo1.maven.org/maven2/</url>
-        </repository>
         <!-- Testing snapshot development
         <repository>
             <id>Sonatype repository</id>

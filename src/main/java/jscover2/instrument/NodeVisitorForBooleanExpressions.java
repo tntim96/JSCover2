@@ -57,8 +57,8 @@ public class NodeVisitorForBooleanExpressions implements AstAlteredNodeCallback 
         if (n == null)
             return false;
         switch (n.getType()) {
-            case Token.OR:
-            case Token.AND:
+            case OR:
+            case AND:
                 return true;
             default:
                 return false;
@@ -67,16 +67,16 @@ public class NodeVisitorForBooleanExpressions implements AstAlteredNodeCallback 
 
     private boolean isBooleanTest(Node n) {
         switch (n.getType()) {
-            case Token.EQ:
-            case Token.NE:
-            case Token.LT:
-            case Token.LE:
-            case Token.GT:
-            case Token.GE:
-            case Token.SHEQ:
-            case Token.SHNE:
-            case Token.OR:
-            case Token.AND:
+            case EQ:
+            case NE:
+            case LT:
+            case LE:
+            case GT:
+            case GE:
+            case SHEQ:
+            case SHNE:
+            case OR:
+            case AND:
                 return true;
             default:
                 return false;

@@ -2,7 +2,6 @@ package jscover2.instrument;
 
 import com.google.javascript.jscomp.CodePrinter;
 import com.google.javascript.jscomp.SourceFile;
-import com.google.javascript.jscomp.parsing.Config;
 import com.google.javascript.jscomp.parsing.ParserRunner;
 import com.google.javascript.rhino.Node;
 import com.google.javascript.rhino.Token;
@@ -10,6 +9,10 @@ import org.junit.Test;
 
 import java.io.IOException;
 
+import static com.google.javascript.jscomp.parsing.Config.JsDocParsing.TYPES_ONLY;
+import static com.google.javascript.jscomp.parsing.Config.LanguageMode.ECMASCRIPT3;
+import static com.google.javascript.jscomp.parsing.Config.RunMode.KEEP_GOING;
+import static com.google.javascript.jscomp.parsing.Config.SourceLocationInformation.PRESERVE;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -113,7 +116,7 @@ public class NodeHelperTest {
         return ParserRunner.parse(
                 new SourceFile("test.js"),
                 source,
-                ParserRunner.createConfig(true, Config.LanguageMode.ECMASCRIPT3, null),
+                ParserRunner.createConfig(ECMASCRIPT3, TYPES_ONLY, PRESERVE, KEEP_GOING, null),
                 null).ast;
     }
 

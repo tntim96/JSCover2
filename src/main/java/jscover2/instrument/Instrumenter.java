@@ -10,6 +10,9 @@ import com.google.javascript.rhino.StaticSourceFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static com.google.javascript.jscomp.parsing.Config.JsDocParsing.TYPES_ONLY;
+import static com.google.javascript.jscomp.parsing.Config.RunMode.KEEP_GOING;
+import static com.google.javascript.jscomp.parsing.Config.SourceLocationInformation.PRESERVE;
 import static java.lang.String.format;
 
 
@@ -78,7 +81,7 @@ public class Instrumenter {
             }
         }
         if (parses > config.getMaxParses())
-            log.log(Level.WARNING, "Stopping AST condition parsing after iteration {0}", parses-1);
+            log.log(Level.WARNING, "Stopping AST condition parsing after iteration {0}", parses - 1);
         return conditionVisitor;
     }
 
@@ -205,7 +208,7 @@ public class Instrumenter {
         Node script = ParserRunner.parse(
                 sourceFile,
                 source,
-                ParserRunner.createConfig(true, config.getJavaScriptVersion(), null),
+                ParserRunner.createConfig(config.getJavaScriptVersion(), TYPES_ONLY, PRESERVE, KEEP_GOING, null),
                 null).ast;
         log.log(Level.FINEST, script.toStringTree());
         return script;

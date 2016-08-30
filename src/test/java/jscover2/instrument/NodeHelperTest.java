@@ -12,7 +12,6 @@ import java.io.IOException;
 import static com.google.javascript.jscomp.parsing.Config.JsDocParsing.TYPES_ONLY;
 import static com.google.javascript.jscomp.parsing.Config.LanguageMode.ECMASCRIPT3;
 import static com.google.javascript.jscomp.parsing.Config.RunMode.KEEP_GOING;
-import static com.google.javascript.jscomp.parsing.Config.SourceLocationInformation.PRESERVE;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -96,10 +95,9 @@ public class NodeHelperTest {
     }
 
     private Node buildLessThanNodeWithParent(Node lt) {
-        Node ifNode = new Node(Token.IF);
         lt.addChildToFront(Node.newString(Token.NAME, "x"));
         lt.addChildToBack(Node.newNumber(0));
-        ifNode.addChildrenToFront(lt);
+
         Node block = new Node(Token.BLOCK);
         Node exprResult = new Node(Token.EXPR_RESULT);
         Node inc = new Node(Token.INC);
@@ -108,15 +106,14 @@ public class NodeHelperTest {
         inc.addChildrenToFront(name);
         exprResult.addChildToBack(inc);
         block.addChildrenToFront(exprResult);
-        ifNode.addChildrenToBack(block);
-        return ifNode;
+        return new Node(Token.IF, lt, block);
     }
 
     private Node parse(String source) {
         return ParserRunner.parse(
                 new SourceFile("test.js"),
                 source,
-                ParserRunner.createConfig(ECMASCRIPT3, TYPES_ONLY, PRESERVE, KEEP_GOING, null),
+                ParserRunner.createConfig(ECMASCRIPT3, TYPES_ONLY, KEEP_GOING, null),
                 null).ast;
     }
 

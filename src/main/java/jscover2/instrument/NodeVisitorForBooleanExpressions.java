@@ -2,7 +2,6 @@ package jscover2.instrument;
 
 import com.google.javascript.jscomp.SourceFile;
 import com.google.javascript.rhino.Node;
-import com.google.javascript.rhino.Token;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +55,7 @@ public class NodeVisitorForBooleanExpressions implements AstAlteredNodeCallback 
     private boolean isBooleanJoin(Node n) {
         if (n == null)
             return false;
-        switch (n.getType()) {
+        switch (n.getToken()) {
             case OR:
             case AND:
                 return true;
@@ -66,7 +65,7 @@ public class NodeVisitorForBooleanExpressions implements AstAlteredNodeCallback 
     }
 
     private boolean isBooleanTest(Node n) {
-        switch (n.getType()) {
+        switch (n.getToken()) {
             case EQ:
             case NE:
             case LT:

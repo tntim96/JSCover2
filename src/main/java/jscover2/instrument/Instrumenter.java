@@ -2,6 +2,7 @@ package jscover2.instrument;
 
 import com.google.javascript.jscomp.CodePrinter;
 import com.google.javascript.jscomp.SourceFile;
+import com.google.javascript.jscomp.parsing.Config;
 import com.google.javascript.jscomp.parsing.ParserRunner;
 import com.google.javascript.jscomp.parsing.parser.LineNumberTable;
 import com.google.javascript.rhino.Node;
@@ -207,7 +208,7 @@ public class Instrumenter {
         Node script = ParserRunner.parse(
                 sourceFile,
                 source,
-                ParserRunner.createConfig(config.getJavaScriptVersion(), TYPES_ONLY, KEEP_GOING, null, false),
+                ParserRunner.createConfig(config.getJavaScriptVersion(), TYPES_ONLY, KEEP_GOING, null, false, Config.StrictMode.STRICT),
                 null).ast;
         log.log(Level.FINEST, script.toStringTree());
         return script;

@@ -2,6 +2,7 @@ package jscover2.instrument;
 
 import com.google.javascript.jscomp.CodePrinter;
 import com.google.javascript.jscomp.SourceFile;
+import com.google.javascript.jscomp.parsing.Config;
 import com.google.javascript.jscomp.parsing.ParserRunner;
 import com.google.javascript.rhino.Node;
 import com.google.javascript.rhino.Token;
@@ -113,7 +114,7 @@ public class NodeHelperTest {
         return ParserRunner.parse(
                 new SourceFile("test.js"),
                 source,
-                ParserRunner.createConfig(ECMASCRIPT3, TYPES_ONLY, KEEP_GOING, null, false),
+                ParserRunner.createConfig(ECMASCRIPT3, TYPES_ONLY, KEEP_GOING, null, false, Config.StrictMode.SLOPPY),
                 null).ast;
     }
 

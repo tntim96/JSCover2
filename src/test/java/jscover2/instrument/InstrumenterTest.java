@@ -113,7 +113,7 @@ public class InstrumenterTest {
     @Test
     public void shouldCoverFunction() throws ScriptException {
         String instrumented = instrumenter.instrument("test.js", "function sq(x) {\n  return x*x;\n}\nsq(5);");
-        assertThat(engine.eval(instrumented), equalTo(25L));
+        assertThat(engine.eval(instrumented), equalTo(25.0));
         assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['2']"), equalTo(1));
         assertThat(engine.eval("jscover['test.js'].s['3']"), equalTo(1));

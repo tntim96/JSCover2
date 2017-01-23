@@ -1,4 +1,5 @@
 JSCover2
+========
 
 A JavaScript code-coverage tool
 

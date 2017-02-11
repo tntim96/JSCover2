@@ -58,8 +58,8 @@ public class FileData {
         ScriptObjectMirror data = (ScriptObjectMirror) mirror.get("be");
         ScriptObjectMirror map = (ScriptObjectMirror) mirror.get("beM");
         for (String count : data.keySet()) {
-            int trueHits = (int) ((ScriptObjectMirror) data.get(count)).get(0);
-            int falseHits = (int) ((ScriptObjectMirror) data.get(count)).get(1);
+            int trueHits = (int) ((ScriptObjectMirror) data.get(count)).get("0");
+            int falseHits = (int) ((ScriptObjectMirror) data.get(count)).get("1");
             ScriptObjectMirror pos = (ScriptObjectMirror) ((ScriptObjectMirror) map.get(count)).get("pos");
             PositionData positionData = new PositionData(pos);
             boolean branch = ((ScriptObjectMirror) map.get(count)).get("br").equals("true");

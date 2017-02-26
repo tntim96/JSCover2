@@ -52,7 +52,7 @@ public class NodeVisitorForStatements implements NodeCallback {
     }
 
     private boolean isStatementToBeInstrumented(Node n) {
-        if (n.getParent() != null && !n.getParent().isBlock() && !n.getParent().isScript())
+        if (n.getParent() != null && !n.getParent().isNormalBlock() && !n.getParent().isScript())
             return false;
         return n.isExprResult()
                 || n.isFunction()
@@ -60,7 +60,8 @@ public class NodeVisitorForStatements implements NodeCallback {
                 || n.isIf()
                 || n.isDo()
                 || n.isWhile()
-                || n.isFor()
+                || n.isVanillaFor()
+                || n.isForIn()
                 || n.isBreak()
                 || n.isSwitch()
                 || n.isReturn();

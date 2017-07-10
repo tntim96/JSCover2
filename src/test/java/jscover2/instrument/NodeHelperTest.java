@@ -4,8 +4,8 @@ import com.google.javascript.jscomp.CodePrinter;
 import com.google.javascript.jscomp.SourceFile;
 import com.google.javascript.jscomp.parsing.Config;
 import com.google.javascript.jscomp.parsing.ParserRunner;
+import com.google.javascript.rhino.IR;
 import com.google.javascript.rhino.Node;
-import com.google.javascript.rhino.Token;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -46,10 +46,7 @@ public class NodeHelperTest {
 
     @Test
     public void shouldWrapConditionNode() throws IOException {
-        Node node = new Node(Token.LT);
-        node.addChildToFront(Node.newString(Token.NAME, "x"));
-        node.addChildToBack(Node.newNumber(0));
-
+        Node node = IR.lt(IR.name("x"), IR.number(0));
         Node expected = parse("coverVar.beF((x < 0), 'urlPath', 7)");
         Node actual = nodeHelper.wrapConditionNode(node, "coverVar", "urlPath", 7);
 
@@ -58,8 +55,8 @@ public class NodeHelperTest {
 
     @Test
     public void shouldWrapNodeWithParent() throws IOException {
-        Node lt = new Node(Token.LT);
-        Node ifNode = buildLessThanNodeWithParent(lt);
+        Node ifNode = buildLessThanNodeWithParent();
+        Node lt = ifNode.getFirstChild();
 
         Node expected = parse("if (coverVar.beF((x < 0), 'urlPath', 7))\n  x++;");
 
@@ -71,9 +68,9 @@ public class NodeHelperTest {
 
     @Test
     public void shouldDetectInstrumentation() throws IOException {
-        Node jscover = Node.newString("jscover");
-        Node getProp = new Node(Token.GETPROP, jscover);
-        Node call = new Node(Token.CALL, getProp);
+        Node jscover = IR.string("jscover");
+        Node getProp = IR.getprop(jscover, "uri");
+        Node call = IR.call(getProp);
 
         assertThat(nodeHelper.isInstrumentation(call, "anything"), is(true));//No source so must be synthetic
         call.setSourceFileForTesting("Hey");
@@ -83,8 +80,7 @@ public class NodeHelperTest {
 
     @Test
     public void shouldDetectWrappedNode() throws IOException {
-        Node lt = new Node(Token.LT);
-        buildLessThanNodeWithParent(lt);
+        Node lt = buildLessThanNodeWithParent().getFirstChild();
 
         Node wrapped = nodeHelper.wrapConditionNode(lt, "coverVar", "urlPath", 7);
 
@@ -95,19 +91,13 @@ public class NodeHelperTest {
         assertThat(nodeHelper.isWrapped(ltWrapped, "coverVary"), is(false));
     }
 
-    private Node buildLessThanNodeWithParent(Node lt) {
-        lt.addChildToFront(Node.newString(Token.NAME, "x"));
-        lt.addChildToBack(Node.newNumber(0));
-
-        Node block = new Node(Token.BLOCK);
-        Node exprResult = new Node(Token.EXPR_RESULT);
-        Node inc = new Node(Token.INC);
-        inc.putBooleanProp(Node.INCRDECR_PROP, true);
-        Node name = Node.newString(Token.NAME, "x");
-        inc.addChildrenToFront(name);
-        exprResult.addChildToBack(inc);
-        block.addChildrenToFront(exprResult);
-        return new Node(Token.IF, lt, block);
+    private Node buildLessThanNodeWithParent() {
+        Node lt = IR.lt(IR.name("x"), IR.number(0));
+        Node name = IR.name("x");
+        Node inc = IR.inc(name, true);
+        Node exprResult = IR.exprResult(inc);
+        Node block = IR.block(exprResult);
+        return IR.ifNode(lt, block);
     }
 
     private Node parse(String source) {

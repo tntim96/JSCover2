@@ -2,8 +2,8 @@ package jscover2.instrument;
 
 import com.google.javascript.jscomp.CodePrinter;
 import com.google.javascript.jscomp.SourceFile;
+import com.google.javascript.rhino.IR;
 import com.google.javascript.rhino.Node;
-import com.google.javascript.rhino.Token;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -15,10 +15,10 @@ public class NodeVisitorForBooleanExpressionsTest {
 
     @Test
     public void shouldWrapCondition() {
-        Node a = Node.newString(Token.NAME, "a");
-        Node b = Node.newString(Token.NAME, "b");
-        Node or = new Node(Token.OR, a, b);
-        Node expressionResult = new Node(Token.EXPR_RESULT, or);
+        Node a = IR.name("a");
+        Node b = IR.name("b");
+        Node or = IR.or(a, b);
+        Node expressionResult = IR.exprResult(or);
         setSourceFile(expressionResult);
         visitor.visit(a);
         visitor.visit(b);
@@ -28,10 +28,10 @@ public class NodeVisitorForBooleanExpressionsTest {
 
     @Test
     public void shouldNotWrapConditionTwice() {
-        Node a = Node.newString(Token.NAME, "a");
-        Node b = Node.newString(Token.NAME, "b");
-        Node or = new Node(Token.OR, a, b);
-        Node expressionResult = new Node(Token.EXPR_RESULT, or);
+        Node a = IR.name("a");
+        Node b = IR.name("b");
+        Node or = IR.or(a, b);
+        Node expressionResult = IR.exprResult(or);
         setSourceFile(expressionResult);
         visitor.visit(a);
         visitor.visit(b);
@@ -42,11 +42,8 @@ public class NodeVisitorForBooleanExpressionsTest {
     }
 
     private void setSourceFile(Node expressionResult) {
-        new NodeWalker().visit(expressionResult, new NodeCallback() {
-            @Override
-            public void visit(Node n) {
-                n.setSourceFileForTesting(sourceFile.getName());
-            }
+        new NodeWalker().visit(expressionResult, n -> {
+            n.setSourceFileForTesting(sourceFile.getName());
         });
     }
 }

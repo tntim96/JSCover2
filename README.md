@@ -8,7 +8,7 @@ A JavaScript code-coverage tool
 [![Dependency Status](https://www.versioneye.com/user/projects/5404420cd0734e31f400016d/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5404420cd0734e31f400016d)
 
 Motivations
-* Swap from Rhino to the excellent [Closure-Compiler](https://developers.google.com/closure/compiler/) for several reasons:
+* Swap (NB: JSCover has swapped too) from Rhino to the excellent [Closure-Compiler](https://developers.google.com/closure/compiler/) for several reasons:
   * ES6 Harmony support
   * Designed specifically for AST manipulation and JavaScript code generation
   * Superior code position data for reports

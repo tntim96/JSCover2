@@ -12,14 +12,11 @@ public class CoverageSummaryDataSorter {
     }
 
     private Comparator<CoverageSummaryData> byName(final boolean ascending) {
-        return new Comparator<CoverageSummaryData>() {
-            @Override
-            public int compare(CoverageSummaryData o1, CoverageSummaryData o2) {
-                if (ascending)
-                    return o1.getName().compareTo(o2.getName());
-                else
-                    return o2.getName().compareTo(o1.getName());
-            }
+        return (o1, o2) -> {
+            if (ascending)
+                return o1.getName().compareTo(o2.getName());
+            else
+                return o2.getName().compareTo(o1.getName());
         };
     }
 
@@ -32,15 +29,12 @@ public class CoverageSummaryDataSorter {
     }
 
     private Comparator<CoverageSummaryData> byStatementCoverage(final boolean ascending) {
-        return new Comparator<CoverageSummaryData>() {
-            @Override
-            public int compare(CoverageSummaryData o1, CoverageSummaryData o2) {
-                if (o1.getStatementCoverage().getRatio() < o2.getStatementCoverage().getRatio())
-                    return ascending ? 1 : -1;
-                else if (o1.getStatementCoverage().getRatio() > o2.getStatementCoverage().getRatio())
-                    return ascending ? -1 : 1;
-                return o1.getName().compareTo(o2.getName());
-            }
+        return (o1, o2) -> {
+            if (o1.getStatementCoverage().getRatio() < o2.getStatementCoverage().getRatio())
+                return ascending ? 1 : -1;
+            else if (o1.getStatementCoverage().getRatio() > o2.getStatementCoverage().getRatio())
+                return ascending ? -1 : 1;
+            return o1.getName().compareTo(o2.getName());
         };
     }
 
@@ -53,15 +47,12 @@ public class CoverageSummaryDataSorter {
     }
 
     private Comparator<CoverageSummaryData> byBranchCoverage(final boolean ascending) {
-        return new Comparator<CoverageSummaryData>() {
-            @Override
-            public int compare(CoverageSummaryData o1, CoverageSummaryData o2) {
-                if (o1.getBranchPathCoverage().getRatio() < o2.getBranchPathCoverage().getRatio())
-                    return ascending ? 1 : -1;
-                else if (o1.getBranchPathCoverage().getRatio() > o2.getBranchPathCoverage().getRatio())
-                    return ascending ? -1 : 1;
-                return o1.getName().compareTo(o2.getName());
-            }
+        return (o1, o2) -> {
+            if (o1.getBranchPathCoverage().getRatio() < o2.getBranchPathCoverage().getRatio())
+                return ascending ? 1 : -1;
+            else if (o1.getBranchPathCoverage().getRatio() > o2.getBranchPathCoverage().getRatio())
+                return ascending ? -1 : 1;
+            return o1.getName().compareTo(o2.getName());
         };
     }
 
@@ -74,15 +65,12 @@ public class CoverageSummaryDataSorter {
     }
 
     private Comparator<CoverageSummaryData> byBooleanExpressionCoverage(final boolean ascending) {
-        return new Comparator<CoverageSummaryData>() {
-            @Override
-            public int compare(CoverageSummaryData o1, CoverageSummaryData o2) {
-                if (o1.getBooleanExpressionCoverage().getRatio() < o2.getBooleanExpressionCoverage().getRatio())
-                    return ascending ? 1 : -1;
-                else if (o1.getBooleanExpressionCoverage().getRatio() > o2.getBooleanExpressionCoverage().getRatio())
-                    return ascending ? -1 : 1;
-                return o1.getName().compareTo(o2.getName());
-            }
+        return (o1, o2) -> {
+            if (o1.getBooleanExpressionCoverage().getRatio() < o2.getBooleanExpressionCoverage().getRatio())
+                return ascending ? 1 : -1;
+            else if (o1.getBooleanExpressionCoverage().getRatio() > o2.getBooleanExpressionCoverage().getRatio())
+                return ascending ? -1 : 1;
+            return o1.getName().compareTo(o2.getName());
         };
     }
 
@@ -95,15 +83,12 @@ public class CoverageSummaryDataSorter {
     }
 
     private Comparator<CoverageSummaryData> byFunctionCoverage(final boolean ascending) {
-        return new Comparator<CoverageSummaryData>() {
-            @Override
-            public int compare(CoverageSummaryData o1, CoverageSummaryData o2) {
-                if (o1.getFunctionCoverage().getRatio() < o2.getFunctionCoverage().getRatio())
-                    return ascending ? 1 : -1;
-                else if (o1.getFunctionCoverage().getRatio() > o2.getFunctionCoverage().getRatio())
-                    return ascending ? -1 : 1;
-                return o1.getName().compareTo(o2.getName());
-            }
+        return (o1, o2) -> {
+            if (o1.getFunctionCoverage().getRatio() < o2.getFunctionCoverage().getRatio())
+                return ascending ? 1 : -1;
+            else if (o1.getFunctionCoverage().getRatio() > o2.getFunctionCoverage().getRatio())
+                return ascending ? -1 : 1;
+            return o1.getName().compareTo(o2.getName());
         };
     }
 
@@ -116,15 +101,12 @@ public class CoverageSummaryDataSorter {
     }
 
     private Comparator<CoverageSummaryData> byLineCoverage(final boolean ascending) {
-        return new Comparator<CoverageSummaryData>() {
-            @Override
-            public int compare(CoverageSummaryData o1, CoverageSummaryData o2) {
-                if (o1.getLineCoverage().getRatio() < o2.getLineCoverage().getRatio())
-                    return ascending ? 1 : -1;
-                else if (o1.getLineCoverage().getRatio() > o2.getLineCoverage().getRatio())
-                    return ascending ? -1 : 1;
-                return o1.getName().compareTo(o2.getName());
-            }
+        return (o1, o2) -> {
+            if (o1.getLineCoverage().getRatio() < o2.getLineCoverage().getRatio())
+                return ascending ? 1 : -1;
+            else if (o1.getLineCoverage().getRatio() > o2.getLineCoverage().getRatio())
+                return ascending ? -1 : 1;
+            return o1.getName().compareTo(o2.getName());
         };
     }
 }

@@ -1,5 +1,6 @@
 package jscover2.instrument;
 
+import jscover2.utils.ReflectionUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -181,5 +182,13 @@ public class InstrumenterTest {
         assertThat(engine.eval("jscover['test.js'].beM['1'].pos.line"), equalTo(2));
         assertThat(engine.eval("jscover['test.js'].beM['1'].pos.col"), equalTo(4));
         assertThat(engine.eval("jscover['test.js'].beM['1'].pos.len"), equalTo(5));
+    }
+
+    @Test
+    public void shouldHitMaxParses() throws ScriptException {
+        ReflectionUtils.setField(config, "maxParses", 0);
+        String instrumented = instrumenter.instrument("test.js", "x = 1;");
+        assertThat(engine.eval(instrumented), equalTo(1));
+        assertThat(engine.eval("jscover['test.js'].s['1']"), equalTo(1));
     }
 }

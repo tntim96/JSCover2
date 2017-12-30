@@ -4,7 +4,7 @@ JSCover2
 A JavaScript code-coverage tool
 
 [![Build Status](https://travis-ci.org/tntim96/JSCover2.svg?branch=master)](https://travis-ci.org/tntim96/JSCover2)
-[![Coverage Status](https://coveralls.io/repos/github/tntim96/JSCover2/badge.svg?branch=master)](https://coveralls.io/github/tntim96/JSCover2?branch=master)
+[![codecov](https://codecov.io/gh/tntim96/JSCover2/branch/master/graph/badge.svg)](https://codecov.io/gh/tntim96/JSCover2)
 [![Dependency Status](https://www.versioneye.com/user/projects/5404420cd0734e31f400016d/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5404420cd0734e31f400016d)
 
 Motivations

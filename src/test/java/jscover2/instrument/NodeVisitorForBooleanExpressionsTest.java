@@ -4,13 +4,14 @@ import com.google.javascript.jscomp.CodePrinter;
 import com.google.javascript.jscomp.SourceFile;
 import com.google.javascript.rhino.IR;
 import com.google.javascript.rhino.Node;
+import com.google.javascript.rhino.StaticSourceFile;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 public class NodeVisitorForBooleanExpressionsTest {
-    private final SourceFile sourceFile = new SourceFile("test.js");
+    private final SourceFile sourceFile = new SourceFile("test.js", StaticSourceFile.SourceKind.STRONG);
     private NodeVisitorForBooleanExpressions visitor = new NodeVisitorForBooleanExpressions("jscover", sourceFile, false);
 
     @Test

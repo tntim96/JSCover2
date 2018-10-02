@@ -6,9 +6,8 @@ import com.google.javascript.jscomp.parsing.Config;
 import com.google.javascript.jscomp.parsing.ParserRunner;
 import com.google.javascript.rhino.IR;
 import com.google.javascript.rhino.Node;
+import com.google.javascript.rhino.StaticSourceFile;
 import org.junit.Test;
-
-import java.io.IOException;
 
 import static com.google.javascript.jscomp.parsing.Config.JsDocParsing.TYPES_ONLY;
 import static com.google.javascript.jscomp.parsing.Config.LanguageMode.ECMASCRIPT3;
@@ -21,7 +20,7 @@ public class NodeHelperTest {
     private NodeHelper nodeHelper = new NodeHelper();
 
     @Test
-    public void shouldCreateStatementIncrementNode() throws IOException {
+    public void shouldCreateStatementIncrementNode() {
         Node expected = parse("coverVar['urlPath'].s['7']++;");
         Node actual = nodeHelper.createStatementIncrementNode("coverVar", "urlPath", 7);
 
@@ -29,7 +28,7 @@ public class NodeHelperTest {
     }
 
     @Test
-    public void shouldCreateFunctionIncrementNode() throws IOException {
+    public void shouldCreateFunctionIncrementNode() {
         Node expected = parse("coverVar['urlPath'].f['7']++;");
         Node actual = nodeHelper.createFunctionIncrementNode("coverVar", "urlPath", 7);
 
@@ -37,7 +36,7 @@ public class NodeHelperTest {
     }
 
     @Test
-    public void shouldCreateBranchIncrementNode() throws IOException {
+    public void shouldCreateBranchIncrementNode() {
         Node expected = parse("coverVar['urlPath'].b['7'][4]++;");
         Node actual = nodeHelper.createBranchIncrementNode("coverVar", "urlPath", 7, 4);
 
@@ -45,7 +44,7 @@ public class NodeHelperTest {
     }
 
     @Test
-    public void shouldWrapConditionNode() throws IOException {
+    public void shouldWrapConditionNode() {
         Node node = IR.lt(IR.name("x"), IR.number(0));
         Node expected = parse("coverVar.beF((x < 0), 'urlPath', 7)");
         Node actual = nodeHelper.wrapConditionNode(node, "coverVar", "urlPath", 7);
@@ -54,7 +53,7 @@ public class NodeHelperTest {
     }
 
     @Test
-    public void shouldWrapNodeWithParent() throws IOException {
+    public void shouldWrapNodeWithParent() {
         Node ifNode = buildLessThanNodeWithParent();
         Node lt = ifNode.getFirstChild();
 
@@ -67,7 +66,7 @@ public class NodeHelperTest {
     }
 
     @Test
-    public void shouldDetectInstrumentation() throws IOException {
+    public void shouldDetectInstrumentation() {
         Node jscover = IR.string("jscover");
         Node getProp = IR.getprop(jscover, "uri");
         Node call = IR.call(getProp);
@@ -79,7 +78,7 @@ public class NodeHelperTest {
     }
 
     @Test
-    public void shouldDetectWrappedNode() throws IOException {
+    public void shouldDetectWrappedNode() {
         Node lt = buildLessThanNodeWithParent().getFirstChild();
 
         Node wrapped = nodeHelper.wrapConditionNode(lt, "coverVar", "urlPath", 7);
@@ -102,7 +101,7 @@ public class NodeHelperTest {
 
     private Node parse(String source) {
         return ParserRunner.parse(
-                new SourceFile("test.js"),
+                new SourceFile("test.js", StaticSourceFile.SourceKind.STRONG),
                 source,
                 ParserRunner.createConfig(ECMASCRIPT3, TYPES_ONLY, KEEP_GOING, null, false, Config.StrictMode.SLOPPY),
                 null).ast;
